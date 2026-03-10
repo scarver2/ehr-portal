@@ -1,12 +1,11 @@
+# compose.yml
 services:
-
   postgres:
     image: postgres:18.3
     environment:
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
-
   redis:
     image: redis:8.6.1
     ports:

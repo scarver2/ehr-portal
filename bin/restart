@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# bin/restart
 source "$(dirname "$0")/_lib.sh"
 banner
-docker compose logs
+"$SCRIPT_DIR/down"
+"$SCRIPT_DIR/up" "$@"
