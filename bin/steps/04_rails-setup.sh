@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 # bin/build-rails-api.sh
 
-source "$(dirname "$0")/_lib.sh"
+source "$(dirname "$0")/../_lib.sh"
 
-banner
-
-info "Checking prerequisites..."
+info "Checking prerequisites for Rails..."
 
 check "ruby"
 check "gem"
@@ -47,10 +45,11 @@ cat << 'EOF' > .ruby-version
 $(/usr/bin/ruby -e 'puts RUBY_VERSION')
 EOF
 
+fail 'intentionally halted for verification'
+
 # create database
 bin/rails db:create
 
-fail 'intentionally halted for verification'
 
 # add RSpec
 bundle add rspec-rails
