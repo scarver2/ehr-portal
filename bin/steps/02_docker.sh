@@ -40,7 +40,7 @@ banner
 #   bin/up --build
 #   bin/up --build --remove-orphans
 #   bin/up -d --build
-if [[ $# -eq 0 ]]; then
+if [[ \$# -eq 0 ]]; then
   docker compose up -d
 else
   docker compose up "\$@"
@@ -77,7 +77,12 @@ source "\$(dirname "\$0")/_lib.sh"
 banner
 
 "\$SCRIPT_DIR/down"
-"\$SCRIPT_DIR/up" "\$@"
+
+if [[ \$# -eq 0 ]]; then
+  "\$SCRIPT_DIR/up"
+else
+  "\$SCRIPT_DIR/up" "\$@"
+fi
 EOF
 
 chmod +x bin/down bin/logs bin/restart bin/up
