@@ -27,7 +27,19 @@ check() {
   fi
 }
 
-require_cmd() {
+execute_scripts() {
+  local dir="${1}"
+
+  for script in "$dir"/[0-9][0-9]_[a-zA-Z0-9_-]*; do
+    if [[ -x "$script" ]]; then
+      "$script"
+    else
+      echo "Skipping non-executable: $(basename "$script")"
+    fi
+  done
+}
+
+require_command() {
   if ! command -v "$1" >/dev/null 2>&1; then
     echo "Missing required command: $1"
     exit 1
