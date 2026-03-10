@@ -1,5 +1,15 @@
 # EHR Portal Roadmap
 
+Phase 1 – Infrastructure  
+Phase 2 – Rails API  
+Phase 3 – Domain modeling  
+Phase 4 – GraphQL queries  
+Phase 5 – Next.js UI  
+Phase 6 – Visualization  
+Phase 7 – Deployment
+
+# EHR Portal Roadmap
+
 This project follows an **SDLC-first approach**, ensuring the development
 environment, infrastructure, testing, and deployment pipeline are operational
 before significant application development begins.
@@ -281,4 +291,8 @@ Tasks:
 - Documentation updates
 - Deployment validation
 
-Ship.
+Done.
+
+## License
+
+Copyright &copy;2026 [Stan Carver II](http://stancarver.com) All rights reserved.

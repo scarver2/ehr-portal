@@ -1,2 +1,0 @@
-# EHR Portal Notes
-
