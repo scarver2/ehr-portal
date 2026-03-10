@@ -46,6 +46,11 @@ require_command() {
   fi
 }
 
+prompt() {
+  read -r -p "$1 " REPLY
+  [[ "$REPLY" == "y" ]]
+}
+
 # bash prompts
 info() {
   echo "→ $1"
