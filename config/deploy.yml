@@ -19,6 +19,7 @@ registry:
 proxy:
   ssl: true
   host: ehr.stancarver.com
+  app_port: 3000
   healthcheck:
     path: /api/up
 

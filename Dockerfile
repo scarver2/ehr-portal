@@ -16,6 +16,7 @@ COPY apps/ehr-portal .
 
 RUN bun run build
 
+ENV PORT=3000
 EXPOSE 3000
 
 CMD ["bun", "run", "start"]
