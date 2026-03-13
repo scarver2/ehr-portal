@@ -8,6 +8,8 @@ builder:
   cache:
     type: registry
     options: mode=max
+  context: apps/ehr-portal
+  dockerfile: Dockerfile
 
 proxy:
   ssl: true

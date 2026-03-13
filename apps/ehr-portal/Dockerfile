@@ -1,4 +1,4 @@
-
+# apps/ehr-portal/Dockerfile
 FROM oven/bun:1
 
 WORKDIR /app

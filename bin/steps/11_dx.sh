@@ -89,8 +89,6 @@ end
 EOF
 # TODO: add SimpleCov to spec_helper.rb
 
-# info "Creating database..."
-# bin/rails db:create
 
 # TODO: Insert health check endpoint after 2nd line of routes.rb
 # get "/up", to: proc { [200, {}, ["ok"]] }

@@ -23,7 +23,7 @@ select_menu() {
 
   echo "" >&2
 
-  read -r -p "Select option: " choice <&1
+  read -r -p "Select option: " choice </dev/tty
 
   if [[ "$choice" =~ ^[0-9]+$ ]] && (( choice >= 1 && choice <= ${#options[@]} )); then
     echo "${options[$((choice - 1))]}"
