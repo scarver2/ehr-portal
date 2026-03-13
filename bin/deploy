@@ -84,18 +84,13 @@ esac
 # Interactive menu
 ########################################
 
-echo ""
-echo "Deploy Target"
-echo "============="
-echo "1) API"
-echo "2) Portal"
-echo "A) All"
-echo "R) Rollback"
-echo ""
+selection=$(select_menu "Deploy Target" \
+  "api" \
+  "portal" \
+  "all" \
+  "rollback")
 
-read -r -p "Select target: " TARGET
-
-case "$TARGET" in
+case "$selection" in
   1)
     deploy_api
     ;;

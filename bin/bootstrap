@@ -1,10 +1,64 @@
 #!/usr/bin/env bash
-# bin/bootstrap
+# STEP: Bootstrap EHR Portal development environment
 
 set -euo pipefail
 
-source "$(dirname "$0")/_lib.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/_lib.sh"
+
+STEPS_DIR="$SCRIPT_DIR/steps"
 
 banner
 
-execute_scripts "$(dirname "$0")/steps" "${1:-}"
+COMMAND="${1:-run}"
+
+case "$COMMAND" in
+
+  run)
+    run_steps "$STEPS_DIR"
+    ;;
+
+  list)
+    list_steps "$STEPS_DIR"
+    ;;
+
+  doctor)
+    echo ""
+    echo "System Check"
+    echo "============"
+
+    check git
+    check docker
+    check ruby
+    check bun
+    check node
+    check psql
+
+    echo ""
+    success "Environment looks good"
+    ;;
+
+  reset)
+    echo ""
+    info "Cleaning state file"
+    clear_state
+    success "State cleared"
+    ;;
+
+  *)
+    if [[ "$COMMAND" =~ ^[0-9]{2}$ ]]; then
+      run_steps "$STEPS_DIR" "$COMMAND"
+    else
+      echo ""
+      echo "Usage:"
+      echo "  bin/bootstrap           Run all steps"
+      echo "  bin/bootstrap list      Show steps"
+      echo "  bin/bootstrap doctor    Check environment"
+      echo "  bin/bootstrap reset     Reset step state"
+      echo "  bin/bootstrap 20        Run specific step"
+      echo ""
+      exit 1
+    fi
+    ;;
+
+esac

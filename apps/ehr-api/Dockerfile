@@ -1,5 +1,5 @@
-
-FROM ruby:4.0.1
+# apps/ehr-api/Dockerfile
+FROM ruby:3.4.8
 
 WORKDIR /app
 
@@ -10,7 +10,5 @@ COPY . .
 
 EXPOSE 3000
 
-ENV RAILS_ENV=production
-ENV RAILS_LOG_TO_STDOUT=true
-
+# CMD ["bin/rails", "server", "-b", "0.0.0.0"]
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
