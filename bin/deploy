@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+# bin/deploy
+
+set -euo pipefail
+
+source "$(dirname "$0")/_lib.sh"
+
+PORTAL_CONFIG="$ROOT_DIR/config/deploy.portal.yml"
+API_CONFIG="$ROOT_DIR/config/deploy.api.yml"
+
+banner
+
+########################################
+# Preflight
+########################################
+
+info "Running preflight checks..."
+
+require_command kamal
+require_command docker
+require_command git
+
+if ! docker info >/dev/null 2>&1; then
+  fail "Docker does not appear to be running"
+fi
+
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  info "Git working tree is dirty"
+  if ! prompt "Continue deploy anyway? (y/N)"; then
+    fail "Deploy cancelled"
+  fi
+fi
+
+success "Preflight checks passed"
+
+########################################
+# Deploy functions
+########################################
+
+deploy_api() {
+  info "Deploying API"
+  kamal deploy -c "$API_CONFIG"
+}
+
+deploy_portal() {
+  info "Deploying Portal"
+  kamal deploy -c "$PORTAL_CONFIG"
+}
+
+deploy_all() {
+  deploy_portal
+  deploy_api
+}
+
+rollback() {
+  info "Rolling back last deployment"
+  kamal rollback
+}
+
+########################################
+# CLI arguments
+########################################
+
+case "${1:-}" in
+  api)
+    deploy_api
+    exit 0
+    ;;
+  portal)
+    deploy_portal
+    exit 0
+    ;;
+  all)
+    deploy_all
+    exit 0
+    ;;
+  rollback)
+    rollback
+    exit 0
+    ;;
+esac
+
+########################################
+# Interactive menu
+########################################
+
+echo ""
+echo "Deploy Target"
+echo "============="
+echo "1) API"
+echo "2) Portal"
+echo "A) All"
+echo "R) Rollback"
+echo ""
+
+read -r -p "Select target: " TARGET
+
+case "$TARGET" in
+  1)
+    deploy_api
+    ;;
+  2)
+    deploy_portal
+    ;;
+  A|a)
+    deploy_all
+    ;;
+  R|r)
+    rollback
+    ;;
+  *)
+    fail "Invalid option"
+    ;;
+esac

@@ -13,7 +13,7 @@ proxy:
   ssl: true
   host: api.ehr.stancarver.com
   app_port: 3000
-  drain_timeout: 30
+  # drain_timeout: 30
   healthcheck:
     path: /up
 
