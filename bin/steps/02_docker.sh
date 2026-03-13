@@ -86,3 +86,8 @@ fi
 EOF
 
 chmod +x bin/down bin/logs bin/restart bin/up
+
+
+# TODO: pull from GitHub 
+# https://raw.githubusercontent.com/ronald2wing/.dockerignore/refs/heads/master/frameworks/nextjs.dockerignore
+# https://raw.githubusercontent.com/ronald2wing/.dockerignore/refs/heads/master/frameworks/ruby-on-rails.dockerignore
