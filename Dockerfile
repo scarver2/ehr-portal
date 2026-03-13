@@ -1,9 +1,5 @@
 # Dockerfile
 
-# Up and running config
-# FROM nginx:alpine
-# COPY index.html /usr/share/nginx/html/index.html
-
 # ---------- Base ----------
 FROM oven/bun:1 AS base
 WORKDIR /app
@@ -28,8 +24,11 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 
-COPY --from=builder /app ./
+# copy standalone output
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
 EXPOSE 3000
 
-CMD ["bun", "run", "start"]
+CMD ["bun", "server.js"]
