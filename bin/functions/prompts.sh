@@ -11,19 +11,19 @@ select_menu() {
   shift
   local options=("$@")
 
-  echo ""
-  echo "$title"
-  echo "================"
+  echo "" >&2
+  echo "$title" >&2
+  echo "================" >&2
 
   local i=1
   for opt in "${options[@]}"; do
-    echo "$i) $opt"
+    echo "$i) $opt" >&2
     ((i++))
   done
 
-  echo ""
+  echo "" >&2
 
-  read -r -p "Select option: " choice
+  read -r -p "Select option: " choice <&1
 
   if [[ "$choice" =~ ^[0-9]+$ ]] && (( choice >= 1 && choice <= ${#options[@]} )); then
     echo "${options[$((choice - 1))]}"
