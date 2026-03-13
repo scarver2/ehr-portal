@@ -17,6 +17,8 @@ check "git"
 
 info "Creating Rails API..."
 
+cd apps
+
 # obsessive, I know.
 rails new ehr-api \
   --api \
@@ -124,7 +126,8 @@ bundle add faker
 
 info "Adding GraphQL..."
 bundle add graphql
-rails generate graphql:install
+bundle add graphql-rails --group development
+bin/rails generate graphql:install
 
 # TODO: Insert health check endpoint after 2nd line of routes.rb
 # get "/up", to: proc { [200, {}, ["ok"]] }

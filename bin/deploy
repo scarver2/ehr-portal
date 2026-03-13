@@ -3,35 +3,13 @@
 
 set -euo pipefail
 
-source "$(dirname "$0")/_lib.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/_lib.sh"
 
 PORTAL_CONFIG="$ROOT_DIR/config/deploy.portal.yml"
 API_CONFIG="$ROOT_DIR/config/deploy.api.yml"
 
 banner
-
-########################################
-# Preflight
-########################################
-
-info "Running preflight checks..."
-
-require_command kamal
-require_command docker
-require_command git
-
-if ! docker info >/dev/null 2>&1; then
-  fail "Docker does not appear to be running"
-fi
-
-if ! git diff --quiet || ! git diff --cached --quiet; then
-  info "Git working tree is dirty"
-  if ! prompt "Continue deploy anyway? (y/N)"; then
-    fail "Deploy cancelled"
-  fi
-fi
-
-success "Preflight checks passed"
 
 ########################################
 # Deploy functions
@@ -52,58 +30,98 @@ deploy_all() {
   deploy_api
 }
 
-rollback() {
+deploy_rollback() {
   info "Rolling back last deployment"
   kamal rollback
 }
 
 ########################################
-# CLI arguments
+# Preflight
 ########################################
 
-case "${1:-}" in
+preflight() {
+  info "Running preflight checks..."
+
+  require_command kamal
+  require_command docker
+  require_command git
+
+  if ! docker info >/dev/null 2>&1; then
+    fail "Docker does not appear to be running"
+  fi
+
+  if ! git diff --quiet || ! git diff --cached --quiet; then
+    info "Git working tree is dirty"
+    if ! prompt "Continue deploy anyway? (y/N)"; then
+      fail "Deploy cancelled"
+    fi
+  fi
+
+  success "Preflight checks passed"
+}
+
+########################################
+# CLI
+########################################
+
+CMD="${1:-}"
+
+case "$CMD" in
+
   api)
+    preflight
     deploy_api
-    exit 0
     ;;
+
   portal)
+    preflight
     deploy_portal
-    exit 0
     ;;
+
   all)
+    preflight
     deploy_all
-    exit 0
     ;;
+
   rollback)
-    rollback
-    exit 0
+    preflight
+    deploy_rollback
     ;;
-esac
 
-########################################
-# Interactive menu
-########################################
+  help|-h|--help)
+    echo ""
+    echo "Usage:"
+    echo ""
+    echo "  bin/deploy             Interactive menu"
+    echo "  bin/deploy api         Deploy API"
+    echo "  bin/deploy portal      Deploy Portal"
+    echo "  bin/deploy all         Deploy Portal + API"
+    echo "  bin/deploy rollback    Rollback last deploy"
+    echo ""
+    ;;
 
-selection=$(select_menu "Deploy Target" \
-  "api" \
-  "portal" \
-  "all" \
-  "rollback")
+  "")
+    preflight
 
-case "$selection" in
-  1)
-    deploy_api
+    selection=$(select_menu "Deploy Target" \
+      "api" \
+      "portal" \
+      "all" \
+      "rollback")
+
+    case "$selection" in
+      api)      deploy_api ;;
+      portal)   deploy_portal ;;
+      all)      deploy_all ;;
+      rollback) deploy_rollback ;;
+      *)        fail "Invalid option: $selection" ;;
+    esac
     ;;
-  2)
-    deploy_portal
-    ;;
-  A|a)
-    deploy_all
-    ;;
-  R|r)
-    rollback
-    ;;
+
   *)
-    fail "Invalid option"
+    echo "Unknown command: $CMD"
+    echo "Run: bin/deploy help"
+    exit 1
     ;;
+
 esac
