@@ -16,11 +16,12 @@ WORKDIR /app
 RUN apt-get update -qq && \
   apt-get install -y --no-install-recommends \
   build-essential \
-  libpq-dev \
-  git \
   curl \
-  pkg-config \
+  git \
+  libpq-dev \
+  libyaml-dev \
   nodejs \
+  pkg-config \
   && rm -rf /var/lib/apt/lists/*
 
 
