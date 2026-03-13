@@ -2,19 +2,11 @@ service: ehr-portal
 
 image: scarver2/ehr-portal
 
-servers:
-  web:
-    - 45.76.237.124
-
 builder:
-  arch:
-    - amd64
-
-registry:
-  server: ghcr.io
-  username: scarver2
-  password:
-    - GITHUB_TOKEN
+  arch: amd64
+  cache:
+    type: registry
+    options: mode=max
 
 proxy:
   ssl: true
@@ -22,6 +14,16 @@ proxy:
   app_port: 3000
   healthcheck:
     path: /api/up
+
+registry:
+  server: ghcr.io
+  username: scarver2
+  password:
+    - GITHUB_TOKEN
+
+servers:
+  web:
+    - 45.76.237.124
 
 ssh:
   user: deploy
