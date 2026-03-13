@@ -9,7 +9,7 @@ builder:
     type: registry
     options: mode=max
   context: apps/ehr-api
-  dockerfile: Dockerfile
+  dockerfile: apps/ehr-api/Dockerfile
 
 proxy:
   ssl: true
