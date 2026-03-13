@@ -10,5 +10,7 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["bin/rails", "server", "-b", "0.0.0.0"]
+ENV RAILS_ENV=production
+ENV RAILS_LOG_TO_STDOUT=true
 
+CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]

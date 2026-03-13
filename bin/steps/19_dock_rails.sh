@@ -1,6 +1,14 @@
 # bin/steps/19_dock_rails.sh
 
-cat << 'EOF' > apps/ehr-api/Dockerfile
+set -euo pipefail
+
+source "$(dirname "$0")/../_lib.sh"
+
+cd apps/ehr-api
+
+info "Creating Dockerfile for Rails API..."
+
+cat << 'EOF' > Dockerfile
 # apps/ehr-api/Dockerfile
 FROM ruby:3.4.8
 
@@ -13,6 +21,6 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["bin/rails", "server", "-b", "0.0.0.0"]
-
+# CMD ["bin/rails", "server", "-b", "0.0.0.0"]
+CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
 EOF

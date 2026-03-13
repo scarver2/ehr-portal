@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# Usage: scp bin/vps_bootstrap.sh root@45.76.237.124:/root/
+# Usage: 
+#   scp bin/vps_bootstrap.sh root@45.76.237.124:/root/
+#   ssh root@45.76.237.124
+#   bash vps_bootstrap.sh
 
 set -euo pipefail
 

@@ -41,3 +41,5 @@ gem "devise", "~> 5.0"
 gem "faker", "~> 3.6"
 
 gem "graphql", "~> 2.5"
+
+gem "solid_queue", "~> 1.3"
