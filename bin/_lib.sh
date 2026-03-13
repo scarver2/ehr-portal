@@ -2,6 +2,7 @@
 # bin/_lib.sh
 
 set -euo pipefail
+shopt -s nullglob
 
 PROJECT_NAME="ehr-portal"
 
@@ -47,41 +48,6 @@ check() {
 }
 
 ########################################
-# Prompts
-########################################
-
-prompt() {
-  read -r -p "$1 " REPLY
-  [[ "$REPLY" == "y" ]]
-}
-
-select_menu() {
-  local prompt="$1"
-  shift
-  local options=("$@")
-
-  echo ""
-  echo "$prompt"
-  echo "================"
-
-  local i=1
-  for opt in "${options[@]}"; do
-    echo "$i) $opt"
-    ((i++))
-  done
-
-  echo ""
-
-  read -r -p "Select option: " choice
-
-  if [[ "$choice" =~ ^[0-9]+$ ]] && (( choice >= 1 && choice <= ${#options[@]} )); then
-    echo "${options[$((choice-1))]}"
-  else
-    fail "Invalid option"
-  fi
-}
-
-########################################
 # State management
 ########################################
 
@@ -90,11 +56,7 @@ save_state() {
 }
 
 resume_state() {
-  if [[ -f "$STATE_FILE" ]]; then
-    cat "$STATE_FILE"
-  else
-    echo ""
-  fi
+  [[ -f "$STATE_FILE" ]] && cat "$STATE_FILE" || echo ""
 }
 
 clear_state() {
@@ -120,12 +82,10 @@ run_steps() {
     name="$(basename "$script")"
     step="${name%%_*}"
 
-    # filter specific step
     if [[ -n "$filter" && "$step" != "$filter" ]]; then
       continue
     fi
 
-    # resume logic
     if [[ -n "$last_step" ]]; then
       if (( step <= last_step )); then
         info "Skipping completed step: $name"
@@ -152,24 +112,32 @@ run_steps() {
   success "All steps completed"
 }
 
+########################################
+# Step listing
+########################################
+
 list_steps() {
   local step_dir="$1"
 
-  [[ -d "$step_dir" ]] || fail "Steps directory not found: $step_dir"
+  [[ -d "$step_dir" ]] || fail "Steps directory not found"
 
   echo ""
   echo "Available Steps"
   echo "================"
 
   for script in "$step_dir"/[0-9][0-9]_*; do
-    name="$(basename "$script")"
-    step="${name%%_*}"
+    # echo "DEBUG script: $script"
 
-    # Extract STEP description
-    desc=$(grep -m1 '^# STEP:' "$script" 2>/dev/null | sed 's/^# STEP:[[:space:]]*//')
+    name="$(basename "$script")"
+    # echo "DEBUG name: $name"
+
+    step="${name%%_*}"
+    # echo "DEBUG step: $step"
+
+    desc="${name#*_}"
+    desc="${desc%.sh}"
 
     if [[ -z "$desc" ]]; then
-      # fallback to filename
       desc="${name#*_}"
       desc="${desc%.sh}"
     fi
