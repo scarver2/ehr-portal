@@ -29,8 +29,10 @@ check() {
 
 execute_scripts() {
   local dir="${1}"
+  local filter="${2:-}"
 
   for script in "$dir"/[0-9][0-9]_[a-zA-Z0-9_-]*; do
+    [[ -n "$filter" && "$(basename "$script")" != "${filter}_"* ]] && continue
     if [[ -x "$script" ]]; then
       "$script"
     else

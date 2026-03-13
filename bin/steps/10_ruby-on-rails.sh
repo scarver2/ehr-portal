@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# bin/build-rails-api.sh
+# bin/steps/10_ruby-on-rails.sh
+
+# TODO: bundle add gems to proper groups
+# TODO: bundle add gems with require: false when appropriate
 
 source "$(dirname "$0")/../_lib.sh"
 
@@ -35,34 +38,34 @@ rails new ehr-api \
 
 cd ehr-api
 
-# TODO: add Git
-# curl -o .gitignore https://raw.githubusercontent.com/github/gitignore/refs/heads/main/Rails.gitignore
+info "Downloading .gitignore ..."
+curl -o .gitignore https://raw.githubusercontent.com/github/gitignore/refs/heads/main/Rails.gitignore
 # git add .
 # git commit -m "Initial API commit"
 
-# lock Ruby version
-cat << 'EOF' > .ruby-version
-$(/usr/bin/ruby -e 'puts RUBY_VERSION')
-EOF
+# # TODO: lock Ruby version
+# cat << 'EOF' > .ruby-version
+# $(/usr/bin/ruby -e 'puts RUBY_VERSION')
+# EOF
 
-fail 'intentionally halted for verification'
-
-# create database
-bin/rails db:create
-
-
-# add RSpec
+info "Adding RSpec..."
 bundle add rspec-rails
 bin/rails generate rspec:install
-# TODO: add .rspec
 cat << 'EOF' > .rspec
 # .rspec
+
+--color
+--format documentation
+--order random
+--require spec_helper
 EOF
 
-# add FactoryBot
+info "Adding FactoryBot..."
 bundle add factory_bot_rails
+# mkdir spec/factories
+# TODO: add FactoryBot to spec_helper.rb
 
-# add RuboCop
+info "Adding RuboCop..."
 bundle add rubocop
 bundle add rubocop-capybara
 bundle add rubocop-factory_bot
@@ -85,7 +88,7 @@ plugins:
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 4.0
+  TargetRubyVersion: 3.4
   Exclude:
     - '.bundle/**/*'
     - 'coverage/**/*'
@@ -93,7 +96,7 @@ AllCops:
     - 'vendor/**/*'
 EOF
 
-# add SimpleCov
+info "Adding SimpleCov..."
 bundle add simplecov
 cat << 'EOF' > .simplecov
 # frozen_string_literal: true
@@ -105,28 +108,26 @@ SimpleCov.start do
   enable_coverage_for_eval
 end
 EOF
+# TODO: add SimpleCov to spec_helper.rb
 
-# add Devise
+info "Creating database..."
+bin/rails db:create
+
+info "Adding Devise..."
 bundle add devise
 bin/rails g devise:install
 bin/rails g devise User
 bin/rails db:migrate
 
-# add ActiveAdmin
-bundle add activeadmin
-rails generate active_admin:install
-bin/rails g active_admin:install
-bin/rails generate devise AdminUser
-bin/rails db:migrate
-# TODO config ActiveAdmin to use Devise for authentication
-
-
-# add Faker
+info "Adding Faker..."
 bundle add faker
 
-# TODO: add seeds
-
-# add GraphQL
+info "Adding GraphQL..."
 bundle add graphql
 rails generate graphql:install
 
+# TODO: Insert health check endpoint after 2nd line of routes.rb
+# get "/up", to: proc { [200, {}, ["ok"]] }
+
+
+# fail 'intentionally halted for verification'

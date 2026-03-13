@@ -1,0 +1,26 @@
+service: ehr-portal
+
+image: scarver2/ehr-portal
+
+servers:
+  web:
+    - 45.76.237.124
+
+builder:
+  arch:
+    - amd64
+
+registry:
+  server: ghcr.io
+  username: scarver2
+  password:
+    - GITHUB_TOKEN
+
+proxy:
+  ssl: true
+  host: ehr.stancarver.com
+  healthcheck:
+    path: /api/up
+
+ssh:
+  user: deploy

@@ -1,0 +1,43 @@
+source "https://rubygems.org"
+
+# Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
+gem "rails", "~> 8.1.2"
+# Use postgresql as the database for Active Record
+gem "pg", "~> 1.1"
+# Use the Puma web server [https://github.com/puma/puma]
+gem "puma", ">= 5.0"
+
+# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+gem "tzinfo-data", platforms: %i[ windows jruby ]
+
+# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
+# gem "rack-cors"
+
+group :development, :test do
+  # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
+  gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
+end
+
+gem "rspec-rails", "~> 8.0"
+
+gem "factory_bot_rails", "~> 6.5"
+
+gem "rubocop", "~> 1.85"
+
+gem "rubocop-capybara", "~> 2.22"
+
+gem "rubocop-factory_bot", "~> 2.28"
+
+gem "rubocop-rails", "~> 2.34"
+
+gem "rubocop-performance", "~> 1.26"
+
+gem "rubocop-rspec", "~> 3.9"
+
+gem "simplecov", "~> 0.22.0"
+
+gem "devise", "~> 5.0"
+
+gem "faker", "~> 3.6"
+
+gem "graphql", "~> 2.5"
