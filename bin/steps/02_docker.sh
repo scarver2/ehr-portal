@@ -21,10 +21,10 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
-  redis:
-    image: redis:8.6.1
-    ports:
-      - "6379:6379"
+  # redis:
+  #   image: redis:8.6.1
+  #   ports:
+  #     - "6379:6379"
 EOF
 
 cat <<EOF > bin/up

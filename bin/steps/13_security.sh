@@ -28,3 +28,9 @@ bundle add rack-attack
 
 info "Adding authorization gems..."
 bundle add pundit
+
+info "Adding Devise..."
+bundle add devise
+bin/rails g devise:install
+bin/rails g devise User
+# bin/rails db:migrate

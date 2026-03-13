@@ -4,7 +4,11 @@
 source "$(dirname "$0")/../_lib.sh"
 
 info "Seeding database..."
-cd ../ehr-api
+
+cd apps/ehr-api
+
+info "Adding Faker..."
+bundle add faker
 
 # TODO: Add seed data
 touch db/seeds/icd10.rb
