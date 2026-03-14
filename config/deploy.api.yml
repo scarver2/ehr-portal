@@ -14,6 +14,13 @@ builder:
 env:
   clear:
     SECRET_KEY_BASE: <%= ENV["SECRET_KEY_BASE"] %>
+    DB_HOST: postgres
+    DB_PORT: 5432
+    DB_USER: ehr_api
+    DB_NAME: ehr_api_production
+
+  secret:
+    - DB_PASSWORD
 
 proxy:
   ssl: true
@@ -30,8 +37,24 @@ registry:
     - GITHUB_TOKEN
 
 servers:
+  # db:
+  #   - 45.76.237.124
   web:
     - 45.76.237.124
 
 ssh:
   user: deploy
+
+accessories:
+  postgres:
+    image: postgres:18.3
+    host: 45.76.237.124
+    port: "5432:5432"
+    env:
+      clear:
+        POSTGRES_DB: ehr_api_production
+        POSTGRES_USER: ehr_api
+      secret:
+        - POSTGRES_PASSWORD
+    directories:
+      - data:/var/lib/postgresql/data
