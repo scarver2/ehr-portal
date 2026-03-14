@@ -8,19 +8,38 @@ cd apps/ehr-api
 info "Adding ActiveAdmin..."
 # Should already be installed bundle add devise
 bundle add activeadmin
+
+
+info "Configuring Rails to serve ActiveAdmin..."
+# In apps/ehr-api/app/controllers/application_controller.rb
+# replace class ApplicationController < ActionController::API
+# with class ApplicationController < ActionController::Base
+
+
+
+info "Adding asset pipeline..."
 bundle add propshaft
 bundle add dartsass-rails
+# TODO: Append to Procfile.dev
+# apps/ehr-api/Procfile.dev
+# css: bin/rails dartsass:watch
+
+# TODO: In apps/ehr-api/config/application.rb
+# replace config.api_only = true with config.api_only = false
+# require "action_view/railtie"
+# insert:
+# config.middleware.use ActionDispatch::Cookies
+# config.middleware.use ActionDispatch::Session::CookieStore
+# config.middleware.use ActionDispatch::Flash
 
 
-
-# TODO: This may not be needed
-# cat <<EOF > config/initializers/assets.rb
-# # apps/ehr-api/config/initializers/assets.rb
-# Rails.application.config.assets.precompile += %w(
-#   active_admin.js
-#   active_admin.css
-# )
-# EOF
+cat <<EOF > config/initializers/assets.rb
+# apps/ehr-api/config/initializers/assets.rb
+Rails.application.config.assets.precompile += %w(
+  active_admin.js
+  active_admin.css
+)
+EOF
 
 # config/initializers/session_store.rb
 # Rails.application.config.session_store :cookie_store, key: "_ehr_admin_session"
@@ -39,6 +58,9 @@ bundle add dartsass-rails
 # config/application.rb
 bin/rails generate active_admin:install
 
+# TODO: In apps/ehr-api/config/initializers/active_admin.rb
+# replace config.site_title = "Ehr Api"
+# with config.site_title = "EHR Portal Admin"
 
 # mkdir -p app/assets/stylesheets
 # mkdir -p app/assets/javascripts
@@ -63,12 +85,23 @@ bin/rails generate active_admin:install
 # //
 
 
-# TODO: This may not be needed
-# config/initializers/assets.rb
-# Rails.application.config.assets.precompile += %w(
-#   active_admin.js
-#   active_admin.css
-# )
+cat <<EOF >> config/initializers/assets.rb
+# apps/ehr-api/config/initializers/assets.rb
+# frozen_string_literal: true
+Rails.application.config.assets.precompile += %w(
+  active_admin.js
+  active_admin.css
+)
+EOF
+
+# config/initializers/dartsass.rb
+# frozen_string_literal: true
+
+# TODO: DART SASS initializer
+# Rails.application.config.dartsass.builds = {
+#   "application.scss"    => "application.css",
+#   "active_admin.scss"   => "active_admin.css"
+# }
 
 # app/views/layouts/active_admin.html.erb
 # <%= stylesheet_link_tag "active_admin", "data-turbo-track": "reload" %>
