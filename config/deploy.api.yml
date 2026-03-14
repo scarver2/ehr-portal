@@ -1,0 +1,37 @@
+# config/deploy.api.yml
+service: ehr-api
+
+image: scarver2/ehr-api
+
+builder:
+  arch: amd64
+  cache:
+    type: registry
+    options: mode=max
+  context: apps/ehr-api
+  dockerfile: apps/ehr-api/Dockerfile
+
+env:
+  clear:
+    SECRET_KEY_BASE: <%= ENV["SECRET_KEY_BASE"] %>
+
+proxy:
+  ssl: true
+  host: api.ehr.stancarver.com
+  app_port: 3000
+  # drain_timeout: 30
+  healthcheck:
+    path: /api/up
+
+registry:
+  server: ghcr.io
+  username: scarver2
+  password:
+    - GITHUB_TOKEN
+
+servers:
+  web:
+    - 45.76.237.124
+
+ssh:
+  user: deploy

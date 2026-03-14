@@ -1,0 +1,10 @@
+# compose.yml
+# for local development only.
+
+services:
+  postgres:
+    image: postgres:18.3
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"

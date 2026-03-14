@@ -1,0 +1,20 @@
+# .rubocop.yml
+
+inherit_from:
+  - .rubocop_todo.yml
+
+plugins:
+  - rubocop-capybara
+  - rubocop-factory_bot
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 4.0
+  Exclude:
+    - '.bundle/**/*'
+    - 'coverage/**/*'
+    - 'tmp/**/*'
+    - 'vendor/**/*'

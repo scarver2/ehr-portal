@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# bin/cleanse
+
+source "$(dirname "$0")/_lib.sh"
+
+banner
+
+if prompt "Are you sure? (yN)"; then
+  rm -rf bin/down bin/logs bin/restart bin/up \
+    compose.yml \
+    ehr-api ehr-portal
+  info "All application files were removed."
+
+  dropdb --if-exists ehr_api_development
+  dropdb --if-exists ehr_api_test
+  info "All database tables were removed."
+else
+  info "Cleanse aborted. No files were deleted."
+fi

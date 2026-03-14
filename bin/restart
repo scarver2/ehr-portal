@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# bin/restart
+
+source "$(dirname "$0")/_lib.sh"
+
+banner
+
+"$SCRIPT_DIR/down"
+
+if [[ $# -eq 0 ]]; then
+  "$SCRIPT_DIR/up"
+else
+  "$SCRIPT_DIR/up" "$@"
+fi
