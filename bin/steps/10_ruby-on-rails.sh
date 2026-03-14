@@ -34,5 +34,30 @@ rails new ehr-api \
 
 cd ehr-api
 
+cat <<EOF > config/database.yml 
+# apps/ehr-api/config/database.yml
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV["DB_HOST"] %>
+  port: <%= ENV.fetch("DB_PORT", 5432) %>
+  username: <%= ENV["DB_USER"] %>
+  password: <%= ENV["DB_PASSWORD"] %>
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 3 } %>
+  # pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+
+development:
+  <<: *default
+  database: ehr_api_development
+
+test:
+  <<: *default
+  database: ehr_api_test
+
+production:
+  <<: *default
+  database: ehr_api_production
+EOF
+
 info "Creating database..."
 bin/rails db:create
