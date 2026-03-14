@@ -18,7 +18,7 @@ services:
   postgres:
     image: postgres:18.3
     environment:
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: \${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
   # redis:
