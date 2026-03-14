@@ -11,6 +11,10 @@ builder:
   context: apps/ehr-api
   dockerfile: apps/ehr-api/Dockerfile
 
+env:
+  clear:
+    SECRET_KEY_BASE: <%= ENV["SECRET_KEY_BASE"] %>
+
 proxy:
   ssl: true
   host: api.ehr.stancarver.com
