@@ -47,6 +47,11 @@ COPY . .
 RUN bundle exec bootsnap precompile --gemfile
 RUN bundle exec bootsnap precompile app/ lib/
 
+# Compile SCSS and precompile assets for production
+RUN SECRET_KEY_BASE=placeholder \
+  DB_HOST=placeholder \
+  bundle exec rails dartsass:build assets:precompile
+
 ############################
 # Runtime image
 ############################

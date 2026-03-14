@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+# bin/kamal
+
+# Usage:
+# bin/kamal <target> [kamal args]
+# bin/kamal api console                                        # Rails console
+# bin/kamal api logs -f                                        # Tail logs
+# bin/kamal api app exec -- bash                               # Shell into container
+# bin/kamal api accessory exec postgres -- psql -U $DB_USER \
+#   -d ehr_api_production                                      # Postgres SQL prompt
+# bin/kamal api app exec -- bin/rails runner "puts User.count" # One-off Ruby
+# bin/kamal                                                    # Interactive target menu
+
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/_lib.sh"
+
+API_CONFIG="$ROOT_DIR/config/deploy.api.yml"
+PORTAL_CONFIG="$ROOT_DIR/config/deploy.portal.yml"
+
+banner
+require_command kamal
+
+########################################
+# CLI
+########################################
+
+TARGET="${1:-}"
+
+case "$TARGET" in
+
+  api|portal)
+    shift
+    ;;
+
+  help|-h|--help)
+    echo ""
+    echo "Usage:"
+    echo ""
+    echo "  bin/kamal <target> [kamal args]"
+    echo ""
+    echo "Targets:"
+    echo "  api      EHR API"
+    echo "  portal   EHR Portal"
+    echo ""
+    echo "Examples:"
+    echo "  bin/kamal api console"
+    echo "  bin/kamal api logs -f"
+    echo "  bin/kamal api app exec -- bash"
+    echo "  bin/kamal api accessory exec postgres -- psql -U \$DB_USER -d ehr_api_production"
+    echo ""
+    exit 0
+    ;;
+
+  "")
+    TARGET=$(select_menu "Select Target" "api" "portal")
+    ;;
+
+  *)
+    fail "Unknown target: '$TARGET'. Run: bin/kamal help"
+    ;;
+
+esac
+
+CONFIG="$([[ "$TARGET" == "api" ]] && echo "$API_CONFIG" || echo "$PORTAL_CONFIG")"
+
+info "Running: kamal $* -c $(basename "$CONFIG")"
+kamal "$@" -c "$CONFIG"

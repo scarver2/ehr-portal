@@ -12,8 +12,14 @@ builder:
   dockerfile: apps/ehr-api/Dockerfile
 
 env:
+  secret:
+    - SECRET_KEY_BASE
+    - DB_USER
+    - DB_PASSWORD
   clear:
-    SECRET_KEY_BASE: <%= ENV["SECRET_KEY_BASE"] %>
+    DB_HOST: ehr-api-postgres
+    DB_PORT: 5432
+    DB_NAME: ehr_api_production
 
 proxy:
   ssl: true
@@ -30,8 +36,24 @@ registry:
     - GITHUB_TOKEN
 
 servers:
+  # db:
+  #   - 45.76.237.124
   web:
     - 45.76.237.124
 
 ssh:
   user: deploy
+
+accessories:
+  postgres:
+    image: postgres:18
+    host: 45.76.237.124
+    port: "5432:5432"
+    env:
+      secret:
+        - POSTGRES_USER
+        - POSTGRES_PASSWORD
+      clear:
+        POSTGRES_DB: ehr_api_production
+    directories:
+      - data:/var/lib/postgresql
