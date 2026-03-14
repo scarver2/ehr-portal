@@ -93,4 +93,24 @@ EOF
 # TODO: Insert health check endpoint after 2nd line of routes.rb
 # get "/up", to: proc { [200, {}, ["ok"]] }
 
+
+info "Adding Procfile.dev..."
+cat << 'EOF' > Procfile.dev
+# apps/ehr-api/Procfile.dev
+web: bin/rails server -p 3000
+EOF
+
+info "Overwriting bin/dev..."
+cat << 'EOF' > bin/dev
+#!/usr/bin/env bash
+# apps/ehr-api/bin/dev
+
+if ! gem list foreman -i --silent; then
+  echo "Installing foreman..."
+  gem install foreman
+fi
+
+exec foreman start -f Procfile.dev "$@"
+EOF
+
 # fail 'intentionally halted for verification'

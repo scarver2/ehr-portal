@@ -1,0 +1,4 @@
+# apps/ehr-api/Procfile.dev
+
+web: bin/rails server -p 3000
+css: bin/rails dartsass:watch
