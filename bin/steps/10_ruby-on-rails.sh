@@ -26,7 +26,6 @@ rails new ehr-api \
   --skip-action-mailbox \
   --skip-action-text \
   --skip-active-storage \
-  --skip-bootsnap \
   --skip-jbuilder \
   --skip-kamal \
   --skip-solid \
