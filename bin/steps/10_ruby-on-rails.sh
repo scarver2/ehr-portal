@@ -48,10 +48,12 @@ default: &default
 
 development:
   <<: *default
+  host: localhost
   database: ehr_api_development
 
 test:
   <<: *default
+  host: localhost
   database: ehr_api_test
 
 production:
