@@ -11,10 +11,15 @@ puts "Seeding providers..."
 # Ensure consistent randomization when recreating the database
 Faker::Config.random = Random.new(42)
 
+def generate_fake_npi
+  rand(1_000_000_000..9_999_999_999)
+end
+
 25.times do
   Provider.create!(
     first_name: Faker::Name.first_name,
-    last_name: Faker::Name.last_name
+    last_name: Faker::Name.last_name,
+    npi: generate_fake_npi
   )
 end
 
