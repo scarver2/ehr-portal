@@ -15,7 +15,9 @@ info "Creating seed loader..."
 cat << 'EOF' > db/seeds.rb
 # apps/ehr-api/db/seeds.rb
 # frozen_string_literal: true
+
 Dir[Rails.root.join("db/seeds/*.rb")].each { |f| load f }
+
 EOF
 
 # Example seeding mechanics:
