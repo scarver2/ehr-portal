@@ -2,9 +2,34 @@
 # for local development only.
 
 services:
-  postgres:
-    image: postgres:18.3
+
+  api:
+    image: ruby:3.4.2
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      RAILS_ENV: development
     ports:
-      - "5432:5432"
+      - "3000:3000"
+    volumes:
+      - ./apps/ehr-api:/app
+
+  portal:
+    image: node:22.19.4
+    environment:
+      NODE_ENV: development
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./apps/ehr-portal:/app
+  # postgres:
+  #   image: postgres:18.3
+  #   environment:
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #   ports:
+  #     - "5432:5432"
+  # pgadmin4:
+  #   image: dpage/pgadmin4
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: [ EMAIL_ADDRESS ]
+  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+  #   ports:
+  #     - "5050:80"
