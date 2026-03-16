@@ -66,5 +66,22 @@ esac
 
 CONFIG="$([[ "$TARGET" == "api" ]] && echo "$API_CONFIG" || echo "$PORTAL_CONFIG")"
 
-info "Running: kamal $* -c $(basename "$CONFIG")"
-kamal "$@" -c "$CONFIG"
+# Inject -c CONFIG before the -- separator (or at end if no -- present)
+pre_sep=()
+post_sep=()
+found_sep=false
+for arg in "$@"; do
+  if [[ "$arg" == "--" && "$found_sep" == "false" ]]; then
+    found_sep=true
+    pre_sep+=("-c" "$CONFIG")
+    post_sep+=("$arg")
+  elif [[ "$found_sep" == "true" ]]; then
+    post_sep+=("$arg")
+  else
+    pre_sep+=("$arg")
+  fi
+done
+[[ "$found_sep" == "false" ]] && pre_sep+=("-c" "$CONFIG")
+
+info "Running: kamal ${pre_sep[*]} ${post_sep[*]}"
+kamal "${pre_sep[@]}" "${post_sep[@]}"
