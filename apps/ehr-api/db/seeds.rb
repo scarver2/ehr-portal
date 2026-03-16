@@ -1,3 +1,4 @@
 # apps/ehr-api/db/seeds.rb
+# frozen_string_literal: true
 
-AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password') if Rails.env.development?
+Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| load f }

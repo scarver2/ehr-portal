@@ -12,12 +12,12 @@ bundle add faker
 
 # Default Rails has seeds in a single file. I'm loading seeds from multiple files for better organization
 info "Creating seed loader..."
+mkdir -p db/seeds
 cat << 'EOF' > db/seeds.rb
 # apps/ehr-api/db/seeds.rb
 # frozen_string_literal: true
 
-Dir[Rails.root.join("db/seeds/*.rb")].each { |f| load f }
-
+Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| load f }
 EOF
 
 # Example seeding mechanics:
