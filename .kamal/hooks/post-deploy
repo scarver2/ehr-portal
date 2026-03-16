@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# .kamal/hooks/post-deploy
+# Runs on the server after each successful deployment.
+
+set -euo pipefail
+
+# Derive config file from service name (provided by Kamal as KAMAL_SERVICE_VERSION=service@sha)
+SERVICE="${KAMAL_SERVICE_VERSION%%@*}"
+case "$SERVICE" in
+  ehr-api)    CONFIG="config/deploy.api.yml" ;;
+  ehr-portal) CONFIG="config/deploy.portal.yml" ;;
+  *)          echo "Unknown service: $SERVICE" >&2; exit 1 ;;
+esac
+
+# TODO: switch db:reset to db:migrate when schema is stablized
+kamal app exec --reuse -c "$CONFIG" -- env DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bin/rails db:reset
+kamal app exec --reuse -c "$CONFIG" -- bin/rails db:seed
