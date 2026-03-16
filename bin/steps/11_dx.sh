@@ -29,6 +29,8 @@ EOF
 
 info "Adding RSpec..."
 bundle add rspec-rails --group "development, test"
+bundle add rspec-its --group "development, test"
+
 bin/rails generate rspec:install
 cat << 'EOF' > .rspec
 # .rspec
