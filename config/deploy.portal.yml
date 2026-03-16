@@ -11,6 +11,10 @@ builder:
   context: apps/ehr-portal
   dockerfile: apps/ehr-portal/Dockerfile
 
+env:
+  clear:
+    NEXT_PUBLIC_API_URL: https://api.ehr.stancarver.com
+
 proxy:
   ssl: true
   host: ehr.stancarver.com

@@ -22,10 +22,24 @@ module Types
     # They will be entry points for queries on your schema.
 
     # TODO: remove me
-    field :test_field, String, null: false,
-      description: "An example field added by the generator"
-    def test_field
-      "Hello World!"
+    # field :test_field, String, null: false,
+    #   description: "An example field added by the generator"
+    # def test_field
+    #   "Hello World!"
+    # end
+
+    field :providers, [Types::ProviderType], null: false
+
+    def providers
+      Provider.order(:last_name)
+    end
+
+    field :provider, Types::ProviderType, null: true do
+      argument :id, ID, required: true
+    end
+
+    def provider(id:)
+      Provider.find(id)
     end
   end
 end

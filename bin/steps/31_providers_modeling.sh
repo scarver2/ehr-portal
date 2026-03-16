@@ -19,10 +19,12 @@ source "$(dirname "$0")/../_lib.sh"
 
 cd apps/ehr-api
 
+info "Generating Provider model..."
 bin/rails generate model Provider first_name:string last_name:string npi:string
 
-# Add Provider to ActiveAdmin
-bin/rails generate active_admin:resource Provider
+info "Generating Provider resource in ActiveAdmin..."
+# bin/rails generate active_admin:resource Provider
+# To avoid a premature database migration, we'll create the resource manually
 
 cat << 'EOF' > apps/ehr-api/app/admin/providers.rb
 # apps/ehr-api/app/admin/providers.rb
@@ -33,5 +35,5 @@ end
 
 EOF
 
-# Add Provider to GraphQL
+info "Generating Provider type in GraphQL..."
 bin/rails generate graphql:object Provider
