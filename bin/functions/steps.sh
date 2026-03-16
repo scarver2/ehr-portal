@@ -40,7 +40,6 @@ run_steps() {
   done
 
   clear_state
-  success "All steps completed"
 }
 
 list_steps() {
