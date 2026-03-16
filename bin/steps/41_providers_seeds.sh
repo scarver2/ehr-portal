@@ -1,6 +1,8 @@
-# bin/steps/40_providers_seeds.sh
+# bin/steps/41_providers_seeds.sh
 
 source "$(dirname "$0")/../_lib.sh"
+
+info "Creating providers seed..."
 
 mkdir -p apps/ehr-api/db/seeds
 

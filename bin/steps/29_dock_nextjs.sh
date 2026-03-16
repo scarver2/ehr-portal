@@ -1,5 +1,7 @@
 # bin/steps/29_dock_nextjs.sh
 
+source "$(dirname "$0")/../_lib.sh"
+
 cat << 'EOF' > apps/ehr-portal/Dockerfile
 # apps/ehr-portal/Dockerfile
 FROM oven/bun:1
