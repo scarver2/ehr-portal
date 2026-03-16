@@ -107,8 +107,6 @@ yarn-error.log
 **/_site/
 **/build/
 **/dist/
-**/lib/
-**/libs/
 **/out/
 **/public/static/chunks/
 **/public/static/css/
