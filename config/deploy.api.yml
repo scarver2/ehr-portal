@@ -11,6 +11,9 @@ builder:
   context: apps/ehr-api
   dockerfile: apps/ehr-api/Dockerfile
 
+deploy:
+  command: bin/rails db:migrate
+
 env:
   secret:
     - SECRET_KEY_BASE
