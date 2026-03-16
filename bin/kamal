@@ -46,10 +46,10 @@ case "$TARGET" in
     echo "  portal   EHR Portal"
     echo ""
     echo "Examples:"
-    echo "  bin/kamal api console"
-    echo "  bin/kamal api logs -f"
-    echo "  bin/kamal api app exec -- bash"
-    echo "  bin/kamal api accessory exec postgres -- psql -U \$DB_USER -d ehr_api_production"
+    echo "  bin/kamal api app exec -i --reuse -- bin/rails console"
+    # FIXME: echo "  bin/kamal api logs -f"
+    # FIXME: echo "  bin/kamal api app exec -- bash"
+    # FIXME: echo "  bin/kamal api accessory exec postgres -- psql -U \$DB_USER -d ehr_api_production"
     echo ""
     exit 0
     ;;
