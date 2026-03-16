@@ -1,3 +1,6 @@
+# apps/ehr-api/config/environments/development.rb
+# frozen_string_literal: true
+
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do

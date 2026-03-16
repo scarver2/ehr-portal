@@ -2,6 +2,6 @@
 
 class Provider < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
-    ["created_at", "first_name", "id", "id_value", "last_name", "updated_at"]
+    ["clinic_name", "created_at", "first_name", "id", "last_name", "npi", "specialty", "updated_at"]
   end
 end

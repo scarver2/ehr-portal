@@ -1,3 +1,4 @@
+# apps/ehr-api/app/graphql/types/query_type.rb
 # frozen_string_literal: true
 
 module Types

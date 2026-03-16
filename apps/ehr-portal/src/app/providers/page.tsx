@@ -1,4 +1,5 @@
 // apps/ehr-portal/src/app/providers/page.tsx
+
 export const dynamic = 'force-dynamic'
 
 import { graphql } from "@/lib/graphql"

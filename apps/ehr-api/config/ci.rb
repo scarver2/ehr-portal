@@ -1,3 +1,6 @@
+# apps/ehr-api/config/ci.rb
+# frozen_string_literal: true
+
 # Run using bin/ci
 
 CI.run do

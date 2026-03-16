@@ -1,4 +1,5 @@
 // apps/ehr-portal/src/app/providers/[id]/page.tsx
+
 export const dynamic = 'force-dynamic'
 
 import { graphql } from "@/lib/graphql"
@@ -9,8 +10,9 @@ const query = gql`
     provider(id: $id) {
       id
       fullName
+      npi
       specialty
-      clinic
+      clinicName
     }
   }
 `
@@ -24,9 +26,9 @@ export default async function ProviderPage({ params }: any) {
   return (
     <div>
       <h1>{provider.fullName}</h1>
-
+      <p>NPI: {provider.npi}</p>
       <p>Specialty: {provider.specialty}</p>
-      <p>Clinic: {provider.clinic}</p>
+      <p>Clinic: {provider.clinicName}</p>
     </div>
   )
 }
