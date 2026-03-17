@@ -5,6 +5,12 @@ import { setupHoneybadger } from "@honeybadger-io/nextjs"
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Turbopack is the default dev server in Next.js 16. The empty config tells
+  // Next.js we're aware of it, which silences the hard error produced when a
+  // custom webpack config exists (added by setupHoneybadger below) but no
+  // turbopack config is present. Source-map upload is disabled outside of
+  // production so the webpack plugin is a no-op during dev/test either way.
+  turbopack: {},
 }
 
 // Wraps the Next.js webpack config to upload source maps to Honeybadger at
