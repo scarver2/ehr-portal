@@ -10,7 +10,7 @@ require 'rails_helper'
 # railtie and its Devise integration also call .context internally (with
 # `controller:` and `user_scope:` keys). Stubbing first and then using
 # `have_received` lets us make precise assertions only on our own call site.
-RSpec.describe ApplicationController, type: :request do
+RSpec.describe ApplicationController do
   let(:headers) { { 'Content-Type' => 'application/json' } }
   let(:payload) { { query: '{ __typename }' }.to_json }
 
@@ -32,7 +32,7 @@ RSpec.describe ApplicationController, type: :request do
       it 'sets Honeybadger context with the user id and email' do
         post '/graphql', params: payload, headers: headers
         expect(Honeybadger).to have_received(:context).with(
-          user_id:    user.id,
+          user_id: user.id,
           user_email: user.email
         )
       end
