@@ -1,0 +1,43 @@
+# spec/graphql/types/provider_type_spec.rb
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe Types::ProviderType do
+  subject(:fields) { described_class.fields }
+
+  it { is_expected.to include('id', 'firstName', 'lastName', 'fullName', 'npi', 'specialty', 'clinicName', 'createdAt', 'updatedAt') }
+
+  describe 'field nullability' do
+    it 'marks id as non-null' do
+      expect(fields['id'].type.to_type_signature).to include('!')
+    end
+
+    it 'marks createdAt as non-null' do
+      expect(fields['createdAt'].type.to_type_signature).to include('!')
+    end
+
+    it 'marks updatedAt as non-null' do
+      expect(fields['updatedAt'].type.to_type_signature).to include('!')
+    end
+  end
+
+  describe '#full_name resolver' do
+    let(:provider) { create(:provider, first_name: 'Jane', last_name: 'Doe') }
+
+    subject(:result) do
+      EhrApiSchema.execute(
+        "{ provider(id: \"#{provider.id}\") { fullName } }",
+        context: {}
+      )
+    end
+
+    it 'returns no errors' do
+      expect(result['errors']).to be_nil
+    end
+
+    it 'concatenates first and last name' do
+      expect(result.dig('data', 'provider', 'fullName')).to eq('Jane Doe')
+    end
+  end
+end

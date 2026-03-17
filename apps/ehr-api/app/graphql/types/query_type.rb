@@ -1,3 +1,4 @@
+# apps/ehr-api/app/graphql/types/query_type.rb
 # frozen_string_literal: true
 
 module Types
@@ -18,14 +19,18 @@ module Types
       ids.map { |id| context.schema.object_from_id(id, context) }
     end
 
-    # Add root-level fields here.
-    # They will be entry points for queries on your schema.
+    field :providers, [Types::ProviderType], null: false
 
-    # TODO: remove me
-    field :test_field, String, null: false,
-      description: "An example field added by the generator"
-    def test_field
-      "Hello World!"
+    def providers
+      Provider.order(:last_name)
+    end
+
+    field :provider, Types::ProviderType, null: true do
+      argument :id, ID, required: true
+    end
+
+    def provider(id:)
+      Provider.find_by(id: id)
     end
   end
 end

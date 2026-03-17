@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# apps/ehr-portal/bin/test
+# Run the test suite. Defaults to Vitest (unit tests). Pass --e2e to run
+# Playwright integration tests instead.
+#
+# Examples:
+#   bin/test                                        # run all unit tests
+#   bin/test --watch                                # interactive watch mode
+#   bin/test --e2e                                  # run Playwright E2E tests
+#   bin/test --e2e --ui                             # Playwright UI mode
+
+set -euo pipefail
+
+if [[ "${1:-}" == "--e2e" ]]; then
+  shift
+  exec bunx playwright test "$@"
+else
+  exec bunx vitest run "$@"
+fi

@@ -34,3 +34,5 @@ bundle add devise
 bin/rails g devise:install
 bin/rails g devise User
 # bin/rails db:migrate
+
+# TODO: add Devise specs

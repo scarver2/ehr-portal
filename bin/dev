@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# bin/dev
+# Starts the full development environment:
+#   - Containerized Postgres on port 5433  (via Docker Compose)
+#   - pgAdmin 4 on port 5050               (via Docker Compose)
+#   - Rails API on port 3000               (hot-reloading)
+#   - Dart Sass watcher
+#   - Next.js portal on port 3001          (hot-reloading)
+
+source "$(dirname "$0")/_lib.sh"
+
+banner
+
+# Start Docker services. --wait blocks until Postgres healthcheck passes;
+# pgadmin4 has no healthcheck so it starts in parallel without delaying boot.
+echo "==> Starting Docker services (Postgres + pgAdmin4)..."
+docker compose up -d --wait
+
+echo "==> Starting dev processes..."
+exec overmind start -f "$ROOT_DIR/Procfile.dev"

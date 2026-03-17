@@ -30,3 +30,6 @@ export async function GET() {
   return new Response("ok", { status: 200 });
 }
 EOF
+
+# TODO: add Next.js unit and integration tests
+

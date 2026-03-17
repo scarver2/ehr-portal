@@ -1,3 +1,4 @@
+# apps/ehr-api/config/initializers/devise.rb
 # frozen_string_literal: true
 
 # Assuming you have not yet modified this file, each configuration option below

@@ -11,12 +11,13 @@ gem "puma", ">= 5.0"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
-# gem "rack-cors"
+gem "rack-cors"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem "rspec-rails", "~> 8.0"
+  gem "rspec-its", "~> 2.0"
 
   gem "factory_bot_rails", "~> 6.5"
 
@@ -31,7 +32,9 @@ group :development, :test do
   gem "rubocop-performance", "~> 1.26"
 
   gem "rubocop-rspec", "~> 3.9"
+end
 
+group :test do
   gem "simplecov", "~> 0.22.0"
 end
 

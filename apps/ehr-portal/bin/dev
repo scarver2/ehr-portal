@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# apps/ehr-portal/bin/dev
+
+NEXT_PUBLIC_API_URL="http://localhost:3000/" PORT=3001 bun dev

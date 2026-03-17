@@ -1,3 +1,6 @@
+# apps/ehr-api/config/application.rb
+# frozen_string_literal: true
+
 require_relative "boot"
 
 require "rails"

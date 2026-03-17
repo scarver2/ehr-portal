@@ -15,8 +15,6 @@ info "Configuring Rails to serve ActiveAdmin..."
 # replace class ApplicationController < ActionController::API
 # with class ApplicationController < ActionController::Base
 
-
-
 info "Adding asset pipeline..."
 bundle add propshaft
 bundle add dartsass-rails
@@ -107,18 +105,4 @@ EOF
 # <%= stylesheet_link_tag "active_admin", "data-turbo-track": "reload" %>
 # <%= javascript_include_tag "active_admin", "data-turbo-track": "reload" %>
 
-info "Adding Administrator user..."
-# bin/rails generate devise:install
-# bin/rails generate devise AdminUser
-
-# In app/models/admin_user.rb
-# insert after class AdminUser < ApplicationRecord
-#   def self.ransackable_attributes(auth_object = nil)
-#     ["created_at", "email", "encrypted_password", "id", "id_value", "remember_created_at", "reset_password_sent_at", "reset_password_token", "updated_at"]
-#   end
-
-
-# info "Migrating database..."
-# bin/rails db:migrate
-
-# TODO config ActiveAdmin to use Devise for authentication
+# TODO: add ActiveAdmin dashboard request specs

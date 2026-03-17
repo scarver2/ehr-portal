@@ -1,17 +1,6 @@
 #!/usr/bin/env bash
 # bin/kamal
 
-# Usage:
-# bin/kamal <target> [kamal args]
-# bin/kamal api console                                        # Rails console
-# bin/kamal api logs -f                                        # Tail logs
-# bin/kamal api app exec -- bash                               # Shell into container
-# bin/kamal api accessory exec postgres -- psql -U $DB_USER \
-#   -d ehr_api_production                                      # Postgres SQL prompt
-# bin/kamal api app exec -- bin/rails runner "puts User.count" # One-off Ruby
-# bin/kamal                                                    # Interactive target menu
-
-
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -20,12 +9,36 @@ source "$SCRIPT_DIR/_lib.sh"
 API_CONFIG="$ROOT_DIR/config/deploy.api.yml"
 PORTAL_CONFIG="$ROOT_DIR/config/deploy.portal.yml"
 
-banner
-require_command kamal
+########################################
+# Usage
+########################################
+
+usage() {
+  echo ""
+  echo "Usage:"
+  echo ""
+  echo "  bin/kamal <target> [kamal args]"
+  echo ""
+  echo "Targets:"
+  echo "  api      EHR API"
+  echo "  portal   EHR Portal"
+  echo ""
+  echo "Examples:"
+  echo "  bin/kamal"
+  echo "  bin/kamal api accessory exec postgres -i -- psql -U \$DB_USER -d ehr_api_production"
+  echo "  bin/kamal api app exec --reuse -- bin/rails runner \"puts User.count\""
+  echo "  bin/kamal api app exec -i --reuse -- bash"
+  echo "  bin/kamal api app exec -i --reuse -- bin/rails console"
+  echo "  bin/kamal api app logs -f"
+  echo ""
+}
 
 ########################################
 # CLI
 ########################################
+
+banner
+require_command kamal
 
 TARGET="${1:-}"
 
@@ -36,21 +49,7 @@ case "$TARGET" in
     ;;
 
   help|-h|--help)
-    echo ""
-    echo "Usage:"
-    echo ""
-    echo "  bin/kamal <target> [kamal args]"
-    echo ""
-    echo "Targets:"
-    echo "  api      EHR API"
-    echo "  portal   EHR Portal"
-    echo ""
-    echo "Examples:"
-    echo "  bin/kamal api console"
-    echo "  bin/kamal api logs -f"
-    echo "  bin/kamal api app exec -- bash"
-    echo "  bin/kamal api accessory exec postgres -- psql -U \$DB_USER -d ehr_api_production"
-    echo ""
+    usage
     exit 0
     ;;
 
@@ -66,5 +65,22 @@ esac
 
 CONFIG="$([[ "$TARGET" == "api" ]] && echo "$API_CONFIG" || echo "$PORTAL_CONFIG")"
 
-info "Running: kamal $* -c $(basename "$CONFIG")"
-kamal "$@" -c "$CONFIG"
+# Inject -c CONFIG before the -- separator (or at end if no -- present)
+pre_sep=()
+post_sep=()
+found_sep=false
+for arg in "$@"; do
+  if [[ "$arg" == "--" && "$found_sep" == "false" ]]; then
+    found_sep=true
+    pre_sep+=("-c" "$CONFIG")
+    post_sep+=("$arg")
+  elif [[ "$found_sep" == "true" ]]; then
+    post_sep+=("$arg")
+  else
+    pre_sep+=("$arg")
+  fi
+done
+[[ "$found_sep" == "false" ]] && pre_sep+=("-c" "$CONFIG")
+
+info "Running: kamal ${pre_sep[*]} ${post_sep[*]}"
+kamal "${pre_sep[@]}" "${post_sep[@]}"
