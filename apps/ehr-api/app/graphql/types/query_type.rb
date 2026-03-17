@@ -30,7 +30,7 @@ module Types
     end
 
     def provider(id:)
-      Provider.find(id)
+      Provider.find_by(id: id)
     end
   end
 end

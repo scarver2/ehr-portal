@@ -3,6 +3,8 @@
 
 module Types
   class ProviderType < Types::BaseObject
+    implements Types::NodeType
+
     field :id, ID, null: false
     field :first_name, String
     field :last_name, String
