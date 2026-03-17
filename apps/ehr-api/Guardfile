@@ -3,6 +3,13 @@
 
 clearing :on
 
+# ── Bundler ────────────────────────────────────────────────────────────────
+# Runs `bundle install` automatically when Gemfile or Gemfile.lock changes.
+guard :bundler do
+  watch("Gemfile")
+  watch("Gemfile.lock")
+end
+
 # ── RuboCop ────────────────────────────────────────────────────────────────
 guard :rubocop, all_on_start: false, cli: %w[--format fuubar --display-cop-names] do
   watch(/.+\.rb$/)
