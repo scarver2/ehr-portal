@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
     return unless current_user
 
     Honeybadger.context(
-      user_id:    current_user.id,
+      user_id: current_user.id,
       user_email: current_user.email
     )
   end

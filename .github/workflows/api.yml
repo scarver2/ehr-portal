@@ -38,6 +38,7 @@ jobs:
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: postgres
+      HONEYBADGER_API_KEY: ${{ secrets.HONEYBADGER_API_KEY }}
 
     defaults:
       run:
