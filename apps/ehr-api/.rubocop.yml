@@ -6,13 +6,15 @@ inherit_from:
 plugins:
   - rubocop-capybara
   - rubocop-factory_bot
+  - rubocop-graphql
   - rubocop-performance
   - rubocop-rails
   - rubocop-rspec
+  - rubocop-rspec_rails
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 4.0
+  TargetRubyVersion: 3.4.8
   Exclude:
     - '.bundle/**/*'
     - 'coverage/**/*'
