@@ -3,7 +3,7 @@
 ############################
 # Base image
 ############################
-FROM ruby:3.4.8-slim AS base
+FROM ruby:4.0.2-slim AS base
 
 WORKDIR /app
 
@@ -55,7 +55,7 @@ RUN SECRET_KEY_BASE=placeholder \
 ############################
 # Runtime image
 ############################
-FROM ruby:3.4.8-slim AS runtime
+FROM ruby:4.0.2-slim AS runtime
 
 WORKDIR /app
 

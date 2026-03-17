@@ -10,7 +10,7 @@ info "Creating Dockerfile for Rails API..."
 
 cat << 'EOF' > Dockerfile
 # apps/ehr-api/Dockerfile
-FROM ruby:3.4.8
+FROM ruby:4.0.2
 
 WORKDIR /app
 

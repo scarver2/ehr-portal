@@ -15,7 +15,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN bun run build
+RUN --mount=type=secret,id=NEXT_PUBLIC_HONEYBADGER_API_KEY \
+    NEXT_PUBLIC_HONEYBADGER_API_KEY=$(cat /run/secrets/NEXT_PUBLIC_HONEYBADGER_API_KEY 2>/dev/null || echo "") \
+    bun run build
 
 # ---------- Runtime ----------
 FROM oven/bun:1-slim AS runner
