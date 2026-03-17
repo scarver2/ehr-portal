@@ -43,7 +43,7 @@
 - [x] Rails test job
 - [x] Next.js build job
 - [x] Linting checks
-- [ ] CI status badges
+- [x] CI status badges
 
 ## Phase 6 — Observability
 
@@ -51,6 +51,7 @@
 - [ ] Rails request instrumentation
 - [ ] GraphQL query tracing
 - [ ] Structured logging
+- [x] Honeybadger APM error logging
 
 ## Phase 7 — Deployment Infrastructure
 

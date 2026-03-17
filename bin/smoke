@@ -1,0 +1,167 @@
+#!/usr/bin/env bash
+# bin/smoke
+# Post-deploy smoke tests — verifies that the EHR Portal stack is reachable
+# and responding correctly after a Kamal deployment.
+#
+# Usage:
+#   bin/smoke              # interactive environment selection
+#   bin/smoke local        # test localhost (API :3000, Portal :3001)
+#   bin/smoke production   # test production
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/_lib.sh"
+
+require_command curl
+
+########################################
+# Environment URLs
+########################################
+
+LOCAL_API_URL="http://localhost:3000"
+LOCAL_PORTAL_URL="http://localhost:3001"
+PROD_API_URL="https://api.ehr.stancarver.com"
+PROD_PORTAL_URL="https://ehr.stancarver.com"
+
+########################################
+# Counters
+########################################
+
+PASS=0
+FAIL=0
+
+########################################
+# Core check function
+########################################
+
+# smoke_check LABEL URL EXPECTED_STATUS [METHOD] [POST_BODY]
+smoke_check() {
+  local label="$1"
+  local url="$2"
+  local expected="$3"
+  local method="${4:-GET}"
+  local data="${5:-}"
+
+  local args=(
+    --silent
+    --output /dev/null
+    --write-out "%{http_code}"
+    --max-time 10
+    --connect-timeout 5
+  )
+
+  if [[ "$method" == "POST" ]]; then
+    args+=(
+      --request POST
+      --header "Content-Type: application/json"
+      --data "$data"
+    )
+  fi
+
+  local actual
+  actual=$(curl "${args[@]}" "$url" 2>/dev/null || echo "000")
+
+  local padded
+  padded=$(printf "%-50s" "$label")
+
+  if [[ "$actual" == "$expected" ]]; then
+    echo "  ✔ ${padded} HTTP ${actual}"
+    PASS=$((PASS + 1))
+  else
+    echo "  ✖ ${padded} expected HTTP ${expected}, got HTTP ${actual}"
+    FAIL=$((FAIL + 1))
+  fi
+}
+
+########################################
+# Test suites
+########################################
+
+smoke_api() {
+  local base="$1"
+
+  echo ""
+  info "API  →  $base"
+  echo "  ──────────────────────────────────────────────────────────────"
+
+  smoke_check "GET  /api/up   (health)"      "$base/api/up"  "200"
+  smoke_check "POST /graphql  (introspect)"  "$base/graphql" "200" "POST" '{"query":"{__typename}"}'
+  smoke_check "GET  /admin    (redirect)"    "$base/admin"   "302"
+}
+
+smoke_portal() {
+  local base="$1"
+
+  echo ""
+  info "Portal  →  $base"
+  echo "  ──────────────────────────────────────────────────────────────"
+
+  smoke_check "GET  /api/up   (health)"    "$base/api/up"    "200"
+  smoke_check "GET  /         (homepage)"  "$base/"          "200"
+  smoke_check "GET  /providers (list)"     "$base/providers" "200"
+}
+
+########################################
+# Summary
+########################################
+
+print_summary() {
+  echo ""
+  echo "  ══════════════════════════════════════════════════════════════"
+  printf "  Smoke Tests: %d passed  /  %d failed\n" "$PASS" "$FAIL"
+  echo "  ══════════════════════════════════════════════════════════════"
+  echo ""
+
+  if [[ "$FAIL" -gt 0 ]]; then
+    fail "Stack is NOT healthy — ${FAIL} check(s) failed"
+  else
+    success "Stack is healthy — all ${PASS} checks passed"
+  fi
+}
+
+########################################
+# CLI
+########################################
+
+banner
+
+ENV="${1:-}"
+
+run_env() {
+  case "$1" in
+    local)
+      smoke_api    "$LOCAL_API_URL"
+      smoke_portal "$LOCAL_PORTAL_URL"
+      ;;
+    production|prod)
+      smoke_api    "$PROD_API_URL"
+      smoke_portal "$PROD_PORTAL_URL"
+      ;;
+    *)
+      fail "Unknown environment: $1. Use 'local' or 'production'."
+      ;;
+  esac
+}
+
+case "$ENV" in
+  help|-h|--help)
+    echo ""
+    echo "Usage:"
+    echo ""
+    echo "  bin/smoke              Interactive environment selection"
+    echo "  bin/smoke local        Test localhost (API :3000, Portal :3001)"
+    echo "  bin/smoke production   Test production"
+    echo ""
+    exit 0
+    ;;
+  "")
+    ENV=$(select_menu "Smoke Test Environment" "local" "production")
+    run_env "$ENV"
+    ;;
+  *)
+    run_env "$ENV"
+    ;;
+esac
+
+print_summary
