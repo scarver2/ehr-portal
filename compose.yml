@@ -3,33 +3,20 @@
 
 services:
 
-  api:
-    image: ruby:3.4.2
+  postgres:
+    image: postgres:17
     environment:
-      RAILS_ENV: development
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - "3000:3000"
+      - "5433:5432"
     volumes:
-      - ./apps/ehr-api:/app
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  portal:
-    image: node:22.19.4
-    environment:
-      NODE_ENV: development
-    ports:
-      - "3001:3000"
-    volumes:
-      - ./apps/ehr-portal:/app
-  # postgres:
-  #   image: postgres:18.3
-  #   environment:
-  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-  #   ports:
-  #     - "5432:5432"
-  # pgadmin4:
-  #   image: dpage/pgadmin4
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: [ EMAIL_ADDRESS ]
-  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
-  #   ports:
-  #     - "5050:80"
+volumes:
+  postgres_data:

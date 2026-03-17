@@ -1,0 +1,6 @@
+# Procfile.dev — root process file for overmind
+# Launch with: overmind start -f Procfile.dev
+
+api:    cd apps/ehr-api    && DB_HOST=localhost DB_PORT=5433 DB_USER=postgres DB_PASSWORD=postgres bin/rails server -p 3000
+css:    cd apps/ehr-api    && DB_HOST=localhost DB_PORT=5433 DB_USER=postgres DB_PASSWORD=postgres bin/rails dartsass:watch
+portal: cd apps/ehr-portal && PORT=3001 bun dev
