@@ -77,6 +77,17 @@ AllCops:
     - 'vendor/**/*'
 EOF
 
+cat << 'EOF' > .rubocop_todo.yml
+# apps/ehr-api/.rubocop_todo.yml
+EOF
+
+cat << 'EOF' > bin/lint
+#!/usr/bin/env bash
+set -euo pipefail
+exec bundle exec rubocop "$@"
+EOF
+chmod +x bin/lint
+
 info "Adding SimpleCov..."
 bundle add simplecov --group "development, test"
 cat << 'EOF' > .simplecov
@@ -90,11 +101,6 @@ SimpleCov.start do
 end
 EOF
 # TODO: add SimpleCov to spec_helper.rb
-
-
-# TODO: Insert health check endpoint after 2nd line of routes.rb
-# get "/up", to: proc { [200, {}, ["ok"]] }
-
 
 info "Adding Procfile.dev..."
 cat << 'EOF' > Procfile.dev
@@ -115,6 +121,17 @@ fi
 exec foreman start -f Procfile.dev "$@"
 EOF
 
-# fail 'intentionally halted for verification'
+info "Adding Brakeman..."
+bundle add brakeman --group development
+cat << 'EOF' > bin/security
+#!/usr/bin/env bash
+set -euo pipefail
+exec bundle exec brakeman "$@"
+EOF
+chmod +x bin/security
 
-# TODO: add health check request spec
+# TODO: add health check request specs
+# TODO: Insert health check endpoint after 2nd line of routes.rb
+# get "/up", to: proc { [200, {}, ["ok"]] }
+
+# TODO: add base application specs

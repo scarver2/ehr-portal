@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# apps/ehr-api/bin/lint
+
+# Usage:
+#   bin/lint                        # default report (no corrections)
+#   bin/lint --autocorrect          # apply corrections
+
+set -euo pipefail
+exec bundle exec rubocop "$@"
