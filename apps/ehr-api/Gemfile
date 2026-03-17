@@ -23,7 +23,7 @@ group :development do
   gem "binding_of_caller", "~> 2.0"
 
   # https://brakemanscanner.org
-  gem "brakeman",          "~> 7.0",  require: false
+  gem "brakeman",          "~> 8.0",  require: false
 
   # https://github.com/guard/guard
   gem "guard",             "~> 2.18", require: false
