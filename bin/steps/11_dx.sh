@@ -77,6 +77,17 @@ AllCops:
     - 'vendor/**/*'
 EOF
 
+cat << 'EOF' > .rubocop_todo.yml
+# apps/ehr-api/.rubocop_todo.yml
+EOF
+
+cat << 'EOF' > bin/lint
+#!/usr/bin/env bash
+set -euo pipefail
+exec bundle exec rubocop "$@"
+EOF
+chmod +x bin/lint
+
 info "Adding SimpleCov..."
 bundle add simplecov --group "development, test"
 cat << 'EOF' > .simplecov
@@ -90,11 +101,6 @@ SimpleCov.start do
 end
 EOF
 # TODO: add SimpleCov to spec_helper.rb
-
-
-# TODO: Insert health check endpoint after 2nd line of routes.rb
-# get "/up", to: proc { [200, {}, ["ok"]] }
-
 
 info "Adding Procfile.dev..."
 cat << 'EOF' > Procfile.dev
@@ -115,6 +121,78 @@ fi
 exec foreman start -f Procfile.dev "$@"
 EOF
 
-# fail 'intentionally halted for verification'
+info "Adding Brakeman..."
+bundle add brakeman --group development
+cat << 'EOF' > bin/security
+#!/usr/bin/env bash
+set -euo pipefail
+exec bundle exec brakeman "$@"
+EOF
+chmod +x bin/security
 
-# TODO: add health check request spec
+info "Adding Guard..."
+bundle add guard --group "development, test"
+
+cat << 'EOF' > Guardfile
+# Guardfile
+# Run with: bin/guard
+
+clearing :on
+
+# ── RuboCop ────────────────────────────────────────────────────────────────
+guard :rubocop, all_on_start: false, cli: %w[--format fuubar --display-cop-names] do
+  watch(/.+\.rb$/)
+  watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
+end
+
+# ── RSpec ──────────────────────────────────────────────────────────────────
+guard :rspec, cmd: "bundle exec rspec --format documentation", all_on_start: false do
+  require "guard/rspec/dsl"
+  dsl = Guard::RSpec::Dsl.new(self)
+
+  rspec = dsl.rspec
+
+  # Re-run all specs when helpers change
+  watch(rspec.spec_helper)  { rspec.spec_dir }
+  watch(rspec.spec_support) { rspec.spec_dir }
+  watch("spec/rails_helper.rb") { rspec.spec_dir }
+
+  # Spec files run themselves
+  watch(rspec.spec_files)
+
+  # Models → spec/models/
+  watch(%r{^app/models/(.+)\.rb$}) { |m| "spec/models/#{m[1]}_spec.rb" }
+
+  # GraphQL types/mutations/resolvers → spec/graphql/**/*_spec.rb
+  watch(%r{^app/graphql/(.+)\.rb$}) { |m| "spec/graphql/#{m[1]}_spec.rb" }
+
+  # ActiveAdmin resources → spec/requests/admin/*_spec.rb
+  watch(%r{^app/admin/(.+)\.rb$}) { |m| "spec/requests/admin/#{m[1]}_spec.rb" }
+
+  # GraphQL controller → spec/requests/graphql_spec.rb
+  watch("app/controllers/graphql_controller.rb") { "spec/requests/graphql_spec.rb" }
+
+  # Factories → run the corresponding model spec
+  watch(%r{^spec/factories/(.+)\.rb$}) { |m| "spec/models/#{m[1].singularize}_spec.rb" }
+end
+EOF
+
+cat << 'EOF' > bin/guard
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Point at the containerized Postgres used in development
+export DB_HOST=localhost
+export DB_PORT=5433
+export DB_USER=postgres
+export DB_PASSWORD=postgres
+
+exec bundle exec guard "$@"
+EOF
+chmod +x bin/guard
+
+# TODO: add health check request specs
+# TODO: Insert health check endpoint after 2nd line of routes.rb
+# get "/up", to: proc { [200, {}, ["ok"]] }
+
+# TODO: add base application specs

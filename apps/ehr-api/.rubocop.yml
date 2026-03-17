@@ -6,15 +6,23 @@ inherit_from:
 plugins:
   - rubocop-capybara
   - rubocop-factory_bot
+  - rubocop-graphql
   - rubocop-performance
   - rubocop-rails
   - rubocop-rspec
+  - rubocop-rspec_rails
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 4.0
+  TargetRubyVersion: 3.4.8
   Exclude:
     - '.bundle/**/*'
     - 'coverage/**/*'
     - 'tmp/**/*'
     - 'vendor/**/*'
+
+# Base classes are internal plumbing, not consumer-facing API types.
+GraphQL/ObjectDescription:
+  Exclude:
+    - 'app/graphql/ehr_api_schema.rb'
+    - 'app/graphql/**/base_*.rb'

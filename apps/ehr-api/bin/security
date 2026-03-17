@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# apps/ehr-api/bin/security
+
+# Usage:
+#   bin/security                        # default text report
+#   bin/security -f json                # JSON output
+#   bin/security -f html -o report.html # HTML report to file
+#   bin/security --quiet                # warnings only, no progress
+
+set -euo pipefail
+exec bundle exec brakeman "$@"

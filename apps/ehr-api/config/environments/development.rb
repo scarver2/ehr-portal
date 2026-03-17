@@ -52,4 +52,9 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
+
+  # Inject LiveReload script into HTML responses (ActiveAdmin pages) so the browser
+  # refreshes automatically when guard-livereload detects file changes.
+  require "rack-livereload"
+  config.middleware.use Rack::LiveReload
 end

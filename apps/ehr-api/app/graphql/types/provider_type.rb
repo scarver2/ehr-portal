@@ -3,6 +3,7 @@
 
 module Types
   class ProviderType < Types::BaseObject
+    description 'A healthcare provider.'
     implements Types::NodeType
 
     field :id, ID, null: false

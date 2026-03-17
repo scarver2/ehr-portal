@@ -1,0 +1,24 @@
+# codecov.yml
+# https://docs.codecov.com/docs/codecov-yaml
+
+coverage:
+  status:
+    project:
+      default:
+        target: auto      # pass if coverage doesn't drop vs base commit
+        threshold: 2%     # allow up to 2% drop before failing
+    patch:
+      default:
+        target: auto      # new code in the PR should match existing coverage
+        threshold: 2%
+
+comment:
+  layout: "reach,diff,flags,files"
+  behavior: default
+  require_changes: false  # always post a comment, even if coverage didn't change
+
+flags:
+  api:
+    paths:
+      - apps/ehr-api/
+    carryforward: false

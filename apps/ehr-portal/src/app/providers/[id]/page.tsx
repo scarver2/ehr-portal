@@ -17,7 +17,7 @@ const query = gql`
   }
 `
 
-export default async function ProviderPage({ params }: any) {
+export default async function ProviderPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const data = await graphql.request(query, { id })
 

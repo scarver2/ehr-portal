@@ -3,6 +3,8 @@
 
 module Types
   class QueryType < Types::BaseObject
+    description 'The root query type.'
+
     field :node, Types::NodeType, null: true, description: "Fetches an object given its ID." do
       argument :id, ID, required: true, description: "ID of the object."
     end

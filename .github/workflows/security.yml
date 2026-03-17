@@ -1,0 +1,34 @@
+# .github/workflows/security.yml
+name: Security
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/ehr-api/**'
+      - '.github/workflows/security.yml'
+  pull_request:
+    paths:
+      - 'apps/ehr-api/**'
+      - '.github/workflows/security.yml'
+
+jobs:
+  brakeman:
+    name: Brakeman
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: apps/ehr-api
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version-file: apps/ehr-api/.ruby-version
+          bundler-cache: true
+          working-directory: apps/ehr-api
+
+      - name: Run Brakeman
+        run: bin/security --no-pager
