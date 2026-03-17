@@ -1,6 +1,10 @@
 # EHR Portal Notes
 
-My ruminations while turning this idea into a working application.
+_My ruminations while turning this idea into a working application._
+
+## VPS
+
+Many VPS providers to choose from. I chose Vultr because of it's proximity to my location and previous positive experiences.
 
 ## License
 

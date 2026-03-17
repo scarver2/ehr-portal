@@ -1,14 +1,44 @@
-# EHR Portal
+# ⚕️ EHR Portal
 
 Modern Electronic Health Record (EHR) portal for clinical staff.
 
 ## Tech Stack
-- Rails 8 GraphQL API
-- Next.js React frontend
-- PostgreSQL
-- Redis
-- Docker
-- Kamal deployment
+- API
+    - [Rails 8](https://rubyonrails.org/)
+    - [ActiveAdmin](https://activeadmin.info/) administrative dashboard
+    - [Brakeman](https://brakemanscanner.org/) security scanner
+    - [GraphQL](https://graphql.org/) API
+    - [Ruby 3](https://www.ruby-lang.org/en/)
+    - [RSpec](https://rspec.info/) test suite
+    - [Rubocop](https://rubocop.org/) linter
+    - [SimpleCov](https://github.com/simplecov-ruby/simplecov) test coverage analysis
+- Portal
+    - [Next.js 16](https://nextjs.org/)
+    - [ESLint](https://eslint.org/) linter
+    - [Jest](https://jestjs.io/) test suite
+    - [Playwright](https://playwright.dev/) test suite
+    - [Prettier](https://prettier.io/) code formatter
+    - [React](https://react.dev/) frontend
+    - [TypeScript](https://www.typescriptlang.org/)
+    - [Vitest](https://vitest.dev/) test suite
+- Database
+    - [pgadmin4](https://www.pgadmin.org/)
+    - [PostgreSQL 17](https://www.postgresql.org/)
+- Queue
+    - [Redis](https://redis.io/)
+- OS
+    - [Ubuntu 24.04 LTS](https://ubuntu.com/)
+
+### SDLC & DEVOPS
+- [Docker](https://www.docker.com/)
+- [Git](https://git-scm.com/)
+- [GitHub Actions](https://github.com/features/actions)
+- [GitHub](https://github.com/)
+- [Kamal](https://kamalapp.dev/) deployment
+- [Let's Encrypt](https://letsencrypt.org/) for SSL certificates
+- [Vultr](https://www.vultr.com/) server provisioning
+- Bash scripts for deployment and management
+- Environment secrets management
 
 ## Roadmap
 
