@@ -32,7 +32,9 @@ group :development, :test do
   gem "rubocop-performance", "~> 1.26"
 
   gem "rubocop-rspec", "~> 3.9"
+end
 
+group :test do
   gem "simplecov", "~> 0.22.0"
 end
 
