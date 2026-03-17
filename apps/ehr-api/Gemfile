@@ -14,7 +14,10 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "rack-cors"
 
 group :development do
-  gem "brakeman", "~> 7.0", require: false
+  gem "brakeman",     "~> 7.0", require: false
+  gem "guard",        "~> 2.18"
+  gem "guard-rspec",  "~> 4.7",  require: false
+  gem "guard-rubocop","~> 1.5",  require: false
 end
 
 group :development, :test do
