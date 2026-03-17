@@ -1,0 +1,67 @@
+# .github/workflows/api.yml
+name: API CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/ehr-api/**'
+      - '.github/workflows/api.yml'
+  pull_request:
+    paths:
+      - 'apps/ehr-api/**'
+      - '.github/workflows/api.yml'
+
+jobs:
+  test:
+    name: RSpec
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ehr_api_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      RAILS_ENV: test
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+
+    defaults:
+      run:
+        working-directory: apps/ehr-api
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version-file: apps/ehr-api/.ruby-version
+          bundler-cache: true
+          working-directory: apps/ehr-api
+
+      - name: Set up database
+        run: bin/rails db:schema:load
+
+      - name: Run RSpec
+        run: bundle exec rspec
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: apps/ehr-api/coverage
+          flags: api
+          fail_ci_if_error: false
