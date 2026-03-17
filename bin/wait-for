@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# bin/wait-for
+# Polls a URL once per second until it responds with HTTP 2xx.
+# Exits 0 when ready; exits 1 after WAIT_FOR_TIMEOUT seconds (default: 60).
+#
+# Usage:
+#   bin/wait-for <url>
+#
+# Typical Procfile usage — chain with && so the next command only starts
+# once the dependency is accepting connections:
+#   portal: bin/wait-for http://localhost:3000/api/up && cd apps/ehr-portal && bun dev
+
+set -euo pipefail
+
+URL="${1:?Usage: bin/wait-for <url>}"
+TIMEOUT="${WAIT_FOR_TIMEOUT:-60}"
+elapsed=0
+
+echo "→ Waiting for ${URL} (max ${TIMEOUT}s)..."
+
+until curl -sf --max-time 2 "$URL" >/dev/null 2>&1; do
+  if [ "$elapsed" -ge "$TIMEOUT" ]; then
+    echo "✖ Timed out after ${TIMEOUT}s waiting for ${URL}"
+    exit 1
+  fi
+  sleep 1
+  elapsed=$((elapsed + 1))
+done
+
+echo "✔ ${URL} ready after ${elapsed}s"
