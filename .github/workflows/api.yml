@@ -52,11 +52,14 @@ jobs:
           bundler-cache: true
           working-directory: apps/ehr-api
 
+      - name: Compile CSS assets
+        run: bin/rails dartsass:build
+
       - name: Set up database
         run: bin/rails db:schema:load
 
       - name: Run RSpec
-        run: bundle exec rspec
+        run: bin/test
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5

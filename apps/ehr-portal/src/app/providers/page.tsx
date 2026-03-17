@@ -16,15 +16,21 @@ const query = gql`
   }
 `
 
+type Provider = {
+  id: string
+  fullName: string
+  specialty: string
+}
+
 export default async function ProvidersPage() {
-  const data = await graphql.request(query)
+  const data = await graphql.request<{ providers: Provider[] }>(query)
 
   return (
     <div>
       <h1>Providers</h1>
 
       <ul>
-        {data.providers.map((p: any) => (
+        {data.providers.map((p) => (
           <li key={p.id}>
             <Link href={`/providers/${p.id}`}>
               {p.fullName} — {p.specialty}

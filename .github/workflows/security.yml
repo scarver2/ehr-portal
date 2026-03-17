@@ -31,4 +31,4 @@ jobs:
           working-directory: apps/ehr-api
 
       - name: Run Brakeman
-        run: bin/brakeman --no-pager
+        run: bin/security --no-pager
