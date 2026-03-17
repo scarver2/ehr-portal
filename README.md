@@ -1,5 +1,20 @@
 # ⚕️ EHR Portal
 
+[![Ruby](https://img.shields.io/badge/ruby-3.4.8-CC342D?logo=ruby&logoColor=white)](https://www.ruby-lang.org)
+[![Rails](https://img.shields.io/badge/rails-8.1.2-CC0000?logo=rubyonrails&logoColor=white)](https://rubyonrails.org)
+[![Next.js](https://img.shields.io/badge/next.js-16.1.6-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org)
+[![React](https://img.shields.io/badge/react-19.2.3-61DAFB?logo=react&logoColor=black)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/typescript-5-3178C6?logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![PostgreSQL](https://img.shields.io/badge/postgresql-17-4169E1?logo=postgresql&logoColor=white)](https://postgresql.org)
+[![GraphQL](https://img.shields.io/badge/graphql-2.5-E10098?logo=graphql&logoColor=white)](https://graphql-ruby.org)
+[![Bun](https://img.shields.io/badge/bun-1.3.10-fbf0df?logo=bun&logoColor=black)](https://bun.sh)
+
+[![API CI](https://github.com/scarver2/ehr-portal/actions/workflows/api.yml/badge.svg)](https://github.com/scarver2/ehr-portal/actions/workflows/api.yml)
+[![Portal CI](https://github.com/scarver2/ehr-portal/actions/workflows/portal.yml/badge.svg)](https://github.com/scarver2/ehr-portal/actions/workflows/portal.yml)
+[![Lint](https://github.com/scarver2/ehr-portal/actions/workflows/lint.yml/badge.svg)](https://github.com/scarver2/ehr-portal/actions/workflows/lint.yml)
+[![Security](https://github.com/scarver2/ehr-portal/actions/workflows/security.yml/badge.svg)](https://github.com/scarver2/ehr-portal/actions/workflows/security.yml)
+[![Coverage](https://codecov.io/gh/scarver2/ehr-portal/branch/main/graph/badge.svg)](https://codecov.io/gh/scarver2/ehr-portal)
+
 Modern Electronic Health Record (EHR) portal for clinical staff.
 
 ## Tech Stack
