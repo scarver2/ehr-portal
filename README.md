@@ -3,30 +3,30 @@
 Modern Electronic Health Record (EHR) portal for clinical staff.
 
 ## Tech Stack
-- API
-    - [Rails 8](https://rubyonrails.org/)
+- **API (Ruby on Rails)**
     - [ActiveAdmin](https://activeadmin.info/) administrative dashboard
     - [Brakeman](https://brakemanscanner.org/) security scanner
     - [GraphQL](https://graphql.org/) API
+    - [Rails 8](https://rubyonrails.org/)
     - [Ruby 3](https://www.ruby-lang.org/en/)
     - [RSpec](https://rspec.info/) test suite
     - [Rubocop](https://rubocop.org/) linter
     - [SimpleCov](https://github.com/simplecov-ruby/simplecov) test coverage analysis
-- Portal
-    - [Next.js 16](https://nextjs.org/)
+- **Portal (React)**
     - [ESLint](https://eslint.org/) linter
     - [Jest](https://jestjs.io/) test suite
+    - [Next.js 16](https://nextjs.org/)
     - [Playwright](https://playwright.dev/) test suite
     - [Prettier](https://prettier.io/) code formatter
     - [React](https://react.dev/) frontend
     - [TypeScript](https://www.typescriptlang.org/)
     - [Vitest](https://vitest.dev/) test suite
-- Database
+- **Database (PostgreSQL)**
     - [pgadmin4](https://www.pgadmin.org/)
     - [PostgreSQL 17](https://www.postgresql.org/)
-- Queue
+- **Queue (Redis)**
     - [Redis](https://redis.io/)
-- OS
+- **OS**
     - [Ubuntu 24.04 LTS](https://ubuntu.com/)
 
 ### SDLC & DEVOPS
