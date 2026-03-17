@@ -56,13 +56,28 @@
 
 - [x] Docker build configuration
 - [x] Kamal deployment configuration
-- [ ] Vultr server provisioning
+- [x] Vultr server provisioning
 - [x] Production environment variables
 - [x] HTTPS via Let's Encrypt
 
 ## Phase 8 — Domain Modeling
 
 - [ ] Create models
+    - [ ] Administrator (AdminUser)
+    - [ ] Allergy
+    - [ ] AuditLog
+    - [ ] Diagnosis
+    - [ ] Document
+    - [ ] Encounter
+    - [ ] Medication
+    - [ ] Note
+    - [ ] Patient
+    - [ ] Permission
+    - [ ] Provider
+    - [ ] Role
+    - [ ] Treatment
+    - [ ] User
+    - [ ] Vital
 - [ ] Seed data
 - [ ] Build patient search
 - [ ] Build patient chart
@@ -101,3 +116,5 @@
 ## License
 
 Copyright &copy;2026 [Stan Carver II](http://stancarver.com) All rights reserved.
+
+![Made in Texas](https://raw.githubusercontent.com/scarver2/howdy-world/main/nginx/www/made-in-texas.png)
