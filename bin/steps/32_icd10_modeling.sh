@@ -30,3 +30,5 @@ bin/rails generate graphql:mutation Icd10
 
 info "Generating ICD10 connection..."
 bin/rails generate graphql:connection Icd10
+
+# TODO: add ICD10 specs

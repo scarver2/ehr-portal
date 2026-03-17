@@ -30,3 +30,5 @@ bin/rails generate graphql:mutation Medication
 
 info "Generating Medication connection..."
 bin/rails generate graphql:connection Medication
+
+# TODO: add Medication specs

@@ -30,3 +30,5 @@ bin/rails generate graphql:mutation Patient
 
 info "Generating Patient connection..."
 bin/rails generate graphql:connection Patient
+
+# TODO: add Patient specs

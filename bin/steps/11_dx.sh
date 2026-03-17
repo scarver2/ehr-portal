@@ -116,3 +116,5 @@ exec foreman start -f Procfile.dev "$@"
 EOF
 
 # fail 'intentionally halted for verification'
+
+# TODO: add health check request spec

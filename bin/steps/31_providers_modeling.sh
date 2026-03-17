@@ -52,3 +52,5 @@ EOF
 
 info "Generating Provider type in GraphQL..."
 bin/rails generate graphql:object Provider
+
+# TODO: add Provider specs

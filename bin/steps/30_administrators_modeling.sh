@@ -16,3 +16,5 @@ bin/rails generate devise AdminUser
 
 # info "Migrating database..."
 # bin/rails db:migrate
+
+# TODO: add AdminUser specs

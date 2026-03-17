@@ -104,3 +104,5 @@ EOF
 # app/views/layouts/active_admin.html.erb
 # <%= stylesheet_link_tag "active_admin", "data-turbo-track": "reload" %>
 # <%= javascript_include_tag "active_admin", "data-turbo-track": "reload" %>
+
+# TODO: add ActiveAdmin dashboard request specs

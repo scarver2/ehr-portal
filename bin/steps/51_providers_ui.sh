@@ -103,3 +103,5 @@ export default async function ProviderPage({ params }: any) {
   )
 }
 EOF
+
+# TODO: add Next.js unit and integration tests for Providers

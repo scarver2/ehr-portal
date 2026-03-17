@@ -11,3 +11,5 @@ info "Adding GraphQL..."
 bundle add graphql
 bundle add graphql-rails --group development
 bin/rails generate graphql:install
+
+# TODO: add GraphQL unit and request specs
