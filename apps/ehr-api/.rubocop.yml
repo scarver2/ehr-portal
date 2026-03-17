@@ -14,7 +14,7 @@ plugins:
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 3.4.8
+  TargetRubyVersion: 4.0
   Exclude:
     - '.bundle/**/*'
     - 'coverage/**/*'
