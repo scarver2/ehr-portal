@@ -20,3 +20,9 @@ AllCops:
     - 'coverage/**/*'
     - 'tmp/**/*'
     - 'vendor/**/*'
+
+# Base classes are internal plumbing, not consumer-facing API types.
+GraphQL/ObjectDescription:
+  Exclude:
+    - 'app/graphql/ehr_api_schema.rb'
+    - 'app/graphql/**/base_*.rb'
