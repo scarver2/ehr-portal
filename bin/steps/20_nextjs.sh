@@ -21,17 +21,121 @@ bunx create-next-app@latest ehr-portal \
   --import-alias "@/*"
 
 
-# Create bin/dev for standalone app development
+# Create bin/ scripts for standalone app development
 mkdir -p apps/ehr-portal/bin
+
+cat << 'EOF' > apps/ehr-portal/bin/_lib.sh
+#!/usr/bin/env bash
+# apps/ehr-portal/bin/_lib.sh
+
+_APP_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APP_DIR="$(cd "$_APP_BIN_DIR/.." && pwd)"
+unset _APP_BIN_DIR
+
+source "$APP_DIR/../../bin/_lib.sh"
+
+# Root's _lib.sh sets COMMAND_NAME from BASH_SOURCE[1], which resolves to this
+# file when scripts source us. Re-resolve to the actual calling script.
+COMMAND_NAME="$(basename "${BASH_SOURCE[1]:-$0}")"
+
+cd "$APP_DIR"
+EOF
+chmod +x apps/ehr-portal/bin/_lib.sh
+
 cat << 'EOF' > apps/ehr-portal/bin/dev
 #!/usr/bin/env bash
 # apps/ehr-portal/bin/dev
-# Starts the Next.js portal on port 3001.
-# Run from the repo root with bin/dev for the full stack.
 
-NEXT_PUBLIC_API_URL="http://localhost:3000/" PORT=3001 bun dev
+source "$(dirname "$0")/_lib.sh"
+
+require_command bun
+
+NEXT_PUBLIC_API_URL="http://localhost:3000/" PORT=3001 bun dev "$@"
 EOF
 chmod +x apps/ehr-portal/bin/dev
+
+cat << 'EOF' > apps/ehr-portal/bin/test
+#!/usr/bin/env bash
+# apps/ehr-portal/bin/test
+# Run the test suite. Defaults to Vitest (unit tests). Pass --e2e to run
+# Playwright integration tests instead.
+#
+# Examples:
+#   bin/test                                        # run all unit tests
+#   bin/test --watch                                # interactive watch mode
+#   bin/test --e2e                                  # run Playwright E2E tests
+#   bin/test --e2e --ui                             # Playwright UI mode
+
+source "$(dirname "$0")/_lib.sh"
+
+if [[ "${1:-}" == "--e2e" ]]; then
+  shift
+  exec bunx playwright test "$@"
+else
+  exec bunx vitest run "$@"
+fi
+EOF
+chmod +x apps/ehr-portal/bin/test
+
+cat << 'EOF' > apps/ehr-portal/bin/outdated
+#!/usr/bin/env bash
+# apps/ehr-portal/bin/outdated
+#
+# Usage:
+#   bin/outdated
+
+source "$(dirname "$0")/_lib.sh"
+
+outdated_command bun
+
+exec bunx npm-check-updates "$@"
+EOF
+chmod +x apps/ehr-portal/bin/outdated
+
+cat << 'EOF' > apps/ehr-portal/bin/update
+#!/usr/bin/env bash
+# apps/ehr-portal/bin/update
+#
+# Usage:
+#   bin/update           # interactive menu
+#   bin/update bun       # upgrade Bun via Homebrew
+#   bin/update packages  # bun update
+#   bin/update all       # bun + packages
+
+source "$(dirname "$0")/_lib.sh"
+
+update_bun() {
+  info "Upgrading Bun..."
+  brew upgrade bun
+  success "Bun upgraded"
+}
+
+update_packages() {
+  info "Updating packages..."
+  bun update
+  success "Packages updated"
+}
+
+run_update() {
+  case "$1" in
+    bun)      update_bun ;;
+    packages) update_packages ;;
+    all)
+      update_bun
+      update_packages
+      ;;
+    *) abort "Unknown target: $1" ;;
+  esac
+}
+
+if [[ $# -gt 0 ]]; then
+  run_update "$1"
+else
+  selection=$(select_menu "Select what to update:" "bun" "packages" "all")
+  run_update "$selection"
+fi
+EOF
+chmod +x apps/ehr-portal/bin/update
 
 # Create health check endpoint
 mkdir -p apps/ehr-portal/src/app/api/up
