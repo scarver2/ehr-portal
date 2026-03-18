@@ -4,3 +4,4 @@
 api:    cd apps/ehr-api    && DB_HOST=localhost DB_PORT=5433 DB_USER=postgres DB_PASSWORD=postgres bin/rails server -p 3000
 css:    cd apps/ehr-api    && DB_HOST=localhost DB_PORT=5433 DB_USER=postgres DB_PASSWORD=postgres bin/rails dartsass:watch
 portal: bin/wait-for http://localhost:3000/api/up && cd apps/ehr-portal && PORT=3001 bun dev
+guard:  cd apps/ehr-api    && DB_HOST=localhost DB_PORT=5433 DB_USER=postgres DB_PASSWORD=postgres bin/guard
