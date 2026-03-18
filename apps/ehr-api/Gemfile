@@ -12,6 +12,9 @@ gem "dartsass-rails", "~> 0.5"
 # https://github.com/heartcombo/devise
 gem "devise", "~> 5.0"
 
+# https://github.com/varvet/pundit
+gem "pundit", "~> 2.5"
+
 # https://github.com/faker-ruby/faker
 gem "faker", "~> 3.6"
 
@@ -59,7 +62,7 @@ group :development do
   gem "guard",             "~> 2.18", require: false
 
   # https://github.com/guard/guard-bundler
-  gem "guard-bundler",                require: false
+  # gem "guard-bundler",                require: false
 
   # https://github.com/guard/guard-rspec
   gem "guard-rspec",       "~> 4.7",  require: false
