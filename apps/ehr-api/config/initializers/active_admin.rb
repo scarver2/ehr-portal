@@ -246,24 +246,16 @@ ActiveAdmin.setup do |config|
 
   # == Menu System
   #
-  # You can add a navigation menu to be used in your application, or configure a provided menu
+  # In development, add a GraphiQL link to the utility navigation (top-right header).
   #
-  # To change the default utility navigation to show a link to your website & a logout btn
-  #
-  #   config.namespace :admin do |admin|
-  #     admin.build_menu :utility_navigation do |menu|
-  #       menu.add label: "My Great Website", url: "http://www.mygreatwebsite.com", html_options: { target: :blank }
-  #       admin.add_logout_button_to_menu menu
-  #     end
-  #   end
-  #
-  # If you wanted to add a static menu item to the default menu provided:
-  #
-  #   config.namespace :admin do |admin|
-  #     admin.build_menu :default do |menu|
-  #       menu.add label: "My Great Website", url: "http://www.mygreatwebsite.com", html_options: { target: "_blank" }
-  #     end
-  #   end
+  if Rails.env.development?
+    config.namespace :admin do |admin|
+      admin.build_menu :utility_navigation do |menu|
+        menu.add label: "GraphiQL", url: "/graphiql", html_options: { target: "_blank" }
+        admin.add_logout_button_to_menu menu
+      end
+    end
+  end
 
   # == Download Links
   #
