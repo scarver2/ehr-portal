@@ -98,11 +98,18 @@ cat << 'EOF' > apps/ehr-portal/bin/update
 #
 # Usage:
 #   bin/update           # interactive menu
+#   bin/update node      # upgrade Node.js via Homebrew
 #   bin/update bun       # upgrade Bun via Homebrew
 #   bin/update packages  # bun update
-#   bin/update all       # bun + packages
+#   bin/update all       # node + bun + packages
 
 source "$(dirname "$0")/_lib.sh"
+
+update_node() {
+  info "Upgrading Node.js..."
+  brew upgrade node
+  success "Node.js upgraded"
+}
 
 update_bun() {
   info "Upgrading Bun..."
@@ -118,9 +125,11 @@ update_packages() {
 
 run_update() {
   case "$1" in
+    node)     update_node ;;
     bun)      update_bun ;;
     packages) update_packages ;;
     all)
+      update_node
       update_bun
       update_packages
       ;;
@@ -131,7 +140,7 @@ run_update() {
 if [[ $# -gt 0 ]]; then
   run_update "$1"
 else
-  selection=$(select_menu "Select what to update:" "bun" "packages" "all")
+  selection=$(select_menu "Select what to update:" "node" "bun" "packages" "all")
   run_update "$selection"
 fi
 EOF
