@@ -181,7 +181,10 @@ cat << 'EOF' > bin/guard
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Point at the containerized Postgres used in development
+# FIXME: Exporting DB_* vars here poisons the calling shell for the lifetime of
+# the terminal session. Any process started afterward (including bin/dev) inherits
+# DB_PORT=5433, which breaks Homebrew Postgres (port 5432). Connection config
+# should come from .env + database.yml defaults, not from bin/guard.
 export DB_HOST=localhost
 export DB_PORT=5433
 export DB_USER=postgres
