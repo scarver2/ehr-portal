@@ -16,5 +16,9 @@ banner
 echo "==> Starting Docker services (Postgres + pgAdmin4)..."
 docker compose up -d --wait
 
+# Export DB connection vars for Docker Compose (compose.yml maps host 5433 → container 5432).
+# These are inherited by all overmind child processes; apps read them via database.yml.
+export DB_HOST=localhost DB_PORT=5433 DB_USER=postgres DB_PASSWORD=postgres
+
 echo "==> Starting dev processes..."
 exec overmind start -f "$ROOT_DIR/Procfile.dev"

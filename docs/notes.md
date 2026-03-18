@@ -41,7 +41,7 @@ bin/steps/00_started.sh               # Prerequisites check
 bin/steps/01_env.sh                   # Environment variables
 bin/steps/02_docker.sh                # Docker Compose setup
 bin/steps/03_kamal.sh                 # Kamal deployment config
-bin/steps/10_ruby-on-rails.sh         # Rails app generation, database
+bin/steps/10_ruby-on-rails.sh         # Rails app generation, database schema
 bin/steps/11_dx.sh                    # DX gems: RSpec, RuboCop, Guard, Brakeman,
                                       #   SimpleCov, RBS/Steep type checking
 bin/steps/12_solid_queue.sh           # Solid Queue background jobs
@@ -101,4 +101,4 @@ Many VPS providers to choose from. I chose Vultr because of it's proximity to my
 
 Copyright &copy;2026 [Stan Carver II](http://stancarver.com) All rights reserved.
 
-![Made in Texas](https://raw.githubusercontent.com/scarver2/howdy-world/main/nginx/www/made-in-texas.png)
+![Made in Texas](https://raw.githubusercontent.com/scarver2/howdy-world/master/_dashboard/www/assets/made-in-texas.png)

@@ -1,8 +1,11 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
+# apps/ehr-api/bin/dev
+# Starts the Rails API development server via Overmind.
+# Run from the repo root with bin/dev for the full stack.
 
-if ! gem list foreman -i --silent; then
-  echo "Installing foreman..."
-  gem install foreman
+if ! command -v overmind &>/dev/null; then
+  echo "Overmind is not installed. Install it with: brew install overmind"
+  exit 1
 fi
 
-exec foreman start -f Procfile.dev "$@"
+exec overmind start -f Procfile.dev "$@"

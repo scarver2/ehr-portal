@@ -9,6 +9,16 @@ Rails.application.configure do
   # Make code changes take effect immediately without server restart.
   config.enable_reloading = true
 
+  # Restart the server when any boot-time Ruby file changes. Rails' reloader handles
+  # Zeitwerk-autoloaded code (app/**) automatically. Everything below runs once at boot
+  # and falls outside that scope — changes require a full restart.
+  #
+  # config/   — application.rb, environments/*, initializers/*, routes.rb, puma.rb, etc.
+  #             Rails already watches routes.rb and locales; Listen deduplicates, no double restart.
+  # lib/      — non-autoloaded support code; watch proactively so additions are picked up.
+  config.watchable_dirs[Rails.root.join("config").to_s] = [:rb]
+  config.watchable_dirs[Rails.root.join("lib").to_s]    = [:rb]
+
   # Do not eager load code on boot.
   config.eager_load = false
 
