@@ -146,6 +146,19 @@ fi
 EOF
 chmod +x apps/ehr-portal/bin/update
 
+# Replace default Next.js landing page
+cat << 'EOF' > apps/ehr-portal/src/app/page.tsx
+export default function Home() {
+  return (
+    <main style={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center" }}>
+      <h1 style={{ fontSize: "20vw", fontWeight: 700, letterSpacing: "-0.05em", lineHeight: 1 }}>
+        EHR
+      </h1>
+    </main>
+  );
+}
+EOF
+
 # Create health check endpoint
 mkdir -p apps/ehr-portal/src/app/api/up
 cat << 'EOF' > apps/ehr-portal/src/app/api/up/route.ts
