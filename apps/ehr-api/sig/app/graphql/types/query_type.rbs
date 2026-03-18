@@ -1,0 +1,10 @@
+# sig/app/graphql/types/query_type.rbs
+
+module Types
+  class QueryType < Types::BaseObject
+    def node: (id: ::String) -> untyped
+    def nodes: (ids: ::Array[::String]) -> ::Array[untyped]
+    def providers: () -> ::Array[::Provider]
+    def provider: (id: ::String) -> ::Provider?
+  end
+end

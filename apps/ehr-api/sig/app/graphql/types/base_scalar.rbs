@@ -1,0 +1,6 @@
+# sig/app/graphql/types/base_scalar.rbs
+
+module Types
+  class BaseScalar < GraphQL::Schema::Scalar
+  end
+end

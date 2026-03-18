@@ -18,3 +18,26 @@ bin/rails generate devise AdminUser
 # bin/rails db:migrate
 
 # TODO: add AdminUser specs
+
+info "Adding AdminUser RBS type signature..."
+cat << 'EOF' > sig/app/models/admin_user.rbs
+# sig/app/models/admin_user.rbs
+# Column types derived from db/schema.rb (admin_users table).
+# AR generates attribute accessors dynamically; attr_accessor syntax avoids
+# Ruby::MethodDefinitionMissing under all_error. Predicate methods (_?) are
+# omitted — they exist at runtime but cannot be declared without triggering
+# the same diagnostic.
+
+class AdminUser < ApplicationRecord
+  attr_accessor id: ::Integer
+  attr_accessor email: ::String
+  attr_accessor encrypted_password: ::String
+  attr_accessor reset_password_token: ::String?
+  attr_accessor reset_password_sent_at: ::Time?
+  attr_accessor remember_created_at: ::Time?
+  attr_accessor created_at: ::Time
+  attr_accessor updated_at: ::Time
+
+  def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]
+end
+EOF

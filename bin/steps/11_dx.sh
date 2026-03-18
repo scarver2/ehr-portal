@@ -14,6 +14,7 @@ check "bundle"
 check "rails"
 check "curl"
 check "git"
+require_command "overmind"
 
 info "Creating Rails API..."
 
@@ -106,19 +107,23 @@ info "Adding Procfile.dev..."
 cat << 'EOF' > Procfile.dev
 # apps/ehr-api/Procfile.dev
 web: bin/rails server -p 3000
+css: bin/rails dartsass:watch
+guard: bin/guard
 EOF
 
 info "Overwriting bin/dev..."
 cat << 'EOF' > bin/dev
 #!/usr/bin/env bash
 # apps/ehr-api/bin/dev
+# Starts the Rails API development server via Overmind.
+# Run from the repo root with bin/dev for the full stack.
 
-if ! gem list foreman -i --silent; then
-  echo "Installing foreman..."
-  gem install foreman
+if ! command -v overmind &>/dev/null; then
+  echo "Overmind is not installed. Install it with: brew install overmind"
+  exit 1
 fi
 
-exec foreman start -f Procfile.dev "$@"
+exec overmind start -f Procfile.dev "$@"
 EOF
 
 info "Adding Brakeman..."
@@ -139,8 +144,17 @@ cat << 'EOF' > Guardfile
 
 clearing :on
 
+# ── Bundler ────────────────────────────────────────────────────────────────
+# Runs `bundle install` automatically when Gemfile changes.
+# bundler_output_as_trigger: false prevents Gemfile.lock updates from re-firing.
+guard :bundler, bundler_output_as_trigger: false do
+  watch("Gemfile")
+end
+
 # ── RuboCop ────────────────────────────────────────────────────────────────
-guard :rubocop, all_on_start: false, cli: %w[--format fuubar --display-cop-names] do
+# --no-color suppresses ANSI cursor-position probes that leak as escape
+# sequences (^[[32;2R) when Guard runs inside Overmind/Foreman pipes.
+guard :rubocop, all_on_start: false, cli: %w[--format fuubar --display-cop-names --no-color] do
   watch(/.+\.rb$/)
   watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
 end
@@ -181,12 +195,6 @@ cat << 'EOF' > bin/guard
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Point at the containerized Postgres used in development
-export DB_HOST=localhost
-export DB_PORT=5433
-export DB_USER=postgres
-export DB_PASSWORD=postgres
-
 exec bundle exec guard "$@"
 EOF
 chmod +x bin/guard
@@ -196,3 +204,132 @@ chmod +x bin/guard
 # get "/up", to: proc { [200, {}, ["ok"]] }
 
 # TODO: add base application specs
+
+info "Setting up RBS type signatures and Steep type checker..."
+bundle add rbs --group "development, test"
+bundle add steep --require false --group development
+
+cat << 'EOF' > rbs_collection.yaml
+# apps/ehr-api/rbs_collection.yaml
+# Declares sources for third-party RBS type definitions.
+# Run `bundle exec rbs collection install` to fetch into .rbs_collection/.
+# Commit rbs_collection.yaml.lock; gitignore .rbs_collection/.
+
+sources:
+  - type: git
+    name: ruby/gem_rbs_collection
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    revision: main
+    path: gems
+
+path: .rbs_collection
+
+gems:
+  # Rails / Rack — RBS bundled in gems and/or in gem_rbs_collection
+  - name: actionpack
+  - name: activesupport
+  - name: railties
+  - name: rack
+
+  # No RBS available; shimmed in sig/shims/ instead
+  - name: activeadmin
+    ignore: true
+  - name: bootsnap
+    ignore: true
+  - name: devise
+    ignore: true
+  - name: factory_bot_rails
+    ignore: true
+  - name: graphql
+    ignore: true
+  - name: honeybadger
+    ignore: true
+  - name: propshaft
+    ignore: true
+  - name: rspec-rails
+    ignore: true
+  - name: simplecov
+    ignore: true
+  - name: solid_queue
+    ignore: true
+EOF
+
+bundle exec rbs collection install
+
+mkdir -p sig/app/models sig/app/controllers \
+         sig/app/graphql/types sig/app/graphql/mutations sig/app/graphql/resolvers \
+         sig/shims
+
+cat << 'EOF' > sig/app/models/application_record.rbs
+# sig/app/models/application_record.rbs
+
+class ApplicationRecord < ActiveRecord::Base
+  include GlobalID::Identification
+end
+EOF
+
+# Minimal initial sig — current_user added in step 14, set_honeybadger_context in step 18.
+cat << 'EOF' > sig/app/controllers/application_controller.rbs
+# sig/app/controllers/application_controller.rbs
+
+class ApplicationController < ActionController::Base
+end
+EOF
+
+cat << 'STEEP' > Steepfile
+# apps/ehr-api/Steepfile
+# https://github.com/soutaro/steep
+
+D = Steep::Diagnostic
+
+# All application targets share the same sig/ tree (including sig/shims/).
+#
+# :models     → all_error: models are the domain core; strict checking pays off here.
+# :controllers → lenient: blocked by graphql-ruby and devise shim gaps.
+# :graphql    → lenient: blocked by graphql-ruby having no official RBS.
+
+target :models do
+  signature "sig"
+
+  check "app/models"
+
+  # all_error with MethodDefinitionMissing downgraded to :information.
+  # AR generates column accessors at runtime — they can't be found in source.
+  # All other diagnostics (NoMethod, TypeError, nil-safety, etc.) remain errors.
+  configure_code_diagnostics(D::Ruby.all_error) do |c|
+    c[D::Ruby::MethodDefinitionMissing] = :information
+  end
+end
+
+target :controllers do
+  signature "sig"
+
+  check "app/controllers"
+
+  configure_code_diagnostics(D::Ruby.lenient)
+end
+
+target :graphql do
+  signature "sig"
+
+  check "app/graphql"
+
+  configure_code_diagnostics(D::Ruby.lenient)
+end
+STEEP
+
+cat << 'EOF' > bin/typecheck
+#!/usr/bin/env bash
+# apps/ehr-api/bin/typecheck
+# Install the RBS collection then run Steep type checking.
+#
+# Examples:
+#   bin/typecheck                  # check all targets
+#   bin/typecheck --log-level=info # verbose output
+
+set -euo pipefail
+
+bundle exec rbs collection install
+exec bundle exec steep check "$@"
+EOF
+chmod +x bin/typecheck

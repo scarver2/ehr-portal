@@ -106,3 +106,36 @@ EOF
 # <%= javascript_include_tag "active_admin", "data-turbo-track": "reload" %>
 
 # TODO: add ActiveAdmin dashboard request specs
+
+info "Adding Devise RBS shim..."
+cat << 'EOF' > sig/shims/devise.rbs
+# sig/shims/devise.rbs
+# Minimal stubs for Devise authentication helpers.
+# Remove once devise ships official RBS definitions.
+
+module Devise
+  module Models
+    module DatabaseAuthenticatable
+    end
+
+    module Registerable
+    end
+
+    module Recoverable
+    end
+
+    module Rememberable
+    end
+
+    module Validatable
+    end
+  end
+end
+
+# Devise adds the `devise` class macro to ActiveRecord models.
+# Declared here so all_error doesn't flag `devise :database_authenticatable, ...`
+# as a missing method on model singletons.
+class ActiveRecord::Base
+  def self.devise: (*::Symbol, **untyped) -> void
+end
+EOF

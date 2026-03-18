@@ -22,3 +22,9 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+## License
+
+Copyright &copy;2026 [Stan Carver II](http://stancarver.com) All rights reserved.
+
+![Made in Texas](https://raw.githubusercontent.com/scarver2/howdy-world/master/_dashboard/www/assets/made-in-texas.png)

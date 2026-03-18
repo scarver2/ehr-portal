@@ -12,6 +12,9 @@ case "$SERVICE" in
   *)          echo "Unknown service: $SERVICE" >&2; exit 1 ;;
 esac
 
-# TODO: switch db:reset to db:migrate when schema is stablized
-kamal app exec --reuse -c "$CONFIG" -- env DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bin/rails db:reset
-kamal app exec --reuse -c "$CONFIG" -- bin/rails db:seed
+# Database tasks only apply to the Rails API; the portal has no bin/rails.
+if [[ "$SERVICE" == "ehr-api" ]]; then
+  # TODO: switch db:reset to db:migrate when schema is stabilized
+  kamal app exec --reuse -c "$CONFIG" -- env DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bin/rails db:reset
+  kamal app exec --reuse -c "$CONFIG" -- bin/rails db:seed
+fi

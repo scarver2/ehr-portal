@@ -1,0 +1,104 @@
+# sig/shims/graphql.rbs
+# Minimal stubs for graphql-ruby classes used in app/graphql/.
+# Remove once graphql-ruby ships official RBS definitions.
+
+module GraphQL
+  class Dataloader
+  end
+
+  class RequiredImplementationMissingError < ::StandardError
+  end
+
+  class InvalidNullError < ::StandardError
+  end
+
+  module Types
+    module Relay
+      module NodeBehaviors
+      end
+
+      module ConnectionBehaviors
+      end
+
+      module EdgeBehaviors
+      end
+    end
+
+    class ISO8601DateTime
+    end
+  end
+
+  class Schema
+    def self.mutation: (untyped) -> void
+    def self.query: (untyped) -> void
+    def self.use: (untyped, **untyped) -> void
+    def self.max_query_string_tokens: (::Integer) -> void
+    def self.validate_max_errors: (::Integer) -> void
+    def self.execute: (
+      ?::String? query,
+      ?variables: untyped,
+      ?context: ::Hash[::Symbol, untyped],
+      ?operation_name: ::String?
+    ) -> untyped
+
+    def self.type_error: (untyped err, untyped context) -> untyped
+    def self.resolve_type: (untyped abstract_type, untyped obj, untyped ctx) -> untyped
+    def self.id_from_object: (untyped object, untyped type_definition, untyped query_ctx) -> ::String
+    def self.object_from_id: (::String global_id, untyped query_ctx) -> untyped
+
+    class Object
+      def self.field_class: (untyped klass) -> void
+      def self.edge_type_class: (untyped klass) -> void
+      def self.connection_type_class: (untyped klass) -> void
+      def self.implements: (*untyped interfaces) -> void
+      def self.field: (::Symbol | ::String name, *untyped, **untyped) ?{ () -> void } -> untyped
+      def self.description: (?::String text) -> ::String?
+
+      def object: () -> untyped
+      def context: () -> untyped
+    end
+
+    class Field
+      def self.argument_class: (untyped klass) -> void
+    end
+
+    class Argument
+    end
+
+    module Interface
+      def self.included: (untyped base) -> void
+      def self.field_class: (untyped klass) -> void
+      def self.edge_type_class: (untyped klass) -> void
+      def self.connection_type_class: (untyped klass) -> void
+      def self.implements: (*untyped interfaces) -> void
+      def self.field: (::Symbol | ::String name, *untyped, **untyped) ?{ () -> void } -> untyped
+      def self.description: (?::String text) -> ::String?
+      def self.include: (untyped mod) -> void
+    end
+
+    class RelayClassicMutation
+      def self.argument_class: (untyped klass) -> void
+      def self.field_class: (untyped klass) -> void
+      def self.input_object_class: (untyped klass) -> void
+      def self.object_class: (untyped klass) -> void
+    end
+
+    class Resolver
+    end
+
+    class Union
+      def self.edge_type_class: (untyped klass) -> void
+      def self.connection_type_class: (untyped klass) -> void
+    end
+
+    class Enum
+    end
+
+    class Scalar
+    end
+
+    class InputObject
+      def self.argument_class: (untyped klass) -> void
+    end
+  end
+end

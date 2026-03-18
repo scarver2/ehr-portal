@@ -1,0 +1,6 @@
+# sig/app/graphql/types/mutation_type.rbs
+
+module Types
+  class MutationType < Types::BaseObject
+  end
+end

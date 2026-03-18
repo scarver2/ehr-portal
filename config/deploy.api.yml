@@ -10,6 +10,9 @@ builder:
     options: mode=max
   context: apps/ehr-api
   dockerfile: apps/ehr-api/Dockerfile
+  args:
+    GIT_SHA: <%= `git rev-parse --short HEAD`.strip %>
+    GIT_BRANCH: <%= `git rev-parse --abbrev-ref HEAD`.strip %>
 
 env:
   secret:

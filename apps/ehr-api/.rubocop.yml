@@ -14,12 +14,15 @@ plugins:
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 3.4.8
+  TargetRubyVersion: 4.0
   Exclude:
     - '.bundle/**/*'
     - 'coverage/**/*'
     - 'tmp/**/*'
     - 'vendor/**/*'
+
+Style/IfUnlessModifier:
+  Enabled: false
 
 # Base classes are internal plumbing, not consumer-facing API types.
 GraphQL/ObjectDescription:

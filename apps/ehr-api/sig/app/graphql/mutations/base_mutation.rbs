@@ -1,0 +1,6 @@
+# sig/app/graphql/mutations/base_mutation.rbs
+
+module Mutations
+  class BaseMutation < GraphQL::Schema::RelayClassicMutation
+  end
+end

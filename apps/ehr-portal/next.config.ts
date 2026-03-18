@@ -20,8 +20,8 @@ export default setupHoneybadger(nextConfig, {
   disableSourceMapUpload: process.env.NODE_ENV !== "production",
   silent: true,
   webpackPluginOptions: {
-    apiKey: process.env.NEXT_PUBLIC_HONEYBADGER_API_KEY,
-    assetsUrl: process.env.NEXT_PUBLIC_HONEYBADGER_ASSETS_URL,
-    revision: process.env.NEXT_PUBLIC_HONEYBADGER_REVISION,
+    apiKey: process.env.NEXT_PUBLIC_HONEYBADGER_API_KEY ?? "",
+    assetsUrl: process.env.NEXT_PUBLIC_HONEYBADGER_ASSETS_URL ?? "",
+    revision: process.env.NEXT_PUBLIC_HONEYBADGER_REVISION ?? "",
   },
 })

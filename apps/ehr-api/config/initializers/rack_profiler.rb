@@ -17,5 +17,5 @@ require "rack-mini-profiler"
 require "stackprof"
 
 Rack::MiniProfiler.config.position                           = "bottom-right"
-Rack::MiniProfiler.config.start_enabled                      = true
+Rack::MiniProfiler.config.enabled                            = true
 Rack::MiniProfiler.config.enable_hotwire_turbo_drive_support = false

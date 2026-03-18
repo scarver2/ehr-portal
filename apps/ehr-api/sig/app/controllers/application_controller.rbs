@@ -1,0 +1,10 @@
+# sig/app/controllers/application_controller.rbs
+
+class ApplicationController < ActionController::Base
+  # Provided by Devise - returns the currently authenticated User or nil.
+  def current_user: () -> ::User?
+
+  private
+
+  def set_honeybadger_context: () -> void
+end

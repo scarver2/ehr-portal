@@ -13,7 +13,8 @@
 - [x] Docker compose configuration
 - [x] PostgreSQL container
 - [ ] Redis container
-- [x] Development helper scripts (`bin/dev`)
+- [x] Development helper scripts (`bin/dev`, `bin/bootstrap`)
+- [x] Overmind as process manager (consistent across root and all apps)
 - [x] Environment variable configuration
 
 ## Phase 3 — Application Scaffolding
@@ -107,6 +108,35 @@
 - [ ] Vitals radial visualization
 - [ ] Pulse glow indicator
 
+## Developer Experience (DX)
+
+### ehr-api
+
+- [x] RSpec with FactoryBot for test-driven development
+- [x] Guard for TDD watch mode (RSpec + RuboCop auto-run on file save)
+- [x] RuboCop with extensions (Rails, RSpec, GraphQL, Performance, CapyBara, FactoryBot)
+- [x] Brakeman static security analysis (`bin/security`)
+- [x] SimpleCov test coverage reporting
+- [x] Better Errors + binding_of_caller for rich in-browser error pages
+- [x] Rack Mini Profiler for request performance inspection
+- [x] IRBTools for an enhanced Rails console
+- [x] GraphiQL IDE mounted at `/graphiql` (development only)
+- [x] GraphiQL link in ActiveAdmin utility navigation (development only)
+- [x] RBS type signatures with Steep type checker (`bin/typecheck`)
+- [ ] OpenTelemetry local tracing (Jaeger or OTEL collector)
+- [ ] Seed realistic FHIR-style data for local development
+
+### ehr-portal
+
+- [x] Vitest for unit testing (`bin/test`)
+- [x] Playwright for E2E testing (`bin/test --e2e`)
+- [x] ESLint for linting (`bun lint`)
+- [x] Honeybadger error monitoring (browser, edge, and server configs)
+- [x] `bin/steps/` guided build scripts for reproducible project setup
+- [x] `bin/bootstrap` step runner with range and from-step support (`10-20`, `10+`)
+- [ ] Storybook for UI component development
+- [ ] Vitest coverage reporting
+
 ## Phase 12 — Final Polishing
 
 - [ ] Seed realistic data
@@ -118,4 +148,4 @@
 
 Copyright &copy;2026 [Stan Carver II](http://stancarver.com) All rights reserved.
 
-![Made in Texas](https://raw.githubusercontent.com/scarver2/howdy-world/main/nginx/www/made-in-texas.png)
+![Made in Texas](https://raw.githubusercontent.com/scarver2/howdy-world/master/_dashboard/www/assets/made-in-texas.png)

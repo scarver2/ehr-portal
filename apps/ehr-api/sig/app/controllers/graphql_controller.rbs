@@ -1,0 +1,13 @@
+# sig/app/controllers/graphql_controller.rbs
+
+class GraphqlController < ApplicationController
+  def execute: () -> void
+
+  private
+
+  def prepare_variables: (
+    ::String | ::Hash[untyped, untyped] | ActionController::Parameters | nil
+  ) -> ::Hash[untyped, untyped]
+
+  def handle_error_in_development: (::Exception e) -> void
+end

@@ -1,6 +1,6 @@
 # ⚕️ EHR Portal
 
-[![Ruby](https://img.shields.io/badge/ruby-3.4.8-CC342D?logo=ruby&logoColor=white)](https://www.ruby-lang.org)
+[![Ruby](https://img.shields.io/badge/ruby-4.0.2-CC342D?logo=ruby&logoColor=white)](https://www.ruby-lang.org)
 [![Rails](https://img.shields.io/badge/rails-8.1.2-CC0000?logo=rubyonrails&logoColor=white)](https://rubyonrails.org)
 [![Next.js](https://img.shields.io/badge/next.js-16.1.6-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org)
 [![React](https://img.shields.io/badge/react-19.2.3-61DAFB?logo=react&logoColor=black)](https://react.dev)
@@ -68,4 +68,4 @@ See [docs/notes.md](docs/notes.md) for notes.
 
 Copyright &copy;2026 [Stan Carver II](http://stancarver.com) All rights reserved.
 
-![Made in Texas](https://raw.githubusercontent.com/scarver2/howdy-world/main/nginx/www/made-in-texas.png)
+![Made in Texas](https://raw.githubusercontent.com/scarver2/howdy-world/master/_dashboard/www/assets/made-in-texas.png)
