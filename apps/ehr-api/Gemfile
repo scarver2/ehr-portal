@@ -50,7 +50,7 @@ group :development do
   gem "binding_of_caller", "~> 2.0"
 
   # https://brakemanscanner.org
-  gem "brakeman",          "~> 8.0",  require: false
+  gem "brakeman",          "~> 8.0", require: false
 
   # https://github.com/rmosolgo/graphiql-rails
   gem "graphiql-rails",    "~> 1.10"
@@ -80,7 +80,7 @@ group :development do
   gem "stackprof",                    require: false
 
   # https://github.com/soutaro/steep
-  gem "steep",             require: false
+  gem "steep",                        require: false
 
   # https://github.com/Springest/terminal-notifier-guard
   gem "terminal-notifier-guard", "~> 1.7", require: false
