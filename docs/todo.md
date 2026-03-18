@@ -107,6 +107,24 @@
 - [ ] Vitals radial visualization
 - [ ] Pulse glow indicator
 
+## Developer Experience (DX)
+
+- [x] RSpec with FactoryBot for test-driven development
+- [x] Guard for TDD watch mode (RSpec + RuboCop auto-run on file save)
+- [x] RuboCop with extensions (Rails, RSpec, GraphQL, Performance, CapyBara, FactoryBot)
+- [x] Brakeman static security analysis (`bin/security`)
+- [x] SimpleCov test coverage reporting
+- [x] Better Errors + binding_of_caller for rich in-browser error pages
+- [x] Rack Mini Profiler for request performance inspection
+- [x] IRBTools for an enhanced Rails console
+- [x] GraphiQL IDE mounted at `/graphiql` (development only)
+- [x] GraphiQL link in ActiveAdmin utility navigation (development only)
+- [x] RBS type signatures with Steep type checker (`bin/typecheck`)
+- [x] `bin/steps/` guided build scripts for reproducible project setup
+- [ ] Storybook for UI component development
+- [ ] OpenTelemetry local tracing (Jaeger or OTEL collector)
+- [ ] Seed realistic FHIR-style data for local development
+
 ## Phase 12 — Final Polishing
 
 - [ ] Seed realistic data
