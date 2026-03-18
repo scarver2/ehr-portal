@@ -56,6 +56,13 @@ bin/outdated   # Check for outdated gems
 bin/setup      # Bootstrap the app (bundle, db:create, db:migrate, db:seed)
 ```
 
+### ehr-portal (`apps/ehr-portal/bin/`)
+
+```bash
+bin/dev        # Start the Next.js dev server on port 3001 (points at API on port 3000)
+bin/test       # Run Vitest unit tests (pass --e2e for Playwright, --watch for watch mode)
+```
+
 ## VPS
 
 Many VPS providers to choose from. I chose Vultr because of it's proximity to my location and previous positive experiences.

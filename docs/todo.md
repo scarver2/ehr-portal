@@ -109,6 +109,8 @@
 
 ## Developer Experience (DX)
 
+### ehr-api
+
 - [x] RSpec with FactoryBot for test-driven development
 - [x] Guard for TDD watch mode (RSpec + RuboCop auto-run on file save)
 - [x] RuboCop with extensions (Rails, RSpec, GraphQL, Performance, CapyBara, FactoryBot)
@@ -120,10 +122,18 @@
 - [x] GraphiQL IDE mounted at `/graphiql` (development only)
 - [x] GraphiQL link in ActiveAdmin utility navigation (development only)
 - [x] RBS type signatures with Steep type checker (`bin/typecheck`)
-- [x] `bin/steps/` guided build scripts for reproducible project setup
-- [ ] Storybook for UI component development
 - [ ] OpenTelemetry local tracing (Jaeger or OTEL collector)
 - [ ] Seed realistic FHIR-style data for local development
+
+### ehr-portal
+
+- [x] Vitest for unit testing (`bin/test`)
+- [x] Playwright for E2E testing (`bin/test --e2e`)
+- [x] ESLint for linting (`bun lint`)
+- [x] Honeybadger error monitoring (browser, edge, and server configs)
+- [x] `bin/steps/` guided build scripts for reproducible project setup
+- [ ] Storybook for UI component development
+- [ ] Vitest coverage reporting
 
 ## Phase 12 — Final Polishing
 
