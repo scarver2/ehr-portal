@@ -4,16 +4,22 @@
 D = Steep::Diagnostic
 
 # All application targets share the same sig/ tree (including sig/shims/).
-# Strictness: lenient — allows untyped chains from gems without RBS yet
-# (graphql-ruby, devise, honeybadger). Tighten to D::Ruby.all_error once
-# upstream gems ship complete type definitions.
+#
+# :models     → all_error: models are the domain core; strict checking pays off here.
+# :controllers → lenient: blocked by graphql-ruby and devise shim gaps.
+# :graphql    → lenient: blocked by graphql-ruby having no official RBS.
 
 target :models do
   signature "sig"
 
   check "app/models"
 
-  configure_code_diagnostics(D::Ruby.lenient)
+  # all_error with MethodDefinitionMissing downgraded to :information.
+  # AR generates column accessors at runtime — they can't be found in source.
+  # All other diagnostics (NoMethod, TypeError, nil-safety, etc.) remain errors.
+  configure_code_diagnostics(D::Ruby.all_error) do |c|
+    c[D::Ruby::MethodDefinitionMissing] = :information
+  end
 end
 
 target :controllers do

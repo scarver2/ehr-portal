@@ -20,3 +20,10 @@ module Devise
     end
   end
 end
+
+# Devise adds the `devise` class macro to ActiveRecord models.
+# Declared here so all_error doesn't flag `devise :database_authenticatable, ...`
+# as a missing method on model singletons.
+class ActiveRecord::Base
+  def self.devise: (*::Symbol, **untyped) -> void
+end

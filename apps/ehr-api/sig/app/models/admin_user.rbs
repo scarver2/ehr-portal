@@ -1,42 +1,19 @@
 # sig/app/models/admin_user.rbs
 # Column types derived from db/schema.rb (admin_users table).
+# AR generates attribute accessors dynamically; attr_accessor syntax avoids
+# Ruby::MethodDefinitionMissing under all_error. Predicate methods (_?) are
+# omitted — they exist at runtime but cannot be declared without triggering
+# the same diagnostic.
 
 class AdminUser < ApplicationRecord
-  # id (bigint, not null)
-  def id: () -> ::Integer
-  def id=: (::Integer val) -> ::Integer
-  def id?: () -> bool
-
-  # email (string, not null, default: "")
-  def email: () -> ::String
-  def email=: (::String val) -> ::String
-  def email?: () -> bool
-
-  # encrypted_password (string, not null, default: "")
-  def encrypted_password: () -> ::String
-  def encrypted_password=: (::String val) -> ::String
-  def encrypted_password?: () -> bool
-
-  # reset_password_token (string, nullable)
-  def reset_password_token: () -> ::String?
-  def reset_password_token=: (::String? val) -> ::String?
-  def reset_password_token?: () -> bool
-
-  # reset_password_sent_at (datetime, nullable)
-  def reset_password_sent_at: () -> ::Time?
-  def reset_password_sent_at=: (::Time? val) -> ::Time?
-
-  # remember_created_at (datetime, nullable)
-  def remember_created_at: () -> ::Time?
-  def remember_created_at=: (::Time? val) -> ::Time?
-
-  # created_at (datetime, not null)
-  def created_at: () -> ::Time
-  def created_at=: (::Time val) -> ::Time
-
-  # updated_at (datetime, not null)
-  def updated_at: () -> ::Time
-  def updated_at=: (::Time val) -> ::Time
+  attr_accessor id: ::Integer
+  attr_accessor email: ::String
+  attr_accessor encrypted_password: ::String
+  attr_accessor reset_password_token: ::String?
+  attr_accessor reset_password_sent_at: ::Time?
+  attr_accessor remember_created_at: ::Time?
+  attr_accessor created_at: ::Time
+  attr_accessor updated_at: ::Time
 
   def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]
 end
