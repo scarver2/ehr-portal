@@ -1,14 +1,14 @@
 # EHR Portal Architecture
 
-Browser
-↓
-Next.js Portal
-↓
-GraphQL API (Rails)
-↓
-PostgreSQL
-↓
-Redis Cache
+    Browser
+        ↓
+    Next.js Portal
+        ↓
+    GraphQL API (Rails)
+        ↓
+    Redis Cache
+        ↓
+    PostgreSQL
 
 ## License
 
