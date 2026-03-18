@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# apps/ehr-portal/bin/lint
+#
+# Usage:
+#   bin/lint                        # default lint report
+#   bin/lint --fix                  # apply auto-fixes
+
+source "$(dirname "$0")/_lib.sh"
+
+require_command bun
+
+exec bun run --silent lint "$@"
