@@ -4,16 +4,27 @@
 require 'rails_helper'
 
 RSpec.describe 'Admin::Providers', type: :request do
-  let(:admin_user) { create(:admin_user) }
-
   context 'when not authenticated' do
     it 'redirects to login' do
       get '/admin/providers'
-      expect(response).to redirect_to(new_admin_user_session_path)
+      expect(response).to redirect_to(new_user_session_path)
     end
   end
 
-  context 'when authenticated' do
+  %i[provider staff patient].each do |role|
+    context "when authenticated as #{role}" do
+      before { sign_in create(:user, role) }
+
+      it 'signs out and redirects to login' do
+        get '/admin/providers'
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+  end
+
+  context 'when authenticated as admin' do
+    let(:admin_user) { create(:user, :admin) }
+
     before { sign_in admin_user }
 
     describe 'GET /admin/providers' do
@@ -72,7 +83,10 @@ RSpec.describe 'Admin::Providers', type: :request do
 
       it 'shows provider details' do
         get "/admin/providers/#{provider.id}"
-        expect(response.body).to include(provider.first_name, provider.last_name)
+        expect(response.body).to include(
+          CGI.escapeHTML(provider.first_name),
+          CGI.escapeHTML(provider.last_name)
+        )
       end
     end
 

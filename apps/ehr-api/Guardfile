@@ -6,9 +6,9 @@ clearing :on
 # ── Bundler ────────────────────────────────────────────────────────────────
 # Runs `bundle install` automatically when Gemfile changes.
 # bundler_output_as_trigger: false prevents Gemfile.lock updates from re-firing.
-guard :bundler, bundler_output_as_trigger: false do
-  watch("Gemfile")
-end
+# guard :bundler, bundler_output_as_trigger: false, run_on_start: false do
+#   watch("Gemfile")
+# end
 
 # ── RuboCop ────────────────────────────────────────────────────────────────
 guard :rubocop, all_on_start: false, cli: %w[--format fuubar --display-cop-names --no-color] do
