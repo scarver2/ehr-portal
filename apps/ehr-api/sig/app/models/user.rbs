@@ -1,0 +1,19 @@
+# sig/app/models/user.rbs
+# Column types derived from db/schema.rb (users table).
+# AR generates attribute accessors dynamically; attr_accessor syntax avoids
+# Ruby::MethodDefinitionMissing under all_error. Predicate methods (_?) are
+# omitted — they exist at runtime but cannot be declared without triggering
+# the same diagnostic.
+# Devise runtime methods (valid_password?, authenticate, etc.) remain untyped
+# until devise ships official RBS definitions.
+
+class User < ApplicationRecord
+  attr_accessor id: ::Integer
+  attr_accessor email: ::String
+  attr_accessor encrypted_password: ::String
+  attr_accessor reset_password_token: ::String?
+  attr_accessor reset_password_sent_at: ::Time?
+  attr_accessor remember_created_at: ::Time?
+  attr_accessor created_at: ::Time
+  attr_accessor updated_at: ::Time
+end

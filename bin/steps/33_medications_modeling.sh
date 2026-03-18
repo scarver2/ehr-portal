@@ -32,3 +32,21 @@ info "Generating Medication connection..."
 bin/rails generate graphql:connection Medication
 
 # TODO: add Medication specs
+
+info "Adding Medication RBS type signature..."
+cat << 'EOF' > sig/app/models/medication.rbs
+# sig/app/models/medication.rbs
+# Column types derived from db/schema.rb (medications table).
+# AR generates attribute accessors dynamically; attr_accessor syntax avoids
+# Ruby::MethodDefinitionMissing under all_error.
+
+class Medication < ApplicationRecord
+  attr_accessor id: ::Integer
+  attr_accessor code: ::String?
+  attr_accessor description: ::String?
+  attr_accessor created_at: ::Time
+  attr_accessor updated_at: ::Time
+
+  def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]
+end
+EOF

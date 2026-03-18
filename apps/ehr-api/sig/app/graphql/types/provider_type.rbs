@@ -1,0 +1,7 @@
+# sig/app/graphql/types/provider_type.rbs
+
+module Types
+  class ProviderType < Types::BaseObject
+    def full_name: () -> ::String
+  end
+end

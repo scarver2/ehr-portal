@@ -1,0 +1,8 @@
+# sig/shims/honeybadger.rbs
+# Minimal stubs for Honeybadger error-tracking methods.
+# Remove once honeybadger-ruby ships official RBS definitions.
+
+module Honeybadger
+  def self.context: (**untyped pairs) -> void
+  def self.notify: (untyped exception_or_message, **untyped opts) -> void
+end

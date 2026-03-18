@@ -204,3 +204,132 @@ chmod +x bin/guard
 # get "/up", to: proc { [200, {}, ["ok"]] }
 
 # TODO: add base application specs
+
+info "Setting up RBS type signatures and Steep type checker..."
+bundle add rbs --group "development, test"
+bundle add steep --require false --group development
+
+cat << 'EOF' > rbs_collection.yaml
+# apps/ehr-api/rbs_collection.yaml
+# Declares sources for third-party RBS type definitions.
+# Run `bundle exec rbs collection install` to fetch into .rbs_collection/.
+# Commit rbs_collection.yaml.lock; gitignore .rbs_collection/.
+
+sources:
+  - type: git
+    name: ruby/gem_rbs_collection
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    revision: main
+    path: gems
+
+path: .rbs_collection
+
+gems:
+  # Rails / Rack — RBS bundled in gems and/or in gem_rbs_collection
+  - name: actionpack
+  - name: activesupport
+  - name: railties
+  - name: rack
+
+  # No RBS available; shimmed in sig/shims/ instead
+  - name: activeadmin
+    ignore: true
+  - name: bootsnap
+    ignore: true
+  - name: devise
+    ignore: true
+  - name: factory_bot_rails
+    ignore: true
+  - name: graphql
+    ignore: true
+  - name: honeybadger
+    ignore: true
+  - name: propshaft
+    ignore: true
+  - name: rspec-rails
+    ignore: true
+  - name: simplecov
+    ignore: true
+  - name: solid_queue
+    ignore: true
+EOF
+
+bundle exec rbs collection install
+
+mkdir -p sig/app/models sig/app/controllers \
+         sig/app/graphql/types sig/app/graphql/mutations sig/app/graphql/resolvers \
+         sig/shims
+
+cat << 'EOF' > sig/app/models/application_record.rbs
+# sig/app/models/application_record.rbs
+
+class ApplicationRecord < ActiveRecord::Base
+  include GlobalID::Identification
+end
+EOF
+
+# Minimal initial sig — current_user added in step 14, set_honeybadger_context in step 18.
+cat << 'EOF' > sig/app/controllers/application_controller.rbs
+# sig/app/controllers/application_controller.rbs
+
+class ApplicationController < ActionController::Base
+end
+EOF
+
+cat << 'STEEP' > Steepfile
+# apps/ehr-api/Steepfile
+# https://github.com/soutaro/steep
+
+D = Steep::Diagnostic
+
+# All application targets share the same sig/ tree (including sig/shims/).
+#
+# :models     → all_error: models are the domain core; strict checking pays off here.
+# :controllers → lenient: blocked by graphql-ruby and devise shim gaps.
+# :graphql    → lenient: blocked by graphql-ruby having no official RBS.
+
+target :models do
+  signature "sig"
+
+  check "app/models"
+
+  # all_error with MethodDefinitionMissing downgraded to :information.
+  # AR generates column accessors at runtime — they can't be found in source.
+  # All other diagnostics (NoMethod, TypeError, nil-safety, etc.) remain errors.
+  configure_code_diagnostics(D::Ruby.all_error) do |c|
+    c[D::Ruby::MethodDefinitionMissing] = :information
+  end
+end
+
+target :controllers do
+  signature "sig"
+
+  check "app/controllers"
+
+  configure_code_diagnostics(D::Ruby.lenient)
+end
+
+target :graphql do
+  signature "sig"
+
+  check "app/graphql"
+
+  configure_code_diagnostics(D::Ruby.lenient)
+end
+STEEP
+
+cat << 'EOF' > bin/typecheck
+#!/usr/bin/env bash
+# apps/ehr-api/bin/typecheck
+# Install the RBS collection then run Steep type checking.
+#
+# Examples:
+#   bin/typecheck                  # check all targets
+#   bin/typecheck --log-level=info # verbose output
+
+set -euo pipefail
+
+bundle exec rbs collection install
+exec bundle exec steep check "$@"
+EOF
+chmod +x bin/typecheck

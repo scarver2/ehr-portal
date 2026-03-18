@@ -1,0 +1,6 @@
+# sig/app/graphql/types/base_input_object.rbs
+
+module Types
+  class BaseInputObject < GraphQL::Schema::InputObject
+  end
+end

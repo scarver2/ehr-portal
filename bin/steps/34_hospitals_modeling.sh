@@ -32,3 +32,21 @@ info "Generating Hospital connection..."
 bin/rails generate graphql:connection Hospital
 
 # TODO: add Hospital specs
+
+info "Adding Hospital RBS type signature..."
+cat << 'EOF' > sig/app/models/hospital.rbs
+# sig/app/models/hospital.rbs
+# Column types derived from db/schema.rb (hospitals table).
+# AR generates attribute accessors dynamically; attr_accessor syntax avoids
+# Ruby::MethodDefinitionMissing under all_error.
+
+class Hospital < ApplicationRecord
+  attr_accessor id: ::Integer
+  attr_accessor code: ::String?
+  attr_accessor description: ::String?
+  attr_accessor created_at: ::Time
+  attr_accessor updated_at: ::Time
+
+  def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]
+end
+EOF

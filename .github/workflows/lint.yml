@@ -27,6 +27,26 @@ jobs:
       - name: Run RuboCop
         run: bin/lint
 
+  steep:
+    name: Steep
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: apps/ehr-api
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version-file: apps/ehr-api/.ruby-version
+          bundler-cache: true
+          working-directory: apps/ehr-api
+
+      - name: Run Steep type check
+        run: bin/typecheck
+
   eslint:
     name: ESLint
     runs-on: ubuntu-latest
