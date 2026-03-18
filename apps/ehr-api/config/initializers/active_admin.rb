@@ -325,11 +325,15 @@ ActiveAdmin.setup do |config|
   # config.head = ''.html_safe
 
   # == Footer
-  #
-  # By default, the footer shows the current Active Admin version. You can
-  # override the content of the footer here.
-  #
-  # config.footer = 'my custom footer text'
+  config.footer = proc do
+    para do
+      strong { "EHR Portal" }
+      text_node " \u00A92026 "
+      a "Stan Carver II", href: "https://stancarver.com", target: "_blank"
+      text_node " \u2022 #{Time.current.strftime('%Y-%m-%d %H:%M')}"
+      text_node " \u2022 #{ENV.fetch('GIT_SHA', 'dev')}"
+    end
+  end
 
   # == Sorting
   #
