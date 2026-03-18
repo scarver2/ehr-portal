@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# apps/ehr-portal/bin/update
+#
+# Usage:
+#   bin/update           # interactive menu
+#   bin/update bun       # upgrade Bun via Homebrew
+#   bin/update packages  # bun update
+#   bin/update all       # bun + packages
+
+source "$(dirname "$0")/_lib.sh"
+
+update_bun() {
+  info "Upgrading Bun..."
+  brew upgrade bun
+  success "Bun upgraded"
+}
+
+update_packages() {
+  info "Updating packages..."
+  bun update
+  success "Packages updated"
+}
+
+run_update() {
+  case "$1" in
+    bun)      update_bun ;;
+    packages) update_packages ;;
+    all)
+      update_bun
+      update_packages
+      ;;
+    *) abort "Unknown target: $1" ;;
+  esac
+}
+
+if [[ $# -gt 0 ]]; then
+  run_update "$1"
+else
+  selection=$(select_menu "Select what to update:" "bun" "packages" "all")
+  run_update "$selection"
+fi
