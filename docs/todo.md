@@ -13,7 +13,8 @@
 - [x] Docker compose configuration
 - [x] PostgreSQL container
 - [ ] Redis container
-- [x] Development helper scripts (`bin/dev`)
+- [x] Development helper scripts (`bin/dev`, `bin/bootstrap`)
+- [x] Overmind as process manager (consistent across root and all apps)
 - [x] Environment variable configuration
 
 ## Phase 3 — Application Scaffolding
@@ -132,6 +133,7 @@
 - [x] ESLint for linting (`bun lint`)
 - [x] Honeybadger error monitoring (browser, edge, and server configs)
 - [x] `bin/steps/` guided build scripts for reproducible project setup
+- [x] `bin/bootstrap` step runner with range and from-step support (`10-20`, `10+`)
 - [ ] Storybook for UI component development
 - [ ] Vitest coverage reporting
 

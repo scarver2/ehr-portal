@@ -9,6 +9,21 @@ _My ruminations while turning this idea into a working application._
 Scripts in `bin/` and `bin/steps/` drive the guided build of the entire project.
 
 ```bash
+bin/dev                          # Start full stack (Docker + all processes via Overmind)
+bin/bootstrap                    # Guided project build (prompts for confirmation)
+bin/bootstrap run                # Run all steps without prompt
+bin/bootstrap list               # List available steps
+bin/bootstrap graph              # Show step dependency graph
+bin/bootstrap doctor             # Check environment prerequisites
+bin/bootstrap reset              # Clear pipeline state
+bin/bootstrap 20                 # Run a specific step
+bin/bootstrap 10-20              # Run steps 10 through 20 (inclusive)
+bin/bootstrap 10+                # Run steps from 10 to end
+```
+
+### bin/steps
+
+```bash
 bin/steps/00_started.sh          # Prerequisites check
 bin/steps/01_env.sh              # Environment variables
 bin/steps/02_docker.sh           # Docker Compose setup
@@ -45,7 +60,7 @@ bin/steps/99_finished.sh         # Final checklist
 ### ehr-api (`apps/ehr-api/bin/`)
 
 ```bash
-bin/dev        # Start the Rails development server via Foreman
+bin/dev        # Start the Rails API development server via Overmind
 bin/guard      # Run Guard for TDD (RSpec + RuboCop watch mode)
 bin/lint       # Run RuboCop
 bin/security   # Run Brakeman static analysis
