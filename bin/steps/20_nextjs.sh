@@ -56,6 +56,22 @@ NEXT_PUBLIC_API_URL="http://localhost:3000/" PORT=3001 bun dev "$@"
 EOF
 chmod +x apps/ehr-portal/bin/dev
 
+cat << 'EOF' > apps/ehr-portal/bin/lint
+#!/usr/bin/env bash
+# apps/ehr-portal/bin/lint
+#
+# Usage:
+#   bin/lint                        # default lint report
+#   bin/lint --fix                  # apply auto-fixes
+
+source "$(dirname "$0")/_lib.sh"
+
+require_command bun
+
+exec bunx next lint "$@"
+EOF
+chmod +x apps/ehr-portal/bin/lint
+
 cat << 'EOF' > apps/ehr-portal/bin/test
 #!/usr/bin/env bash
 # apps/ehr-portal/bin/test
