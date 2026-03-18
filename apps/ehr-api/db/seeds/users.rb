@@ -1,0 +1,17 @@
+# apps/ehr-api/db/seeds/users.rb
+# frozen_string_literal: true
+
+Rails.logger.debug "Creating seed Users..."
+
+[
+  { email: "admin@example.com",    role: :admin    },
+  { email: "provider@example.com", role: :provider },
+  { email: "staff@example.com",    role: :staff    },
+  { email: "patient@example.com",  role: :patient  }
+].each do |attrs|
+  User.find_or_create_by!(email: attrs[:email]) do |u|
+    u.role                 = attrs[:role]
+    u.password             = "password"
+    u.password_confirmation = "password"
+  end
+end
