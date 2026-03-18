@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# apps/ehr-api/bin/coverage
+# Run the RSpec test suite with SimpleCov coverage reporting.
+# Coverage is always active (SimpleCov starts in spec_helper.rb); this script
+# makes the intent explicit and opens the HTML report when run locally.
+#
+# Examples:
+#   bin/coverage                                        # run all specs + open report
+#   bin/coverage spec/models/provider_spec.rb           # single file + open report
+
+source "$(dirname "$0")/_lib.sh"
+
+bundle exec rspec "$@"
+
+if [[ -f coverage/index.html ]] && command -v open &>/dev/null; then
+  open coverage/index.html
+fi

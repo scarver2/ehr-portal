@@ -122,11 +122,18 @@ bundle add simplecov --group "development, test"
 cat << 'EOF' > .simplecov
 # frozen_string_literal: true
 
-SimpleCov.external_at_exit = true
-
-SimpleCov.start do
-  add_filter 'test'
+# This file is auto-loaded by SimpleCov.start in spec/spec_helper.rb.
+# Use SimpleCov.configure (not SimpleCov.start) here to avoid a double-start.
+SimpleCov.configure do
   enable_coverage_for_eval
+  minimum_coverage 80
+
+  # Exclude graphql-ruby generated boilerplate that ships with every new schema.
+  # These Base* stubs, the schema wiring, and the generated controller contain no
+  # app-specific logic and will never hit 100% without meaningless tests.
+  add_filter %r{/graphql/(types|mutations|resolvers)/base_}
+  add_filter "/graphql/ehr_api_schema.rb"
+  add_filter "/controllers/graphql_controller.rb"
 end
 EOF
 # TODO: add SimpleCov to spec_helper.rb
@@ -389,6 +396,27 @@ source "$(dirname "$0")/_lib.sh"
 exec bundle exec rspec "$@"
 EOF
 chmod +x bin/test
+
+cat << 'EOF' > bin/coverage
+#!/usr/bin/env bash
+# apps/ehr-api/bin/coverage
+# Run the RSpec test suite with SimpleCov coverage reporting.
+# Coverage is always active (SimpleCov starts in spec_helper.rb); this script
+# makes the intent explicit and opens the HTML report when run locally.
+#
+# Examples:
+#   bin/coverage                                        # run all specs + open report
+#   bin/coverage spec/models/provider_spec.rb           # single file + open report
+
+source "$(dirname "$0")/_lib.sh"
+
+bundle exec rspec "$@"
+
+if [[ -f coverage/index.html ]] && command -v open &>/dev/null; then
+  open coverage/index.html
+fi
+EOF
+chmod +x bin/coverage
 
 cat << 'EOF' > bin/outdated
 #!/usr/bin/env bash
