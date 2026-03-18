@@ -32,3 +32,21 @@ info "Generating Patient connection..."
 bin/rails generate graphql:connection Patient
 
 # TODO: add Patient specs
+
+info "Adding Patient RBS type signature..."
+cat << 'EOF' > sig/app/models/patient.rbs
+# sig/app/models/patient.rbs
+# Column types derived from db/schema.rb (patients table).
+# AR generates attribute accessors dynamically; attr_accessor syntax avoids
+# Ruby::MethodDefinitionMissing under all_error.
+
+class Patient < ApplicationRecord
+  attr_accessor id: ::Integer
+  attr_accessor code: ::String?
+  attr_accessor description: ::String?
+  attr_accessor created_at: ::Time
+  attr_accessor updated_at: ::Time
+
+  def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]
+end
+EOF

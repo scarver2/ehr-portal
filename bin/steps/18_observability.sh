@@ -42,3 +42,30 @@ bundle exec honeybadger install "${HONEYBADGER_API_KEY:?HONEYBADGER_API_KEY must
 #     environment:
 #       HONEYBADGER_API_KEY: ${HONEYBADGER_API_KEY}
 # EOF
+
+info "Adding Honeybadger RBS shim..."
+cat << 'EOF' > sig/shims/honeybadger.rbs
+# sig/shims/honeybadger.rbs
+# Minimal stubs for Honeybadger error-tracking methods.
+# Remove once honeybadger-ruby ships official RBS definitions.
+
+module Honeybadger
+  def self.context: (**untyped pairs) -> void
+  def self.notify: (untyped exception_or_message, **untyped opts) -> void
+end
+EOF
+
+# Overwrite with full application_controller sig now that all methods are known:
+# current_user from Devise (step 14), set_honeybadger_context from this step.
+cat << 'EOF' > sig/app/controllers/application_controller.rbs
+# sig/app/controllers/application_controller.rbs
+
+class ApplicationController < ActionController::Base
+  # Provided by Devise — returns the currently authenticated User or nil.
+  def current_user: () -> ::User?
+
+  private
+
+  def set_honeybadger_context: () -> void
+end
+EOF

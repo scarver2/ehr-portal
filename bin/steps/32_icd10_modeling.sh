@@ -32,3 +32,21 @@ info "Generating ICD10 connection..."
 bin/rails generate graphql:connection Icd10
 
 # TODO: add ICD10 specs
+
+info "Adding Icd10 RBS type signature..."
+cat << 'EOF' > sig/app/models/icd10.rbs
+# sig/app/models/icd10.rbs
+# Column types derived from db/schema.rb (icd10s table).
+# AR generates attribute accessors dynamically; attr_accessor syntax avoids
+# Ruby::MethodDefinitionMissing under all_error.
+
+class Icd10 < ApplicationRecord
+  attr_accessor id: ::Integer
+  attr_accessor code: ::String?
+  attr_accessor description: ::String?
+  attr_accessor created_at: ::Time
+  attr_accessor updated_at: ::Time
+
+  def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]
+end
+EOF

@@ -54,3 +54,37 @@ info "Generating Provider type in GraphQL..."
 bin/rails generate graphql:object Provider
 
 # TODO: add Provider specs
+
+info "Adding Provider RBS type signature..."
+cat << 'EOF' > sig/app/models/provider.rbs
+# sig/app/models/provider.rbs
+# Column types derived from db/schema.rb (providers table).
+# AR generates attribute accessors dynamically; attr_accessor syntax avoids
+# Ruby::MethodDefinitionMissing under all_error. Predicate methods (_?) are
+# omitted — they exist at runtime but cannot be declared without triggering
+# the same diagnostic.
+
+class Provider < ApplicationRecord
+  attr_accessor id: ::Integer
+  attr_accessor first_name: ::String?
+  attr_accessor last_name: ::String?
+  attr_accessor npi: ::String?
+  attr_accessor specialty: ::String?
+  attr_accessor clinic_name: ::String?
+  attr_accessor created_at: ::Time
+  attr_accessor updated_at: ::Time
+
+  def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]
+end
+EOF
+
+info "Adding Provider GraphQL type signature..."
+cat << 'EOF' > sig/app/graphql/types/provider_type.rbs
+# sig/app/graphql/types/provider_type.rbs
+
+module Types
+  class ProviderType < Types::BaseObject
+    def full_name: () -> ::String
+  end
+end
+EOF
