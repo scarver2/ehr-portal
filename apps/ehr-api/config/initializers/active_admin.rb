@@ -326,12 +326,13 @@ ActiveAdmin.setup do |config|
 
   # == Footer
   config.footer = proc do
+    build_ref = [ENV.fetch("GIT_BRANCH", nil), ENV.fetch("GIT_SHA", nil)].compact.presence&.join(" ") || "dev"
     para do
       strong { "EHR Portal" }
       text_node " \u00A92026 "
       a "Stan Carver II", href: "https://stancarver.com", target: "_blank"
+      text_node " \u2022 #{build_ref}"
       text_node " \u2022 #{Time.current.strftime('%Y-%m-%d %H:%M')}"
-      text_node " \u2022 #{ENV.fetch('GIT_SHA', 'dev')}"
     end
   end
 

@@ -20,6 +20,9 @@ ENV RAILS_ENV=production \
 ############################
 FROM base AS build
 
+ARG GIT_SHA=dev
+ARG GIT_BRANCH=dev
+
 # Install build dependencies
 RUN apt-get update -qq && \
   apt-get install -y --no-install-recommends \
@@ -59,11 +62,16 @@ FROM ruby:4.0.2-slim AS runtime
 
 WORKDIR /app
 
+ARG GIT_SHA=dev
+ARG GIT_BRANCH=dev
+
 ENV RAILS_ENV=production \
   BUNDLE_DEPLOYMENT=1 \
   BUNDLE_PATH=/usr/local/bundle \
   BUNDLE_WITHOUT="development test" \
-  PATH="/usr/local/bundle/bin:${PATH}"
+  PATH="/usr/local/bundle/bin:${PATH}" \
+  GIT_SHA=$GIT_SHA \
+  GIT_BRANCH=$GIT_BRANCH
 
 # Install runtime dependencies only
 RUN apt-get update -qq && \
