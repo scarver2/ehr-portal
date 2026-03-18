@@ -21,6 +21,9 @@ AllCops:
     - 'tmp/**/*'
     - 'vendor/**/*'
 
+Style/IfUnlessModifier:
+  Enabled: false
+
 # Base classes are internal plumbing, not consumer-facing API types.
 GraphQL/ObjectDescription:
   Exclude:

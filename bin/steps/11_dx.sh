@@ -14,6 +14,7 @@ check "bundle"
 check "rails"
 check "curl"
 check "git"
+require_command "overmind"
 
 info "Creating Rails API..."
 
@@ -106,19 +107,23 @@ info "Adding Procfile.dev..."
 cat << 'EOF' > Procfile.dev
 # apps/ehr-api/Procfile.dev
 web: bin/rails server -p 3000
+css: bin/rails dartsass:watch
+guard: bin/guard
 EOF
 
 info "Overwriting bin/dev..."
 cat << 'EOF' > bin/dev
 #!/usr/bin/env bash
 # apps/ehr-api/bin/dev
+# Starts the Rails API development server via Overmind.
+# Run from the repo root with bin/dev for the full stack.
 
-if ! gem list foreman -i --silent; then
-  echo "Installing foreman..."
-  gem install foreman
+if ! command -v overmind &>/dev/null; then
+  echo "Overmind is not installed. Install it with: brew install overmind"
+  exit 1
 fi
 
-exec foreman start -f Procfile.dev "$@"
+exec overmind start -f Procfile.dev "$@"
 EOF
 
 info "Adding Brakeman..."
@@ -139,8 +144,17 @@ cat << 'EOF' > Guardfile
 
 clearing :on
 
+# ── Bundler ────────────────────────────────────────────────────────────────
+# Runs `bundle install` automatically when Gemfile changes.
+# bundler_output_as_trigger: false prevents Gemfile.lock updates from re-firing.
+guard :bundler, bundler_output_as_trigger: false do
+  watch("Gemfile")
+end
+
 # ── RuboCop ────────────────────────────────────────────────────────────────
-guard :rubocop, all_on_start: false, cli: %w[--format fuubar --display-cop-names] do
+# --no-color suppresses ANSI cursor-position probes that leak as escape
+# sequences (^[[32;2R) when Guard runs inside Overmind/Foreman pipes.
+guard :rubocop, all_on_start: false, cli: %w[--format fuubar --display-cop-names --no-color] do
   watch(/.+\.rb$/)
   watch(%r{(?:.+/)?\.rubocop(?:_todo)?\.yml$}) { |m| File.dirname(m[0]) }
 end
@@ -180,12 +194,6 @@ EOF
 cat << 'EOF' > bin/guard
 #!/usr/bin/env bash
 set -euo pipefail
-
-# Point at the containerized Postgres used in development
-export DB_HOST=localhost
-export DB_PORT=5433
-export DB_USER=postgres
-export DB_PASSWORD=postgres
 
 exec bundle exec guard "$@"
 EOF

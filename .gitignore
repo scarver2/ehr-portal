@@ -1,3 +1,5 @@
 # .gitignore
 
 .kamal/secrets*
+
+apps/ehr-api/.rbs_collection

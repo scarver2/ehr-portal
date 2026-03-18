@@ -16,6 +16,9 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "rack-cors"
 
 group :development do
+  # https://github.com/rmosolgo/graphiql-rails
+  gem "graphiql-rails",    "~> 1.10"
+
   # https://github.com/BetterErrors/better_errors
   gem "better_errors",     "~> 2.10"
 
