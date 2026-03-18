@@ -1,0 +1,44 @@
+# sig/app/models/provider.rbs
+# Column types derived from db/schema.rb (providers table).
+
+class Provider < ApplicationRecord
+  # id (bigint, not null)
+  def id: () -> ::Integer
+  def id=: (::Integer val) -> ::Integer
+  def id?: () -> bool
+
+  # first_name (string, nullable)
+  def first_name: () -> ::String?
+  def first_name=: (::String? val) -> ::String?
+  def first_name?: () -> bool
+
+  # last_name (string, nullable)
+  def last_name: () -> ::String?
+  def last_name=: (::String? val) -> ::String?
+  def last_name?: () -> bool
+
+  # npi (string, nullable)
+  def npi: () -> ::String?
+  def npi=: (::String? val) -> ::String?
+  def npi?: () -> bool
+
+  # specialty (string, nullable)
+  def specialty: () -> ::String?
+  def specialty=: (::String? val) -> ::String?
+  def specialty?: () -> bool
+
+  # clinic_name (string, nullable)
+  def clinic_name: () -> ::String?
+  def clinic_name=: (::String? val) -> ::String?
+  def clinic_name?: () -> bool
+
+  # created_at (datetime, not null)
+  def created_at: () -> ::Time
+  def created_at=: (::Time val) -> ::Time
+
+  # updated_at (datetime, not null)
+  def updated_at: () -> ::Time
+  def updated_at=: (::Time val) -> ::Time
+
+  def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]
+end

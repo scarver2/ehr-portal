@@ -1,0 +1,33 @@
+# apps/ehr-api/Steepfile
+# https://github.com/soutaro/steep
+
+D = Steep::Diagnostic
+
+# All application targets share the same sig/ tree (including sig/shims/).
+# Strictness: lenient — allows untyped chains from gems without RBS yet
+# (graphql-ruby, devise, honeybadger). Tighten to D::Ruby.all_error once
+# upstream gems ship complete type definitions.
+
+target :models do
+  signature "sig"
+
+  check "app/models"
+
+  configure_code_diagnostics(D::Ruby.lenient)
+end
+
+target :controllers do
+  signature "sig"
+
+  check "app/controllers"
+
+  configure_code_diagnostics(D::Ruby.lenient)
+end
+
+target :graphql do
+  signature "sig"
+
+  check "app/graphql"
+
+  configure_code_diagnostics(D::Ruby.lenient)
+end

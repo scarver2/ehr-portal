@@ -1,0 +1,6 @@
+# sig/app/graphql/types/base_field.rbs
+
+module Types
+  class BaseField < GraphQL::Schema::Field
+  end
+end

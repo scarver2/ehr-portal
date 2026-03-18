@@ -1,0 +1,6 @@
+# sig/app/graphql/resolvers/base_resolver.rbs
+
+module Resolvers
+  class BaseResolver < GraphQL::Schema::Resolver
+  end
+end

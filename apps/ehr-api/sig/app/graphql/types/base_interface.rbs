@@ -1,0 +1,7 @@
+# sig/app/graphql/types/base_interface.rbs
+
+module Types
+  module BaseInterface
+    include GraphQL::Schema::Interface
+  end
+end

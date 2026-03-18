@@ -1,0 +1,22 @@
+# sig/shims/devise.rbs
+# Minimal stubs for Devise authentication helpers.
+# Remove once devise ships official RBS definitions.
+
+module Devise
+  module Models
+    module DatabaseAuthenticatable
+    end
+
+    module Registerable
+    end
+
+    module Recoverable
+    end
+
+    module Rememberable
+    end
+
+    module Validatable
+    end
+  end
+end

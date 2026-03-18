@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# apps/ehr-api/bin/typecheck
+# Install the RBS collection then run Steep type checking.
+#
+# Examples:
+#   bin/typecheck                  # check all targets
+#   bin/typecheck --log-level=info # verbose output
+
+set -euo pipefail
+
+bundle exec rbs collection install
+exec bundle exec steep check "$@"

@@ -1,0 +1,42 @@
+# apps/ehr-api/rbs_collection.yaml
+# Declares sources for third-party RBS type definitions.
+# Run `bundle exec rbs collection install` to fetch into .rbs_collection/.
+# Commit rbs_collection.yaml.lock; gitignore .rbs_collection/.
+
+sources:
+  - type: git
+    name: ruby/gem_rbs_collection
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    revision: main
+    path: gems
+
+path: .rbs_collection
+
+gems:
+  # Rails / Rack — RBS bundled in gems and/or in gem_rbs_collection
+  - name: actionpack
+  - name: activesupport
+  - name: railties
+  - name: rack
+
+  # No RBS available; shimmed in sig/shims/ instead
+  - name: activeadmin
+    ignore: true
+  - name: bootsnap
+    ignore: true
+  - name: devise
+    ignore: true
+  - name: factory_bot_rails
+    ignore: true
+  - name: graphql
+    ignore: true
+  - name: honeybadger
+    ignore: true
+  - name: propshaft
+    ignore: true
+  - name: rspec-rails
+    ignore: true
+  - name: simplecov
+    ignore: true
+  - name: solid_queue
+    ignore: true
