@@ -68,7 +68,7 @@ source "$(dirname "$0")/_lib.sh"
 
 require_command bun
 
-exec bunx next lint "$@"
+exec bunx next lint . "$@"
 EOF
 chmod +x apps/ehr-portal/bin/lint
 
