@@ -3,10 +3,8 @@
 
 require 'rails_helper'
 
-RSpec.describe 'GraphiQL route' do
-  describe 'GET /graphiql' do
-    it 'is not routable in the test environment (production guard)' do
-      expect { get '/graphiql' }.to raise_error(ActionController::RoutingError)
-    end
+RSpec.describe 'GraphiQL route', type: :routing do
+  it 'is not routable outside the development environment' do
+    expect(get: '/graphiql').not_to be_routable
   end
 end
