@@ -1,4 +1,4 @@
-# EHR Portal Notes
+# EHR Portal Developer Notes
 
 _My ruminations while turning this idea into a working application._
 
