@@ -20,4 +20,5 @@ unset _f
 # Auto-banner for root-level scripts.
 # App-level _lib.sh files set _EHR_APP_CONTEXT=1 before sourcing this,
 # then call banner themselves after correcting COMMAND_NAME and APP_DIR.
-[[ -z "${_EHR_APP_CONTEXT:-}" ]] && banner
+# Uses if rather than [[ ]] && to avoid a false-condition exit under set -e.
+if [[ -z "${_EHR_APP_CONTEXT:-}" ]]; then banner; fi
