@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# apps/ehr-portal/bin/coverage
+# Run unit tests with code coverage.
+#
+# Usage:
+#   bin/coverage              # run all tests with coverage report
+#   bin/coverage --ui         # open coverage in browser UI
+
+source "$(dirname "$0")/_lib.sh"
+
+require_command bun
+
+exec bunx vitest run --coverage "$@"

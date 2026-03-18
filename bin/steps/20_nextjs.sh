@@ -148,6 +148,26 @@ fi
 EOF
 chmod +x apps/ehr-portal/bin/update
 
+cat << 'EOF' > apps/ehr-portal/bin/coverage
+#!/usr/bin/env bash
+# apps/ehr-portal/bin/coverage
+# Run unit tests with code coverage.
+#
+# Usage:
+#   bin/coverage              # run all tests with coverage report
+#   bin/coverage --ui         # open coverage in browser UI
+
+source "$(dirname "$0")/_lib.sh"
+
+require_command bun
+
+exec bunx vitest run --coverage "$@"
+EOF
+chmod +x apps/ehr-portal/bin/coverage
+
+# Install coverage provider
+bun add --cwd apps/ehr-portal -d @vitest/coverage-v8
+
 # Update app metadata
 cat << 'EOF' > apps/ehr-portal/src/app/layout.tsx
 import type { Metadata } from "next";
