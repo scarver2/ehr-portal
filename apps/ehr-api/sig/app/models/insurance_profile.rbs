@@ -1,0 +1,5 @@
+class InsuranceProfile < ApplicationRecord
+  def user: () -> ::User
+  def payer: () -> ::Payer?
+  def insurance_verifications: () -> ::ActiveRecord::Associations::CollectionProxy
+end

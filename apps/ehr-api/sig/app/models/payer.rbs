@@ -1,0 +1,4 @@
+class Payer < ApplicationRecord
+  def self.active: () -> ::ActiveRecord::Relation
+  def simulated_latency: () -> ::Float
+end

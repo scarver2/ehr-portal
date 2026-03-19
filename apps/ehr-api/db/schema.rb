@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_19_070005) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_19_071215) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -58,6 +58,46 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_070005) do
     t.index ["provider_id"], name: "index_encounters_on_provider_id"
   end
 
+  create_table "insurance_profiles", force: :cascade do |t|
+    t.decimal "copay"
+    t.datetime "created_at", null: false
+    t.decimal "deductible"
+    t.string "member_id"
+    t.decimal "oop_max"
+    t.bigint "payer_id", null: false
+    t.string "payer_name"
+    t.jsonb "raw_response", default: {}
+    t.string "status", default: "pending"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.datetime "verified_at"
+    t.index ["payer_id"], name: "index_insurance_profiles_on_payer_id"
+    t.index ["user_id"], name: "index_insurance_profiles_on_user_id"
+  end
+
+  create_table "insurance_verifications", force: :cascade do |t|
+    t.integer "copay_cents"
+    t.datetime "created_at", null: false
+    t.integer "deductible_cents"
+    t.text "error_message"
+    t.datetime "expires_at"
+    t.string "external_reference"
+    t.bigint "insurance_profile_id", null: false
+    t.integer "oop_max_cents"
+    t.string "payer_name"
+    t.string "plan_name"
+    t.jsonb "raw_response", default: {}, null: false
+    t.string "request_uuid", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.datetime "verified_at"
+    t.index ["insurance_profile_id"], name: "index_insurance_verifications_on_insurance_profile_id"
+    t.index ["request_uuid"], name: "index_insurance_verifications_on_request_uuid", unique: true
+    t.index ["status"], name: "index_insurance_verifications_on_status"
+    t.index ["user_id"], name: "index_insurance_verifications_on_user_id"
+  end
+
   create_table "patients", force: :cascade do |t|
     t.string "address"
     t.datetime "created_at", null: false
@@ -76,6 +116,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_070005) do
     t.index ["mrn"], name: "index_patients_on_mrn", unique: true
     t.index ["searchable_name"], name: "index_patients_on_searchable_name", using: :gin
     t.index ["user_id"], name: "index_patients_on_user_id", unique: true
+  end
+
+  create_table "payers", force: :cascade do |t|
+    t.boolean "active"
+    t.string "api_endpoint"
+    t.string "clearinghouse"
+    t.datetime "created_at", null: false
+    t.jsonb "metadata"
+    t.string "name"
+    t.string "payer_code"
+    t.boolean "requires_auth"
+    t.integer "response_time_ms"
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_payers_on_active"
+    t.index ["payer_code"], name: "index_payers_on_payer_code", unique: true
   end
 
   create_table "providers", force: :cascade do |t|
@@ -132,6 +187,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_070005) do
   add_foreign_key "diagnoses", "encounters"
   add_foreign_key "encounters", "patients"
   add_foreign_key "encounters", "providers"
+  add_foreign_key "insurance_profiles", "payers"
+  add_foreign_key "insurance_profiles", "users"
+  add_foreign_key "insurance_verifications", "insurance_profiles"
+  add_foreign_key "insurance_verifications", "users"
   add_foreign_key "patients", "users"
   add_foreign_key "providers", "specialties"
   add_foreign_key "providers", "users"

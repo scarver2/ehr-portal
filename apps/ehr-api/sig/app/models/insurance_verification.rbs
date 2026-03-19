@@ -1,0 +1,34 @@
+class InsuranceVerification < ApplicationRecord
+  include AASM
+
+  def user: () -> ::User
+  def insurance_profile: () -> ::InsuranceProfile
+  def broadcast!: () -> void
+
+  def pending?: () -> bool
+  def queued?: () -> bool
+  def requesting?: () -> bool
+  def parsing?: () -> bool
+  def verified?: () -> bool
+  def failed?: () -> bool
+  def expired?: () -> bool
+  def canceled?: () -> bool
+
+  def may_enqueue?: () -> bool
+  def may_start_request?: () -> bool
+  def may_start_parsing?: () -> bool
+  def may_mark_verified?: () -> bool
+  def may_mark_failed?: () -> bool
+  def may_mark_expired?: () -> bool
+  def may_cancel?: () -> bool
+
+  def enqueue!: () -> void
+  def start_request!: () -> void
+  def start_parsing!: () -> void
+  def mark_verified!: () -> void
+  def mark_failed!: () -> void
+  def mark_expired!: () -> void
+  def cancel!: () -> void
+
+  def with_lock: () { () -> void } -> void
+end

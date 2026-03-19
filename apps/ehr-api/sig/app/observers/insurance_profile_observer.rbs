@@ -1,0 +1,3 @@
+class InsuranceProfileObserver < ActiveRecord::Observer
+  def after_create: (::InsuranceProfile profile) -> void
+end
