@@ -5,4 +5,4 @@ api:    cd apps/ehr-api    && bin/rails server -p 3000
 css:    cd apps/ehr-api    && bin/rails dartsass:watch
 sidekiq: cd apps/ehr-api   && bundle exec sidekiq -C config/sidekiq.yml
 portal: bin/wait-for http://localhost:3000/api/up && cd apps/ehr-portal && bin/dev
-guard:  cd apps/ehr-api    && bin/guard
+# guard:  cd apps/ehr-api    && bin/guard  # Disabled: encoding issue. Run `bin/test` manually instead.
