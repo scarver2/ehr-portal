@@ -9,7 +9,13 @@ module Api
         # JWT is stateless — no CSRF token needed for these endpoints
         skip_before_action :verify_authenticity_token
 
+        before_action :configure_sign_in_params, only: :create
+
         private
+
+        def configure_sign_in_params
+          devise_parameter_sanitizer.permit(:sign_in, keys: [:email, :password])
+        end
 
         # Called on successful sign-in. The JWT is emitted automatically by
         # devise-jwt in the Authorization response header.
