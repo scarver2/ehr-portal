@@ -38,9 +38,6 @@ module EhrApi
     # Background jobs via Sidekiq
     config.active_job.queue_adapter = :sidekiq
 
-    # ActiveRecord observers
-    config.active_record.observers = :insurance_profile_observer
-
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.

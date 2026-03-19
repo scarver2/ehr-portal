@@ -1,9 +1,0 @@
-# sig/shims/rails_observers.rbs
-# Minimal stub for the rails-observers gem.
-# Remove once rails-observers ships official RBS definitions.
-
-module ActiveRecord
-  class Observer
-    def self.observe: (*untyped) -> void
-  end
-end

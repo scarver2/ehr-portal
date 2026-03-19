@@ -8,4 +8,18 @@ class InsuranceProfile < ApplicationRecord
   has_many :insurance_verifications, dependent: :destroy
 
   validates :member_id, :payer_name, presence: true
+
+  after_create_commit :trigger_verification
+
+  private
+
+  def trigger_verification
+    verification = user.insurance_verifications.create!(
+      insurance_profile: self,
+      payer_name:        payer_name
+    )
+    verification.enqueue!
+    verification.broadcast!
+    InsuranceVerificationWorker.perform_async(verification.id)
+  end
 end

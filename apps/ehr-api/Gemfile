@@ -45,9 +45,6 @@ gem "sidekiq", "~> 7.0"
 # https://github.com/aasm/aasm
 gem "aasm", "~> 5.5"
 
-# https://github.com/rails/rails-observers
-gem "rails-observers", "~> 0.1"
-
 # https://github.com/redis/redis-rb
 gem "redis", "~> 5.0"
 
