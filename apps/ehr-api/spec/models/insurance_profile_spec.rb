@@ -50,9 +50,9 @@ RSpec.describe InsuranceProfile, type: :model do
     before { allow(InsuranceVerificationChannel).to receive(:broadcast_to) }
 
     it "creates an InsuranceVerification" do
-      expect {
+      expect do
         create(:insurance_profile, user: user, payer: payer)
-      }.to change(InsuranceVerification, :count).by(1)
+      end.to change(InsuranceVerification, :count).by(1)
     end
 
     it "enqueues an InsuranceVerificationWorker job" do
