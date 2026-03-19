@@ -6,8 +6,12 @@
 # the same diagnostic.
 # Devise runtime methods (valid_password?, authenticate, etc.) remain untyped
 # until devise ships official RBS definitions.
+# devise-jwt: JwtAuthenticatable mixin adds token dispatch/revocation at the
+# Warden level; no instance methods need to be declared here.
 
 class User < ApplicationRecord
+  include Devise::Models::JwtAuthenticatable
+
   attr_accessor id: ::Integer
   attr_accessor email: ::String
   attr_accessor encrypted_password: ::String
