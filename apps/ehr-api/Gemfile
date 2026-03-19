@@ -45,9 +45,6 @@ gem "sidekiq", "~> 8.0"
 # https://github.com/aasm/aasm
 gem "aasm", "~> 5.5"
 
-# https://github.com/redis/redis-rb
-gem "redis", "~> 5.0"
-
 # https://github.com/tzinfo/tzinfo-data
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
