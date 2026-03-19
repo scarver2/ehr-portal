@@ -10,7 +10,11 @@ const nextConfig: NextConfig = {
   // custom webpack config exists (added by setupHoneybadger below) but no
   // turbopack config is present. Source-map upload is disabled outside of
   // production so the webpack plugin is a no-op during dev/test either way.
-  turbopack: {},
+  turbopack: {
+    // Monorepo has multiple bun.lock files; pin the root to this app so
+    // Turbopack doesn't pick up the workspace-level lockfile by mistake.
+    root: __dirname,
+  },
 }
 
 // Wraps the Next.js webpack config to upload source maps to Honeybadger at

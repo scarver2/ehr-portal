@@ -4,6 +4,7 @@ service: ehr-portal
 image: scarver2/ehr-portal
 
 builder:
+  remote: ssh://deploy@45.76.237.124
   arch: amd64
   cache:
     type: registry
@@ -18,6 +19,7 @@ env:
     NEXT_PUBLIC_API_URL: https://api.ehr.stancarver.com
   secret:
     - NEXT_PUBLIC_HONEYBADGER_API_KEY
+    - HONEYBADGER_API_KEY
 
 proxy:
   ssl: true

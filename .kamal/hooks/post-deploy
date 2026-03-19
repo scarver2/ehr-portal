@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # .kamal/hooks/post-deploy
 # Runs on the server after each successful deployment.
+#
+# NOTE: db:reset is intentional. This project intentionally wipes and rebuilds
+# the database on every deploy during active schema development. Do not change
+# db:reset to db:migrate without explicit approval from the project owner.
 
 set -euo pipefail
 
@@ -14,7 +18,21 @@ esac
 
 # Database tasks only apply to the Rails API; the portal has no bin/rails.
 if [[ "$SERVICE" == "ehr-api" ]]; then
-  # TODO: switch db:reset to db:migrate when schema is stabilized
+  # NOTE: db:reset is intentional. This project intentionally wipes and rebuilds
+  # the database on every deploy during active schema development. Do not change
+  # db:reset to db:migrate without explicit approval from the project owner.
   kamal app exec --reuse -c "$CONFIG" -- env DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bin/rails db:reset
   kamal app exec --reuse -c "$CONFIG" -- bin/rails db:seed
+fi
+
+# Notify Honeybadger of the deployment so it can correlate errors with releases.
+# Uses the honeybadger gem inside the ehr-api container where HONEYBADGER_API_KEY
+# is injected by Kamal. That variable is NOT available in this hook's local shell,
+# so we wrap the command in sh -c and escape the dollar sign (\$) so the
+# container's shell expands it — not the hook's shell. KAMAL_VERSION and
+# KAMAL_PERFORMER ARE local hook vars, so they expand normally here.
+# --skip-rails-load avoids loading the full Rails stack for this one CLI call.
+if [[ "$SERVICE" == "ehr-api" ]]; then
+  DEPLOY_CMD="bundle exec honeybadger deploy --skip-rails-load --api-key \$HONEYBADGER_API_KEY --repository https://github.com/scarver2/ehr-portal --revision $KAMAL_VERSION --environment production --user $KAMAL_PERFORMER"
+  kamal app exec --reuse -c "$CONFIG" -- sh -c "$DEPLOY_CMD"
 fi

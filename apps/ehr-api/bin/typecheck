@@ -8,5 +8,5 @@
 
 source "$(dirname "$0")/_lib.sh"
 
-bundle exec rbs collection install
+bundle exec rbs collection install > /dev/null
 exec bundle exec steep check "$@"

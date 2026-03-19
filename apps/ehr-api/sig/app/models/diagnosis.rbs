@@ -1,0 +1,26 @@
+# sig/app/models/diagnosis.rbs
+
+class Diagnosis < ApplicationRecord
+  attr_accessor id:           ::Integer
+  attr_accessor encounter_id: ::Integer
+  attr_accessor icd10_code:   ::String
+  attr_accessor description:  ::String
+  attr_accessor status:       ::String
+  attr_accessor diagnosed_at: ::Time
+  attr_accessor notes:        ::String?
+  attr_accessor created_at:   ::Time
+  attr_accessor updated_at:   ::Time
+
+  # enum predicates
+  def active?:    () -> bool
+  def resolved?:  () -> bool
+  def chronic?:   () -> bool
+  def ruled_out?: () -> bool
+
+  def self.active: () -> ::ActiveRecord::Relation
+  def self.chronic: () -> ::ActiveRecord::Relation
+  def self.recent: () -> ::ActiveRecord::Relation
+  def self.by_code: (::String code) -> ::ActiveRecord::Relation
+  def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]
+  def self.ransackable_associations: (?untyped auth_object) -> ::Array[::String]
+end

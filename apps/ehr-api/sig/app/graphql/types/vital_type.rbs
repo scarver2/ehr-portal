@@ -1,0 +1,6 @@
+# sig/app/graphql/types/vital_type.rbs
+
+module Types
+  class VitalType < Types::BaseObject
+  end
+end

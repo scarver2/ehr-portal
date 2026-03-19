@@ -13,14 +13,14 @@ export const mockProviders = [
   {
     id: '1',
     fullName: 'Alice Adams',
-    specialty: 'Cardiology',
+    specialty: { id: '1', name: 'Cardiology' },
     npi: '1111111111',
     clinicName: 'Heart Clinic',
   },
   {
     id: '2',
     fullName: 'Bob Brown',
-    specialty: 'Neurology',
+    specialty: { id: '2', name: 'Neurology' },
     npi: '2222222222',
     clinicName: 'Brain Center',
   },

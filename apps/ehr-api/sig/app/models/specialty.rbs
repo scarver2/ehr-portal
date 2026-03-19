@@ -1,0 +1,14 @@
+# sig/app/models/specialty.rbs
+
+class Specialty < ApplicationRecord
+  attr_accessor id:         ::Integer
+  attr_accessor name:       ::String
+  attr_accessor category:   ::String?
+  attr_accessor created_at: ::Time
+  attr_accessor updated_at: ::Time
+
+  def self.alphabetical: () -> ::ActiveRecord::Relation
+  def self.by_category: (::String cat) -> ::ActiveRecord::Relation
+  def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]
+  def self.ransackable_associations: (?untyped auth_object) -> ::Array[::String]
+end

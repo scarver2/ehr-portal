@@ -4,7 +4,7 @@
 banner() {
   [[ "${EHR_QUIET:-0}" == "1" ]] && return
   echo ""
-  echo "EHR Portal CLI"
+  echo "⚕️ EHR Portal CLI"
   echo "Root:    $ROOT_DIR"
   [[ -n "${APP_DIR:-}" ]] && echo "App:     ${APP_DIR#"$ROOT_DIR/"}"
   echo "Command: $COMMAND_NAME"

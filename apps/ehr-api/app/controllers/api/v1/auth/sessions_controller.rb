@@ -17,7 +17,9 @@ module Api
           render json: {
             user: {
               id: resource.id,
-              email: resource.email
+              email: resource.email,
+              role: resource.role,
+              provider_id: resource.provider&.id
             }
           }, status: :ok
         end

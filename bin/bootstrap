@@ -7,8 +7,6 @@ source "$SCRIPT_DIR/_lib.sh"
 
 STEPS_DIR="$SCRIPT_DIR/steps"
 
-banner
-
 CMD="${1:-}"
 
 case "$CMD" in

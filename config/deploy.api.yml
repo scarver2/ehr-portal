@@ -4,6 +4,7 @@ service: ehr-api
 image: scarver2/ehr-api
 
 builder:
+  remote: ssh://deploy@45.76.237.124
   arch: amd64
   cache:
     type: registry
@@ -19,6 +20,8 @@ env:
     - SECRET_KEY_BASE
     - DB_USER
     - DB_PASSWORD
+    - HONEYBADGER_API_KEY
+    - REDIS_URL
   clear:
     DB_HOST: ehr-api-postgres
     DB_PORT: 5432
@@ -60,3 +63,10 @@ accessories:
         POSTGRES_DB: ehr_api_production
     directories:
       - data:/var/lib/postgresql
+
+  redis:
+    image: redis:7
+    host: 45.76.237.124
+    port: "6379:6379"
+    directories:
+      - data:/data

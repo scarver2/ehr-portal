@@ -74,7 +74,7 @@ ActiveAdmin.setup do |config|
   #
   # This setting changes the method which Active Admin calls
   # within the application controller.
-  config.authentication_method = :authenticate_admin_user!
+  config.authentication_method = :authenticate_user!
 
   # == User Authorization
   #
@@ -111,7 +111,7 @@ ActiveAdmin.setup do |config|
   #
   # This setting changes the method which Active Admin calls
   # (within the application controller) to return the currently logged in user.
-  config.current_user_method = :current_admin_user
+  config.current_user_method = :current_user
 
   # == Logging Out
   #
@@ -123,7 +123,7 @@ ActiveAdmin.setup do |config|
   # will call the method to return the path.
   #
   # Default:
-  config.logout_link_path = :destroy_admin_user_session_path
+  config.logout_link_path = :destroy_user_session_path
 
   # This setting changes the http method used when rendering the
   # link. For example :get, :delete, :put, etc..
@@ -144,7 +144,7 @@ ActiveAdmin.setup do |config|
   # This allows your users to comment on any resource registered with Active Admin.
   #
   # You can completely disable comments:
-  # config.comments = false
+  config.comments = false
   #
   # You can change the name under which comments are registered:
   # config.comments_registration_name = 'AdminComment'
@@ -170,7 +170,7 @@ ActiveAdmin.setup do |config|
   # You can add before, after and around filters to all of your
   # Active Admin resources and pages from here.
   #
-  # config.before_action :do_something_awesome
+  config.before_action :require_admin_role
 
   # == Attribute Filters
   #
@@ -246,13 +246,27 @@ ActiveAdmin.setup do |config|
 
   # == Menu System
   #
-  # In development, add a GraphiQL link to the utility navigation (top-right header).
+  # "Tools" dropdown in the main navigation:
+  #   - GraphiQL (development only) — in-browser GraphQL IDE, opens in new tab
+  #   - Honeybadger               — Insights dashboard, opens in new tab
   #
-  if Rails.env.development?
-    config.namespace :admin do |admin|
-      admin.build_menu :utility_navigation do |menu|
-        menu.add label: "GraphiQL", url: "/graphiql", html_options: { target: "_blank" }
-        admin.add_logout_button_to_menu menu
+  config.namespace :admin do |admin|
+    admin.build_menu do |menu|
+      menu.add label: "Tools", priority: 98 do |tools|
+        if Rails.env.development?
+          tools.add label:         "GraphiQL",
+                    url:           "/graphiql",
+                    priority:      1,
+                    html_options:  { target: "_blank" }
+        end
+        tools.add label:        "Honeybadger",
+                  url:          "https://app.honeybadger.io/projects/138326/insights/dashboards",
+                  priority:     2,
+                  html_options: { target: "_blank", rel: "noopener noreferrer" }
+        tools.add label:        "Sidekiq",
+                  url:          "/sidekiq",
+                  priority:     3,
+                  html_options: { target: "_blank" }
       end
     end
   end

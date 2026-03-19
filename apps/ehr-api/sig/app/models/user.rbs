@@ -1,16 +1,16 @@
 # sig/app/models/user.rbs
-# Column types derived from db/schema.rb (users table).
+# Column types derived from db/migrate (users table).
 # AR generates attribute accessors dynamically; attr_accessor syntax avoids
-# Ruby::MethodDefinitionMissing under all_error. Predicate methods (_?) are
-# omitted — they exist at runtime but cannot be declared without triggering
-# the same diagnostic.
-# Devise runtime methods (valid_password?, authenticate, etc.) remain untyped
-# until devise ships official RBS definitions.
+# Ruby::MethodDefinitionMissing under all_error. Devise runtime methods
+# (valid_password?, authenticate, etc.) remain untyped until devise ships
+# official RBS definitions. Enum predicate methods are declared explicitly.
 # devise-jwt: JwtAuthenticatable mixin adds token dispatch/revocation at the
 # Warden level; no instance methods need to be declared here.
 
 class User < ApplicationRecord
   include Devise::Models::JwtAuthenticatable
+
+  ROLES: ::Array[::String]
 
   attr_accessor id: ::Integer
   attr_accessor email: ::String
@@ -18,6 +18,20 @@ class User < ApplicationRecord
   attr_accessor reset_password_token: ::String?
   attr_accessor reset_password_sent_at: ::Time?
   attr_accessor remember_created_at: ::Time?
+  attr_accessor role: ::String
   attr_accessor created_at: ::Time
   attr_accessor updated_at: ::Time
+
+  def admin?: () -> bool
+  def provider?: () -> bool
+  def staff?: () -> bool
+  def patient?: () -> bool
+
+  # Profile associations
+  def patient: () -> ::Patient?
+  def provider: () -> ::Provider?
+  def insurance_profile: () -> ::InsuranceProfile?
+  def insurance_verifications: () -> ::ActiveRecord::Associations::CollectionProxy
+
+  def self.provider_accounts: () -> ::ActiveRecord::Relation
 end

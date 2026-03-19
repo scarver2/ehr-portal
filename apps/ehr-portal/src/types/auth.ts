@@ -4,6 +4,8 @@
 export type AuthUser = {
   id: number
   email: string
+  role: string
+  provider_id?: number
 }
 
 export type AuthState = {

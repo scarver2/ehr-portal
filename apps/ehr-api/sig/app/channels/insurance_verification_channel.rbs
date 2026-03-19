@@ -1,0 +1,3 @@
+class InsuranceVerificationChannel < ActionCable::Channel::Base
+  def self.broadcast_to: (::User, untyped) -> void
+end

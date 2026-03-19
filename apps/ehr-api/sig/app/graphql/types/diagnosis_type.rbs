@@ -1,0 +1,6 @@
+# sig/app/graphql/types/diagnosis_type.rbs
+
+module Types
+  class DiagnosisType < Types::BaseObject
+  end
+end

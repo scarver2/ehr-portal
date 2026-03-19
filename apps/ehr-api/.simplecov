@@ -12,4 +12,7 @@ SimpleCov.configure do
   add_filter %r{/graphql/(types|mutations|resolvers)/base_}
   add_filter "/graphql/ehr_api_schema.rb"
   add_filter "/controllers/graphql_controller.rb"
+
+  add_group "GraphQL", "app/graphql"
+  add_group "Admin",   "app/admin"
 end

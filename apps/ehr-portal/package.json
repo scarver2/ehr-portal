@@ -16,6 +16,7 @@
   "dependencies": {
     "@honeybadger-io/nextjs": "^5.10.7",
     "@honeybadger-io/react": "^6.1.27",
+    "@rails/actioncable": "^8.1.200",
     "graphql-request": "^7.4.0",
     "next": "16.2.0",
     "react": "19.2.4",
