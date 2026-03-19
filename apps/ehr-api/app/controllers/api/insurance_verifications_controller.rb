@@ -1,9 +1,7 @@
 # app/controllers/api/insurance_verifications_controller.rb
 # frozen_string_literal: true
 
-class Api::InsuranceVerificationsController < ApplicationController
-  before_action :authenticate_api_user!
-
+class Api::InsuranceVerificationsController < Api::ApplicationController
   def create
     profile = current_user.insurance_profile
     verification = current_user.insurance_verifications.create!(
@@ -27,12 +25,6 @@ class Api::InsuranceVerificationsController < ApplicationController
   end
 
   private
-
-  def authenticate_api_user!
-    return if current_user
-
-    render json: { error: "Unauthorized" }, status: :unauthorized
-  end
 
   def serialize_verification(v)
     {
