@@ -3,9 +3,8 @@
 # Starts the Rails API development server via Overmind.
 # Run from the repo root with bin/dev for the full stack.
 
-if ! command -v overmind &>/dev/null; then
-  echo "Overmind is not installed. Install it with: brew install overmind"
-  exit 1
-fi
+source "$(dirname "$0")/_lib.sh"
+
+require_command overmind
 
 exec overmind start -f Procfile.dev "$@"
