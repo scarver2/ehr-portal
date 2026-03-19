@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # apps/ehr-api/app/admin/status.rb
 
 ActiveAdmin.register_page "Status" do
@@ -12,7 +13,7 @@ ActiveAdmin.register_page "Status" do
           link_to "Open Insights Dashboard",
                   "https://app.honeybadger.io/projects/138326/insights/dashboards",
                   target: "_blank",
-                  rel:    "noopener noreferrer"
+                  rel: "noopener noreferrer"
         end
       end
     end
