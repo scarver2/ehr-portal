@@ -4,7 +4,7 @@
 class Api::InsuranceVerificationsController < Api::ApplicationController
   def create
     profile = current_user.insurance_profile
-    return render json: { error: "No insurance profile on file" }, status: :unprocessable_entity unless profile
+    return render json: { error: "No insurance profile on file" }, status: :unprocessable_content unless profile
 
     verification = current_user.insurance_verifications.create!(
       insurance_profile: profile,

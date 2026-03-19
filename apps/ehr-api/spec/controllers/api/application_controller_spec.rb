@@ -21,7 +21,7 @@ RSpec.describe Api::ApplicationController, type: :controller do
 
       it "returns the user (line 23 — Hash branch)" do
         get :index
-        expect(JSON.parse(response.body)["user_id"]).to eq(user.id)
+        expect(response.parsed_body["user_id"]).to eq(user.id)
       end
     end
 
@@ -30,7 +30,7 @@ RSpec.describe Api::ApplicationController, type: :controller do
 
       it "returns the user (line 22 — Array branch)" do
         get :index
-        expect(JSON.parse(response.body)["user_id"]).to eq(user.id)
+        expect(response.parsed_body["user_id"]).to eq(user.id)
       end
     end
 
@@ -39,7 +39,7 @@ RSpec.describe Api::ApplicationController, type: :controller do
 
       it "resolves to nil" do
         get :index
-        expect(JSON.parse(response.body)["user_id"]).to be_nil
+        expect(response.parsed_body["user_id"]).to be_nil
       end
     end
   end
@@ -51,7 +51,7 @@ RSpec.describe Api::ApplicationController, type: :controller do
       it "returns 401 Unauthorized" do
         get :index
         expect(response).to have_http_status(:unauthorized)
-        expect(JSON.parse(response.body)["error"]).to eq("Unauthorized")
+        expect(response.parsed_body["error"]).to eq("Unauthorized")
       end
     end
 
