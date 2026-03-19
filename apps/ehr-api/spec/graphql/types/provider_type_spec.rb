@@ -40,4 +40,44 @@ RSpec.describe Types::ProviderType do
       expect(result.dig('data', 'provider', 'fullName')).to eq('Jane Doe')
     end
   end
+
+  describe '#location resolver' do
+    context 'when the provider has city and state' do
+      let(:provider) { create(:provider, city: 'Boston', state: 'MA') }
+
+      subject(:result) do
+        EhrApiSchema.execute(
+          "{ provider(id: \"#{provider.id}\") { location } }",
+          context: {}
+        )
+      end
+
+      it 'returns no errors' do
+        expect(result['errors']).to be_nil
+      end
+
+      it 'returns city and state joined with a comma' do
+        expect(result.dig('data', 'provider', 'location')).to eq('Boston, MA')
+      end
+    end
+
+    context 'when the provider has no city or state' do
+      let(:provider) { create(:provider, city: nil, state: nil) }
+
+      subject(:result) do
+        EhrApiSchema.execute(
+          "{ provider(id: \"#{provider.id}\") { location } }",
+          context: {}
+        )
+      end
+
+      it 'returns no errors' do
+        expect(result['errors']).to be_nil
+      end
+
+      it 'returns an empty string' do
+        expect(result.dig('data', 'provider', 'location')).to eq('')
+      end
+    end
+  end
 end
