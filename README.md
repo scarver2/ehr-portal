@@ -13,7 +13,7 @@
 [![Portal CI](https://github.com/scarver2/ehr-portal/actions/workflows/portal.yml/badge.svg)](https://github.com/scarver2/ehr-portal/actions/workflows/portal.yml)
 [![Lint](https://github.com/scarver2/ehr-portal/actions/workflows/lint.yml/badge.svg)](https://github.com/scarver2/ehr-portal/actions/workflows/lint.yml)
 [![Security](https://github.com/scarver2/ehr-portal/actions/workflows/security.yml/badge.svg)](https://github.com/scarver2/ehr-portal/actions/workflows/security.yml)
-[![Coverage](https://codecov.io/gh/scarver2/ehr-portal/branch/main/graph/badge.svg)](https://codecov.io/gh/scarver2/ehr-portal)
+[![Coverage](https://coveralls.io/repos/github/scarver2/ehr-portal/badge.svg?branch=main)](https://coveralls.io/github/scarver2/ehr-portal?branch=main)
 
 Modern Electronic Health Record (EHR) portal for clinical staff.
 

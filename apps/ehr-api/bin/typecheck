@@ -6,7 +6,7 @@
 #   bin/typecheck                  # check all targets
 #   bin/typecheck --log-level=info # verbose output
 
-set -euo pipefail
+source "$(dirname "$0")/_lib.sh"
 
 bundle exec rbs collection install
 exec bundle exec steep check "$@"

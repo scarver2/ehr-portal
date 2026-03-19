@@ -1,4 +1,5 @@
 # apps/ehr-api/app/models/provider.rb
+# frozen_string_literal: true
 
 class Provider < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)

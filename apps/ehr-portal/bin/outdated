@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # apps/ehr-portal/bin/outdated
-
+#
 # Usage:
 #   bin/outdated
+
+source "$(dirname "$0")/_lib.sh"
 
 outdated_command() {
   local formula="$1"
@@ -46,8 +48,6 @@ outdated_command() {
     echo "✅ $formula $installed is newer than latest stable ($latest)"
   fi
 }
-
-set -euo pipefail
 
 outdated_command node
 outdated_command bun

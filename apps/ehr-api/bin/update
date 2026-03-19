@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# apps/ehr-api/bin/update
+#
+# Usage:
+#   bin/update           # interactive menu
+#   bin/update ruby      # upgrade Ruby via Homebrew
+#   bin/update gems      # bundle update
+#   bin/update all       # ruby + gems
+
+source "$(dirname "$0")/_lib.sh"
+
+update_ruby() {
+  info "Upgrading Ruby..."
+  brew upgrade ruby
+  success "Ruby upgraded"
+}
+
+update_gems() {
+  info "Updating gems..."
+  bundle update
+  success "Gems updated"
+}
+
+run_update() {
+  case "$1" in
+    ruby) update_ruby ;;
+    gems) update_gems ;;
+    all)
+      update_ruby
+      update_gems
+      ;;
+    *) abort "Unknown target: $1" ;;
+  esac
+}
+
+if [[ $# -gt 0 ]]; then
+  run_update "$1"
+else
+  selection=$(select_menu "Select what to update:" "ruby" "gems" "all")
+  run_update "$selection"
+fi

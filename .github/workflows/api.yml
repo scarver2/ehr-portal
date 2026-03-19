@@ -62,10 +62,10 @@ jobs:
       - name: Run RSpec
         run: bin/test
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+      - name: Upload coverage to Coveralls
+        uses: coverallsapp/github-action@v2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: apps/ehr-api/coverage
-          flags: api
-          fail_ci_if_error: false
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          format: simplecov
+          files: apps/ehr-api/coverage/.resultset.json
+          base-path: apps/ehr-api

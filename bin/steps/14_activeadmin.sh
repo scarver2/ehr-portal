@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# bin/steps/13_active-admin.sh
+# bin/steps/14_activeadmin.sh
 
 source "$(dirname "$0")/../_lib.sh"
 

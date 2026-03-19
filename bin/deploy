@@ -9,8 +9,6 @@ source "$SCRIPT_DIR/_lib.sh"
 PORTAL_CONFIG="$ROOT_DIR/config/deploy.portal.yml"
 API_CONFIG="$ROOT_DIR/config/deploy.api.yml"
 
-banner
-
 ########################################
 # Deploy functions
 ########################################

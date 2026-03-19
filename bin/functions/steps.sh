@@ -56,7 +56,7 @@ run_steps() {
 
     info "Executing $name"
 
-    if "$script"; then
+    if EHR_QUIET=1 "$script"; then
       save_state "$step"
       success "$name completed"
     else

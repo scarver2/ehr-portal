@@ -7,6 +7,7 @@ RSpec.describe User, type: :model do
   subject(:user) { build(:user) }
 
   its(:email) { is_expected.to be_present }
+  its(:role)  { is_expected.to eq('patient') }
 
   it { is_expected.to be_valid }
 
@@ -30,5 +31,27 @@ RSpec.describe User, type: :model do
 
       it { is_expected.not_to be_valid }
     end
+
+    context 'without role' do
+      subject { build(:user, role: nil) }
+
+      it { is_expected.not_to be_valid }
+    end
+
+    context 'with an invalid role' do
+      subject { build(:user) }
+
+      it 'is invalid with an unknown role value' do
+        subject.write_attribute(:role, 'superuser')
+        expect(subject).not_to be_valid
+      end
+    end
+  end
+
+  describe 'role predicates' do
+    it { expect(build(:user, :admin)).to    be_admin }
+    it { expect(build(:user, :provider)).to be_provider }
+    it { expect(build(:user, :staff)).to    be_staff }
+    it { expect(build(:user, :patient)).to  be_patient }
   end
 end

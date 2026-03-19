@@ -82,9 +82,37 @@ cat << 'EOF' > .rubocop_todo.yml
 # apps/ehr-api/.rubocop_todo.yml
 EOF
 
+info "Creating bin/_lib.sh..."
+cat << 'EOF' > bin/_lib.sh
+#!/usr/bin/env bash
+# apps/ehr-api/bin/_lib.sh
+
+_APP_BIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APP_DIR="$(cd "$_APP_BIN_DIR/.." && pwd)"
+unset _APP_BIN_DIR
+
+# Tell root's _lib.sh to skip its auto-banner — we call it below after
+# correcting COMMAND_NAME and APP_DIR.
+_EHR_APP_CONTEXT=1 source "$APP_DIR/../../bin/_lib.sh"
+unset _EHR_APP_CONTEXT
+
+COMMAND_NAME="$(basename "${BASH_SOURCE[1]:-$0}")"
+
+cd "$APP_DIR"
+banner
+EOF
+chmod +x bin/_lib.sh
+
 cat << 'EOF' > bin/lint
 #!/usr/bin/env bash
-set -euo pipefail
+# apps/ehr-api/bin/lint
+#
+# Usage:
+#   bin/lint                        # default report (no corrections)
+#   bin/lint --autocorrect          # apply corrections
+
+source "$(dirname "$0")/_lib.sh"
+
 exec bundle exec rubocop "$@"
 EOF
 chmod +x bin/lint
@@ -94,11 +122,18 @@ bundle add simplecov --group "development, test"
 cat << 'EOF' > .simplecov
 # frozen_string_literal: true
 
-SimpleCov.external_at_exit = true
-
-SimpleCov.start do
-  add_filter 'test'
+# This file is auto-loaded by SimpleCov.start in spec/spec_helper.rb.
+# Use SimpleCov.configure (not SimpleCov.start) here to avoid a double-start.
+SimpleCov.configure do
   enable_coverage_for_eval
+  minimum_coverage 80
+
+  # Exclude graphql-ruby generated boilerplate that ships with every new schema.
+  # These Base* stubs, the schema wiring, and the generated controller contain no
+  # app-specific logic and will never hit 100% without meaningless tests.
+  add_filter %r{/graphql/(types|mutations|resolvers)/base_}
+  add_filter "/graphql/ehr_api_schema.rb"
+  add_filter "/controllers/graphql_controller.rb"
 end
 EOF
 # TODO: add SimpleCov to spec_helper.rb
@@ -118,19 +153,28 @@ cat << 'EOF' > bin/dev
 # Starts the Rails API development server via Overmind.
 # Run from the repo root with bin/dev for the full stack.
 
-if ! command -v overmind &>/dev/null; then
-  echo "Overmind is not installed. Install it with: brew install overmind"
-  exit 1
-fi
+source "$(dirname "$0")/_lib.sh"
+
+require_command overmind
 
 exec overmind start -f Procfile.dev "$@"
 EOF
+chmod +x bin/dev
 
 info "Adding Brakeman..."
 bundle add brakeman --group development
 cat << 'EOF' > bin/security
 #!/usr/bin/env bash
-set -euo pipefail
+# apps/ehr-api/bin/security
+#
+# Usage:
+#   bin/security                        # default text report
+#   bin/security -f json                # JSON output
+#   bin/security -f html -o report.html # HTML report to file
+#   bin/security --quiet                # warnings only, no progress
+
+source "$(dirname "$0")/_lib.sh"
+
 exec bundle exec brakeman "$@"
 EOF
 chmod +x bin/security
@@ -193,7 +237,9 @@ EOF
 
 cat << 'EOF' > bin/guard
 #!/usr/bin/env bash
-set -euo pipefail
+# apps/ehr-api/bin/guard
+
+source "$(dirname "$0")/_lib.sh"
 
 exec bundle exec guard "$@"
 EOF
@@ -327,9 +373,107 @@ cat << 'EOF' > bin/typecheck
 #   bin/typecheck                  # check all targets
 #   bin/typecheck --log-level=info # verbose output
 
-set -euo pipefail
+source "$(dirname "$0")/_lib.sh"
 
 bundle exec rbs collection install
 exec bundle exec steep check "$@"
 EOF
 chmod +x bin/typecheck
+
+cat << 'EOF' > bin/test
+#!/usr/bin/env bash
+# apps/ehr-api/bin/test
+# Run the RSpec test suite. Any extra arguments are forwarded to rspec.
+#
+# Examples:
+#   bin/test                                        # run all specs
+#   bin/test spec/models/provider_spec.rb           # run a single file
+#   bin/test spec/models/provider_spec.rb:12        # run one example by line
+#   bin/test --format documentation                 # verbose output
+
+source "$(dirname "$0")/_lib.sh"
+
+exec bundle exec rspec "$@"
+EOF
+chmod +x bin/test
+
+cat << 'EOF' > bin/coverage
+#!/usr/bin/env bash
+# apps/ehr-api/bin/coverage
+# Run the RSpec test suite with SimpleCov coverage reporting.
+# Coverage is always active (SimpleCov starts in spec_helper.rb); this script
+# makes the intent explicit and opens the HTML report when run locally.
+#
+# Examples:
+#   bin/coverage                                        # run all specs + open report
+#   bin/coverage spec/models/provider_spec.rb           # single file + open report
+
+source "$(dirname "$0")/_lib.sh"
+
+bundle exec rspec "$@"
+
+if [[ -f coverage/index.html ]] && command -v open &>/dev/null; then
+  open coverage/index.html
+fi
+EOF
+chmod +x bin/coverage
+
+cat << 'EOF' > bin/outdated
+#!/usr/bin/env bash
+# apps/ehr-api/bin/outdated
+#
+# Usage:
+#   bin/outdated
+
+source "$(dirname "$0")/_lib.sh"
+
+outdated_command ruby
+
+exec bundle outdated "$@"
+EOF
+chmod +x bin/outdated
+
+cat << 'EOF' > bin/update
+#!/usr/bin/env bash
+# apps/ehr-api/bin/update
+#
+# Usage:
+#   bin/update           # interactive menu
+#   bin/update ruby      # upgrade Ruby via Homebrew
+#   bin/update gems      # bundle update
+#   bin/update all       # ruby + gems
+
+source "$(dirname "$0")/_lib.sh"
+
+update_ruby() {
+  info "Upgrading Ruby..."
+  brew upgrade ruby
+  success "Ruby upgraded"
+}
+
+update_gems() {
+  info "Updating gems..."
+  bundle update
+  success "Gems updated"
+}
+
+run_update() {
+  case "$1" in
+    ruby) update_ruby ;;
+    gems) update_gems ;;
+    all)
+      update_ruby
+      update_gems
+      ;;
+    *) abort "Unknown target: $1" ;;
+  esac
+}
+
+if [[ $# -gt 0 ]]; then
+  run_update "$1"
+else
+  selection=$(select_menu "Select what to update:" "ruby" "gems" "all")
+  run_update "$selection"
+fi
+EOF
+chmod +x bin/update
