@@ -1,4 +1,4 @@
-// src/app/insurance/page.test.tsx
+// src/app/patients/[id]/InsuranceVerificationPanel.test.tsx
 
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { render, screen } from "@testing-library/react"
@@ -12,7 +12,7 @@ vi.mock("@/hooks/useInsuranceVerificationStream", () => ({
   startVerification: vi.fn(),
 }))
 
-import InsurancePage from "./page"
+import { InsuranceVerificationPanel } from "./InsuranceVerificationPanel"
 import {
   useInsuranceVerificationStream,
   startVerification,
@@ -36,58 +36,58 @@ const mockVerification = {
 
 // ── Static rendering ──────────────────────────────────────────────────────────
 
-describe("InsurancePage — static", () => {
-  it("renders the page heading", () => {
-    render(<InsurancePage />)
+describe("InsuranceVerificationPanel — static", () => {
+  it("renders the section heading", () => {
+    render(<InsuranceVerificationPanel patientId={1} />)
     expect(screen.getByRole("heading", { name: "Insurance Verification" })).toBeInTheDocument()
   })
 
   it("renders the verify button with initial label", () => {
-    render(<InsurancePage />)
+    render(<InsuranceVerificationPanel patientId={1} />)
     expect(screen.getByRole("button", { name: "Verify Insurance" })).toBeInTheDocument()
   })
 
-  it("does not render the verification section when no data", () => {
-    render(<InsurancePage />)
-    expect(screen.queryByText(/Status:/)).toBeNull()
+  it("does not render verification data when none has arrived", () => {
+    render(<InsuranceVerificationPanel patientId={1} />)
+    expect(screen.queryByRole("term")).toBeNull()
   })
 })
 
 // ── With live verification data ───────────────────────────────────────────────
 
-describe("InsurancePage — with verification data", () => {
+describe("InsuranceVerificationPanel — with verification data", () => {
   beforeEach(() => {
     vi.mocked(useInsuranceVerificationStream).mockReturnValue(mockVerification)
   })
 
   it("renders the status", () => {
-    render(<InsurancePage />)
-    expect(screen.getByText(/verified/)).toBeInTheDocument()
+    render(<InsuranceVerificationPanel patientId={1} />)
+    expect(screen.getByText("verified")).toBeInTheDocument()
   })
 
   it("renders the payer name", () => {
-    render(<InsurancePage />)
-    expect(screen.getByText(/Aetna/)).toBeInTheDocument()
+    render(<InsuranceVerificationPanel patientId={1} />)
+    expect(screen.getByText("Aetna")).toBeInTheDocument()
   })
 
   it("renders the plan name", () => {
-    render(<InsurancePage />)
-    expect(screen.getByText(/Gold PPO/)).toBeInTheDocument()
+    render(<InsuranceVerificationPanel patientId={1} />)
+    expect(screen.getByText("Gold PPO")).toBeInTheDocument()
   })
 
   it("formats copay_cents as a dollar amount", () => {
-    render(<InsurancePage />)
-    expect(screen.getByText(/\$25\.00/)).toBeInTheDocument()
+    render(<InsuranceVerificationPanel patientId={1} />)
+    expect(screen.getByText("$25.00")).toBeInTheDocument()
   })
 
   it("formats deductible_cents as a dollar amount", () => {
-    render(<InsurancePage />)
-    expect(screen.getByText(/\$1000\.00/)).toBeInTheDocument()
+    render(<InsuranceVerificationPanel patientId={1} />)
+    expect(screen.getByText("$1000.00")).toBeInTheDocument()
   })
 
   it("formats oop_max_cents as a dollar amount", () => {
-    render(<InsurancePage />)
-    expect(screen.getByText(/\$5000\.00/)).toBeInTheDocument()
+    render(<InsuranceVerificationPanel patientId={1} />)
+    expect(screen.getByText("$5000.00")).toBeInTheDocument()
   })
 
   it("shows dashes when financial fields are null", () => {
@@ -99,8 +99,7 @@ describe("InsurancePage — with verification data", () => {
       payer_name: null,
       plan_name: null,
     })
-    render(<InsurancePage />)
-    // Three dashes for the null financial fields + payer + plan
+    render(<InsuranceVerificationPanel patientId={1} />)
     expect(screen.getAllByText("—")).toHaveLength(5)
   })
 
@@ -109,24 +108,24 @@ describe("InsurancePage — with verification data", () => {
       ...mockVerification,
       error_message: "gateway timeout",
     })
-    render(<InsurancePage />)
-    expect(screen.getByText(/gateway timeout/)).toBeInTheDocument()
+    render(<InsuranceVerificationPanel patientId={1} />)
+    expect(screen.getByText("gateway timeout")).toBeInTheDocument()
   })
 
-  it("does not render an error_message element when absent", () => {
-    render(<InsurancePage />)
+  it("does not render error_message element when absent", () => {
+    render(<InsuranceVerificationPanel patientId={1} />)
     expect(screen.queryByText(/Error:/)).toBeNull()
   })
 })
 
 // ── Button interactions ───────────────────────────────────────────────────────
 
-describe("InsurancePage — button", () => {
-  it("calls startVerification when the button is clicked", async () => {
+describe("InsuranceVerificationPanel — button", () => {
+  it("calls startVerification with the patientId when clicked", async () => {
     vi.mocked(startVerification).mockResolvedValue(mockVerification)
-    render(<InsurancePage />)
+    render(<InsuranceVerificationPanel patientId={7} />)
     await userEvent.click(screen.getByRole("button", { name: "Verify Insurance" }))
-    expect(startVerification).toHaveBeenCalledTimes(1)
+    expect(startVerification).toHaveBeenCalledWith(7)
   })
 
   it("shows loading state while the request is in flight", async () => {
@@ -134,9 +133,8 @@ describe("InsurancePage — button", () => {
     vi.mocked(startVerification).mockReturnValue(
       new Promise(resolve => { settle = () => resolve(mockVerification) })
     )
-    render(<InsurancePage />)
+    render(<InsuranceVerificationPanel patientId={1} />)
     const user = userEvent.setup()
-    // Start click but don't await — button is in loading state during the pending promise
     const click = user.click(screen.getByRole("button", { name: "Verify Insurance" }))
     expect(await screen.findByRole("button", { name: "Starting…" })).toBeDisabled()
     settle()
@@ -145,21 +143,21 @@ describe("InsurancePage — button", () => {
 
   it("shows an error message when startVerification throws", async () => {
     vi.mocked(startVerification).mockRejectedValue(new Error("Unable to start verification"))
-    render(<InsurancePage />)
+    render(<InsuranceVerificationPanel patientId={1} />)
     await userEvent.click(screen.getByRole("button", { name: "Verify Insurance" }))
     expect(screen.getByText(/Unable to start verification/)).toBeInTheDocument()
   })
 
   it("re-enables the button after an error", async () => {
     vi.mocked(startVerification).mockRejectedValue(new Error("oops"))
-    render(<InsurancePage />)
+    render(<InsuranceVerificationPanel patientId={1} />)
     await userEvent.click(screen.getByRole("button", { name: "Verify Insurance" }))
     expect(screen.getByRole("button", { name: "Verify Insurance" })).not.toBeDisabled()
   })
 
   it("shows 'Unknown error' when startVerification rejects with a non-Error value", async () => {
     vi.mocked(startVerification).mockRejectedValue("plain string rejection")
-    render(<InsurancePage />)
+    render(<InsuranceVerificationPanel patientId={1} />)
     await userEvent.click(screen.getByRole("button", { name: "Verify Insurance" }))
     expect(screen.getByText(/Unknown error/)).toBeInTheDocument()
   })

@@ -5,8 +5,8 @@ require "rails_helper"
 require "sidekiq/testing"
 
 RSpec.describe "Api::InsuranceVerifications", type: :request do
-  let(:user)  { create(:user, :patient) }
-  let(:payer) { create(:payer) }
+  let(:user)    { create(:user, :patient) }
+  let(:payer)   { create(:payer) }
   let!(:profile) { create(:insurance_profile, user: user, payer: payer) }
 
   before do
@@ -19,35 +19,42 @@ RSpec.describe "Api::InsuranceVerifications", type: :request do
   describe "POST /api/insurance_verifications" do
     context "when unauthenticated" do
       it "returns 401" do
-        post "/api/insurance_verifications"
+        post "/api/insurance_verifications", params: { patient_id: user.id }, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
 
-    context "when authenticated as patient" do
+    context "when authenticated" do
       before { sign_in user }
 
       it "returns 202 accepted" do
-        post "/api/insurance_verifications"
+        post "/api/insurance_verifications", params: { patient_id: user.id }, as: :json
         expect(response).to have_http_status(:accepted)
       end
 
       it "creates a new InsuranceVerification" do
         expect {
-          post "/api/insurance_verifications"
+          post "/api/insurance_verifications", params: { patient_id: user.id }, as: :json
         }.to change(InsuranceVerification, :count).by(1)
       end
 
       it "enqueues a worker job" do
         Sidekiq::Worker.clear_all
-        post "/api/insurance_verifications"
+        post "/api/insurance_verifications", params: { patient_id: user.id }, as: :json
         expect(InsuranceVerificationWorker.jobs.size).to eq(1)
       end
 
       it "returns status queued in the response body" do
-        post "/api/insurance_verifications"
+        post "/api/insurance_verifications", params: { patient_id: user.id }, as: :json
         body = JSON.parse(response.body)
         expect(body["status"]).to eq("queued")
+      end
+
+      it "returns 422 when the patient has no insurance profile" do
+        other_user = create(:user, :patient)
+        post "/api/insurance_verifications", params: { patient_id: other_user.id }, as: :json
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(JSON.parse(response.body)["error"]).to include("no insurance profile")
       end
     end
   end

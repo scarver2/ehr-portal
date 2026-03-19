@@ -50,12 +50,13 @@ export function useInsuranceVerificationStream() {
   return verification
 }
 
-export async function startVerification(): Promise<InsuranceVerification> {
+export async function startVerification(patientId: number): Promise<InsuranceVerification> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "https://api.ehr.stancarver.com"
   const res = await fetch(`${apiUrl}/api/insurance_verifications`, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ patient_id: patientId }),
   })
   if (!res.ok) throw new Error("Unable to start verification")
   return res.json()

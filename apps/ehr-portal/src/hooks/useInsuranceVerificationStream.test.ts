@@ -128,18 +128,27 @@ describe("startVerification", () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(JSON.stringify(mockVerification), { status: 202 })
     )
-    await startVerification()
+    await startVerification(42)
     expect(fetchSpy).toHaveBeenCalledWith(
       expect.stringContaining("/api/insurance_verifications"),
       expect.objectContaining({ method: "POST", credentials: "include" })
     )
   })
 
+  it("sends patient_id in the request body", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(JSON.stringify(mockVerification), { status: 202 })
+    )
+    await startVerification(42)
+    const body = JSON.parse((fetchSpy.mock.calls[0][1] as RequestInit).body as string)
+    expect(body).toEqual({ patient_id: 42 })
+  })
+
   it("returns the parsed verification on success", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(JSON.stringify(mockVerification), { status: 202 })
     )
-    const result = await startVerification()
+    const result = await startVerification(42)
     expect(result).toEqual(mockVerification)
   })
 
@@ -147,6 +156,6 @@ describe("startVerification", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response("Unauthorized", { status: 401 })
     )
-    await expect(startVerification()).rejects.toThrow("Unable to start verification")
+    await expect(startVerification(42)).rejects.toThrow("Unable to start verification")
   })
 })
