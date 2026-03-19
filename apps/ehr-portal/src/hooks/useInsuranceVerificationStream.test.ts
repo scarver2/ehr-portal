@@ -103,6 +103,18 @@ describe("useInsuranceVerificationStream", () => {
     expect(mockUnsubscribe).toHaveBeenCalledTimes(1)
     expect(mockDisconnect).toHaveBeenCalledTimes(1)
   })
+
+  it("connected callback does not throw", () => {
+    const getCallbacks = captureCallbacks()
+    renderHook(() => useInsuranceVerificationStream())
+    expect(() => getCallbacks().connected()).not.toThrow()
+  })
+
+  it("disconnected callback does not throw", () => {
+    const getCallbacks = captureCallbacks()
+    renderHook(() => useInsuranceVerificationStream())
+    expect(() => getCallbacks().disconnected()).not.toThrow()
+  })
 })
 
 // ── startVerification ─────────────────────────────────────────────────────────

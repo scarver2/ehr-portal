@@ -175,4 +175,24 @@ describe("PatientPage", () => {
     expect(screen.getByText("No encounters on record.")).toBeInTheDocument()
     expect(screen.queryByRole("listitem")).toBeNull()
   })
+
+  it("falls back to raw gender string for unknown gender values", async () => {
+    vi.mocked(graphql.request).mockResolvedValue({
+      patient: { ...mockPatient, gender: "nonbinary" },
+    })
+    render(await PatientPage(params("1")))
+    expect(screen.getByText("Gender: nonbinary")).toBeInTheDocument()
+  })
+
+  it("omits chief complaint when null", async () => {
+    vi.mocked(graphql.request).mockResolvedValue({
+      patient: {
+        ...mockPatient,
+        encounters: [{ ...mockEncounter, chiefComplaint: null }],
+      },
+    })
+    render(await PatientPage(params("1")))
+    const item = screen.getByRole("listitem")
+    expect(item.textContent).not.toMatch(/·/)
+  })
 })

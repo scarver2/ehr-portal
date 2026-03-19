@@ -88,4 +88,21 @@ describe("PatientsPage", () => {
     await PatientsPage()
     expect(graphql.request).toHaveBeenCalledTimes(1)
   })
+
+  it("falls back to raw gender string for unknown gender values", async () => {
+    vi.mocked(graphql.request).mockResolvedValue({
+      patients: [{ id: "9", fullName: "Sam Rho", dateOfBirth: null, age: null, gender: "nonbinary", mrn: null }],
+    })
+    render(await PatientsPage())
+    expect(screen.getByText(/nonbinary/)).toBeInTheDocument()
+  })
+
+  it("omits gender when null", async () => {
+    vi.mocked(graphql.request).mockResolvedValue({
+      patients: [{ id: "9", fullName: "Sam Rho", dateOfBirth: null, age: null, gender: null, mrn: null }],
+    })
+    render(await PatientsPage())
+    const item = screen.getByRole("listitem")
+    expect(item.textContent).not.toMatch(/·/)
+  })
 })

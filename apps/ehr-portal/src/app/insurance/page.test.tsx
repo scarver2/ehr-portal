@@ -156,4 +156,11 @@ describe("InsurancePage — button", () => {
     await userEvent.click(screen.getByRole("button", { name: "Verify Insurance" }))
     expect(screen.getByRole("button", { name: "Verify Insurance" })).not.toBeDisabled()
   })
+
+  it("shows 'Unknown error' when startVerification rejects with a non-Error value", async () => {
+    vi.mocked(startVerification).mockRejectedValue("plain string rejection")
+    render(<InsurancePage />)
+    await userEvent.click(screen.getByRole("button", { name: "Verify Insurance" }))
+    expect(screen.getByText(/Unknown error/)).toBeInTheDocument()
+  })
 })
