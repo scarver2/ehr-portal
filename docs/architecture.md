@@ -12,28 +12,73 @@
 
 ## Real-Time Eligibility (RTE) Flow
 
-    React (Next.js)
-        ↓ POST /api/insurance_verifications
-    Rails API
-        ↓ InsuranceVerificationWorker.perform_async
-    Redis (Sidekiq queue)
-        ↓ Worker picks up job
-    InsuranceVerificationWorker
-        ↓ RteCache.read → cache hit? apply cached response
-        ↓ FakePayerGateway → Insurance Clearinghouse API
-        ↓ RteCache.write (12h TTL)
-        ↓ mark_verified! + broadcast!
-    ActionCable → WebSocket
-        ↓
-    React UI (live status update)
+    ┌─────────────────────────────────────────────────────────────┐
+    │  Next.js Portal  (/insurance)                               │
+    │  InsurancePage + useInsuranceVerificationStream hook        │
+    │  @rails/actioncable consumer (wss://…/cable)               │
+    └──────────┬──────────────────────────────────────────────────┘
+               │ POST /api/insurance_verifications
+               ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │  Rails API                                                  │
+    │  Api::InsuranceVerificationsController#create               │
+    │    → InsuranceVerification.create!                          │
+    │    → verification.enqueue!  (AASM: pending → queued)        │
+    │    → InsuranceVerificationWorker.perform_async              │
+    └──────────┬──────────────────────────────────────────────────┘
+               │ enqueue job
+               ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │  Redis  (Sidekiq queue: insurance)                          │
+    └──────────┬──────────────────────────────────────────────────┘
+               │ worker picks up job
+               ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │  InsuranceVerificationWorker                                │
+    │                                                             │
+    │  RteCache.read ──hit──► apply_cached_response               │
+    │       │                   mark_verified! (queued→verified)  │
+    │      miss                                                   │
+    │       │                                                     │
+    │  start_request! (queued → requesting)                       │
+    │  FakePayerGateway#check_eligibility                         │
+    │  mark_verified! (requesting → verified)                     │
+    │  RteCache.write (12h TTL)                                   │
+    │                                                             │
+    │  on error → mark_failed! + persist error_message           │
+    └──────────┬──────────────────────────────────────────────────┘
+               │ broadcast!
+               ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │  ActionCable / InsuranceVerificationChannel                 │
+    │  stream_for current_user                                    │
+    └──────────┬──────────────────────────────────────────────────┘
+               │ WebSocket push
+               ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │  React UI  (live status, payer, plan, copay, deductible,    │
+    │  OOP max, error — rendered in InsurancePage)                │
+    └─────────────────────────────────────────────────────────────┘
 
-    PostgreSQL (InsuranceVerification record persisted)
-    React polls GET /api/insurance_verifications/:id as fallback
+    PostgreSQL  ← InsuranceVerification record persisted at each state change
+    React       ← GET /api/insurance_verifications/:id as WebSocket fallback
+
+### Observer Trigger
+
+When a patient's `InsuranceProfile` is created, `InsuranceProfileObserver#after_create`
+automatically creates an `InsuranceVerification`, enqueues it, and dispatches the worker —
+no explicit controller call required.
+
+    InsuranceProfile.create!
+        → InsuranceProfileObserver#after_create
+        → InsuranceVerification.create! + enqueue! + broadcast!
+        → InsuranceVerificationWorker.perform_async
 
 ### RTE State Machine
 
-    pending → queued → requesting → parsing → verified
-                                  ↘ failed
+    pending → queued → requesting → verified
+                     ↘            ↗ (cache hit: queued → verified directly)
+                       → failed
     verified → expired
     pending/queued → canceled
 
