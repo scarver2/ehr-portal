@@ -33,8 +33,11 @@ class Patient < ApplicationRecord
   # Check if the patient's birthday has already occurred this calendar year.
   # Returns true if we've passed or are on the birthday month/day.
   def birthday_passed_this_year?(reference_date = Date.today)
-    reference_date.month > date_of_birth.month ||
-      (reference_date.month == date_of_birth.month && reference_date.day >= date_of_birth.day)
+    dob = date_of_birth
+    return false unless dob
+
+    reference_date.month > dob.month ||
+      (reference_date.month == dob.month && reference_date.day >= dob.day)
   end
 
   def self.ransackable_attributes(auth_object = nil)
