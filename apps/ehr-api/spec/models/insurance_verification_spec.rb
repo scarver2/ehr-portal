@@ -118,5 +118,21 @@ RSpec.describe InsuranceVerification, type: :model do
       )
       verification.broadcast!
     end
+
+    context "when Redis is unavailable" do
+      it "gracefully handles Errno::ECONNREFUSED" do
+        verification = create(:insurance_verification, :verified)
+        allow(InsuranceVerificationChannel).to receive(:broadcast_to).and_raise(Errno::ECONNREFUSED, "Connection refused")
+        expect(Rails.logger).to receive(:debug).with(/Redis broadcast failed/)
+        expect { verification.broadcast! }.not_to raise_error
+      end
+
+      it "gracefully handles RedisClient::CannotConnectError" do
+        verification = create(:insurance_verification, :verified)
+        allow(InsuranceVerificationChannel).to receive(:broadcast_to).and_raise(RedisClient::CannotConnectError, "Cannot connect")
+        expect(Rails.logger).to receive(:debug).with(/Redis broadcast failed/)
+        expect { verification.broadcast! }.not_to raise_error
+      end
+    end
   end
 end
