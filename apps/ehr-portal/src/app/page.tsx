@@ -12,11 +12,9 @@ export default function Home() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-  const [hydrated, setHydrated] = useState(false)
 
-  // Redirect if already logged in (after hydration)
+  // Redirect if already logged in
   useEffect(() => {
-    setHydrated(true)
     if (user) {
       if (user.role === "provider" && user.provider_id) {
         router.push(`/providers/${user.provider_id}`)
@@ -36,12 +34,7 @@ export default function Home() {
       setToken(token)
       setUser(newUser)
 
-      // Role-based redirect
-      if (newUser.role === "provider" && newUser.provider_id) {
-        router.push(`/providers/${newUser.provider_id}`)
-      } else {
-        router.push("/not-implemented")
-      }
+      // Redirect handled by useEffect above
     } catch {
       setError("Invalid email or password")
     } finally {
@@ -56,47 +49,45 @@ export default function Home() {
           EHR
         </h1>
 
-        {hydrated && (
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {error && <p style={{ color: "red", margin: 0 }}>{error}</p>}
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          {error && <p style={{ color: "red", margin: 0, fontSize: "0.875rem" }}>{error}</p>}
 
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-              style={{ padding: "0.5rem", fontSize: "1rem", border: "1px solid #ccc", borderRadius: "4px" }}
-            />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoComplete="email"
+            style={{ padding: "0.5rem", fontSize: "1rem", border: "1px solid #ccc", borderRadius: "4px" }}
+          />
 
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-              style={{ padding: "0.5rem", fontSize: "1rem", border: "1px solid #ccc", borderRadius: "4px" }}
-            />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            autoComplete="current-password"
+            style={{ padding: "0.5rem", fontSize: "1rem", border: "1px solid #ccc", borderRadius: "4px" }}
+          />
 
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                padding: "0.75rem",
-                fontSize: "1rem",
-                backgroundColor: loading ? "#ccc" : "#000",
-                color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                cursor: loading ? "not-allowed" : "pointer",
-              }}
-            >
-              {loading ? "Signing in…" : "Login"}
-            </button>
-          </form>
-        )}
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              padding: "0.75rem",
+              fontSize: "1rem",
+              backgroundColor: loading ? "#ccc" : "#000",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              cursor: loading ? "not-allowed" : "pointer",
+            }}
+          >
+            {loading ? "Signing in…" : "Login"}
+          </button>
+        </form>
       </div>
 
       <footer style={{ position: "fixed", bottom: "1.5rem", fontSize: "0.8rem", opacity: 0.4 }}>
