@@ -2,4 +2,12 @@
 
 class ApplicationRecord < ActiveRecord::Base
   include GlobalID::Identification
+
+  # Declare the most-common AR query methods on the singleton so that
+  # scope lambdas and class-method bodies type-check without errors.
+  # Steep resolves `self` inside lambdas as `singleton(::ClassName)`, and the
+  # full ActiveRecord::Base inheritance chain is not always traversed for these
+  # query-builder methods.
+  def self.where: (*untyped) -> ::ActiveRecord::Relation
+  def self.order: (*untyped) -> ::ActiveRecord::Relation
 end

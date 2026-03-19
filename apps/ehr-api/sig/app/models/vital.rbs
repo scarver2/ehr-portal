@@ -22,4 +22,9 @@ class Vital < ApplicationRecord
   def bmi?:               () -> bool
 
   UNITS: ::Hash[::Symbol, ::String]
+
+  def self.by_type: (::Symbol type) -> ::ActiveRecord::Relation
+  def self.recent: () -> ::ActiveRecord::Relation
+  def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]
+  def self.ransackable_associations: (?untyped auth_object) -> ::Array[::String]
 end

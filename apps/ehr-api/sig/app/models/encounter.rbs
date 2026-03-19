@@ -22,4 +22,11 @@ class Encounter < ApplicationRecord
   def in_progress?:  () -> bool
   def completed?:    () -> bool
   def cancelled?:    () -> bool
+
+  def self.for_patient: (::Patient patient) -> ::ActiveRecord::Relation
+  def self.for_provider: (::Provider provider) -> ::ActiveRecord::Relation
+  def self.recent: () -> ::ActiveRecord::Relation
+  def self.completed: () -> ::ActiveRecord::Relation
+  def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]
+  def self.ransackable_associations: (?untyped auth_object) -> ::Array[::String]
 end

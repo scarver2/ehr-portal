@@ -4,7 +4,22 @@ module Types
   class QueryType < Types::BaseObject
     def node: (id: ::String) -> untyped
     def nodes: (ids: ::Array[::String]) -> ::Array[untyped]
-    def providers: () -> ::Array[::Provider]
+
+    # Collection resolvers return ActiveRecord::Relation; GraphQL coerces to array.
+    def patients: (?name: ::String?, ?gender: ::String?) -> ::ActiveRecord::Relation
+    def patient: (id: ::String) -> ::Patient?
+
+    def providers: () -> ::ActiveRecord::Relation
     def provider: (id: ::String) -> ::Provider?
+
+    def specialties: (?category: ::String?) -> ::ActiveRecord::Relation
+    def specialty: (id: ::String) -> ::Specialty?
+
+    def encounters: (?patient_id: ::String?, ?provider_id: ::String?, ?status: ::String?) -> ::ActiveRecord::Relation
+    def encounter: (id: ::String) -> ::Encounter?
+
+    def vitals: (encounter_id: ::String) -> ::ActiveRecord::Relation
+
+    def diagnoses: (?encounter_id: ::String?, ?icd10_code: ::String?) -> ::ActiveRecord::Relation
   end
 end

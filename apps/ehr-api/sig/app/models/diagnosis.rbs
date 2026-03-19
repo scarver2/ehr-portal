@@ -16,4 +16,11 @@ class Diagnosis < ApplicationRecord
   def resolved?:  () -> bool
   def chronic?:   () -> bool
   def ruled_out?: () -> bool
+
+  def self.active: () -> ::ActiveRecord::Relation
+  def self.chronic: () -> ::ActiveRecord::Relation
+  def self.recent: () -> ::ActiveRecord::Relation
+  def self.by_code: (::String code) -> ::ActiveRecord::Relation
+  def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]
+  def self.ransackable_associations: (?untyped auth_object) -> ::Array[::String]
 end
