@@ -1,5 +1,6 @@
 class InsuranceVerificationWorker
   include Sidekiq::Worker
 
+  def self.perform_async: (*untyped) -> ::String
   def perform: (::Integer verification_id) -> void
 end
