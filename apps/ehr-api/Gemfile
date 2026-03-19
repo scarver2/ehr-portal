@@ -12,6 +12,9 @@ gem "dartsass-rails", "~> 0.5"
 # https://github.com/heartcombo/devise
 gem "devise", "~> 5.0"
 
+# TODO: add devise-jwt project url
+gem "devise-jwt"
+
 # https://github.com/faker-ruby/faker
 gem "faker", "~> 3.6"
 

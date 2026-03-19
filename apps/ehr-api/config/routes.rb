@@ -15,5 +15,9 @@ Rails.application.routes.draw do
     mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
   end
 
-  devise_for :users
+  devise_for :users,
+    path: 'api/v1/auth',
+    path_names: { sign_in: 'login', sign_out: 'logout' },
+    controllers: { sessions: 'api/v1/auth/sessions' },
+    skip: %i[registrations confirmations passwords unlocks omniauth_callbacks]
 end
