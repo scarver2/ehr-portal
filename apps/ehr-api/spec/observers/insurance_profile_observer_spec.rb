@@ -5,8 +5,6 @@ require "rails_helper"
 require "sidekiq/testing"
 
 RSpec.describe InsuranceProfileObserver, type: :model do
-  include ActiveSupport::Testing::Isolation
-
   around do |example|
     Sidekiq::Testing.fake! { example.run }
   end
