@@ -1,0 +1,6 @@
+# sig/shims/aasm.rbs
+# Minimal stub for the aasm gem.
+# Remove once aasm ships official RBS definitions.
+
+module AASM
+end
