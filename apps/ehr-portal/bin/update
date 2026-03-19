@@ -2,49 +2,155 @@
 # apps/ehr-portal/bin/update
 #
 # Usage:
-#   bin/update           # interactive menu
-#   bin/update node      # upgrade Node.js via Homebrew
-#   bin/update bun       # upgrade Bun via Homebrew
-#   bin/update packages  # bun update
-#   bin/update all       # node + bun + packages
+#   bin/update          # interactive menu
+#   bin/update --all    # update everything without prompting
 
 source "$(dirname "$0")/_lib.sh"
 
-update_node() {
-  info "Upgrading Node.js..."
-  brew upgrade node
-  success "Node.js upgraded"
+BREW_TOOLS=(node bun)
+UPDATES=()        # "type:name:current:latest"
+UPDATE_LABELS=()  # human-readable label per entry
+
+# ── Homebrew version check ───────────────────────────────────────────────────
+
+brew_outdated_version() {
+  local formula="$1"
+  local brew_info installed="" latest
+
+  brew_info="$(brew info "$formula" 2>/dev/null)" || return 1
+  latest="$(grep -Eo 'stable [0-9][^ ,]+' <<< "$brew_info" | head -1 | awk '{print $2}')"
+  [[ -z "$latest" ]] && return 1
+
+  if brew list --formula "$formula" &>/dev/null; then
+    installed="$(brew list --versions "$formula" | awk '{print $NF}')"
+  elif command -v "$formula" >/dev/null 2>&1; then
+    installed="$("$formula" --version 2>/dev/null | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
+  fi
+
+  [[ -z "$installed" ]] && return 1
+  [[ "$installed" == "$latest" ]] && return 1
+
+  # Only report if latest is strictly newer; return 1 if installed is current or newer
+  if [[ "$(printf '%s\n%s\n' "$installed" "$latest" | sort -V | tail -1)" == "$latest" ]]; then
+    echo "$installed $latest"
+  else
+    return 1
+  fi
 }
 
-update_bun() {
-  info "Upgrading Bun..."
-  brew upgrade bun
-  success "Bun upgraded"
-}
+for tool in "${BREW_TOOLS[@]}"; do
+  if versions="$(brew_outdated_version "$tool")"; then
+    current="$(awk '{print $1}' <<< "$versions")"
+    latest="$(awk '{print $2}' <<< "$versions")"
+    UPDATES+=("brew:$tool:$current:$latest")
+    UPDATE_LABELS+=("$tool  $current → $latest  (brew upgrade $tool)")
+  fi
+done
 
-update_packages() {
-  info "Updating packages..."
-  bun update
-  success "Packages updated"
-}
+# ── bun package check ────────────────────────────────────────────────────────
+# Parse rows where Latest != Current. Update == Current is the common case when
+# the installed version satisfies the semver range but a newer major exists.
+# bun outdated exits non-zero when updates are available — suppress that.
 
-run_update() {
-  case "$1" in
-    node)     update_node ;;
-    bun)      update_bun ;;
-    packages) update_packages ;;
-    all)
-      update_node
-      update_bun
-      update_packages
-      ;;
-    *) abort "Unknown target: $1" ;;
-  esac
-}
+outdated_output="$(bun outdated 2>/dev/null)" || true
 
-if [[ $# -gt 0 ]]; then
-  run_update "$1"
-else
-  selection=$(select_menu "Select what to update:" "node" "bun" "packages" "all")
-  run_update "$selection"
+while IFS='|' read -ra cols; do
+  [[ "${#cols[@]}" -lt 5 ]] && continue
+
+  raw_pkg="$(echo "${cols[1]}" | xargs)"
+  current="$(echo "${cols[2]}" | xargs)"
+  latest="$(echo "${cols[4]}" | xargs)"
+
+  # Skip header, separator, and version-header lines
+  [[ -z "$raw_pkg" || "$raw_pkg" == "Package" ]] && continue
+  [[ "$raw_pkg" =~ ^-+$ ]] && continue
+  [[ "$current" =~ ^-+$ || -z "$current" ]] && continue
+  [[ "$current" == "$latest" ]] && continue
+
+  # Strip trailing " (dev)" annotation to get the installable package name
+  pkg="${raw_pkg% \(dev\)}"
+
+  UPDATES+=("bun:$pkg:$current:$latest")
+  UPDATE_LABELS+=("$raw_pkg  $current → $latest  (bun add $pkg@latest)")
+done <<< "$outdated_output"
+
+# ── Nothing to do ────────────────────────────────────────────────────────────
+
+if [[ "${#UPDATES[@]}" -eq 0 ]]; then
+  echo "✅ Everything is up to date."
+  exit 0
 fi
+
+# ── Resolve selection ─────────────────────────────────────────────────────────
+
+all_indices=()
+for i in "${!UPDATES[@]}"; do
+  all_indices+=("$i")
+done
+
+if [[ "${1:-}" == "--all" ]]; then
+  selected_indices=("${all_indices[@]}")
+else
+  echo "Available updates:"
+  echo
+  for i in "${!UPDATE_LABELS[@]}"; do
+    printf "  %2d) %s\n" "$((i + 1))" "${UPDATE_LABELS[$i]}"
+  done
+  printf "  %2d) all\n" "$((${#UPDATES[@]} + 1))"
+  echo
+  read -rp "Select updates (e.g. 1 3 or all): " input
+
+  if [[ "$input" == "all" || "$input" == "$((${#UPDATES[@]} + 1))" ]]; then
+    selected_indices=("${all_indices[@]}")
+  else
+    selected_indices=()
+    for token in $input; do
+      idx=$((token - 1))
+      if [[ "$idx" -ge 0 && "$idx" -lt "${#UPDATES[@]}" ]]; then
+        selected_indices+=("$idx")
+      else
+        echo "⚠️  Skipping invalid selection: $token"
+      fi
+    done
+  fi
+fi
+
+if [[ "${#selected_indices[@]}" -eq 0 ]]; then
+  echo "Nothing selected."
+  exit 0
+fi
+
+# ── Apply updates ─────────────────────────────────────────────────────────────
+
+echo
+bun_packages=()
+
+for idx in "${selected_indices[@]}"; do
+  entry="${UPDATES[$idx]}"
+  type="${entry%%:*}"
+  rest="${entry#*:}"
+  name="${rest%%:*}"
+
+  case "$type" in
+    brew)
+      echo "⬆️  Upgrading $name via Homebrew..."
+      brew upgrade "$name"
+      echo
+      ;;
+    bun)
+      bun_packages+=("$name")
+      ;;
+  esac
+done
+
+if [[ "${#bun_packages[@]}" -gt 0 ]]; then
+  versioned=()
+  for pkg in "${bun_packages[@]}"; do
+    versioned+=("${pkg}@latest")
+  done
+  echo "⬆️  Installing latest: ${bun_packages[*]}"
+  bun add "${versioned[@]}"
+  echo
+fi
+
+echo "✅ Done."
