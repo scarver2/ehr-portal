@@ -5,27 +5,32 @@ require "rails_helper"
 
 RSpec.describe ApplicationCable::Connection, type: :channel do
   describe "#connect" do
-    context "when warden has an authenticated user" do
-      let(:user) { create(:user, :patient) }
+    let(:user) { create(:user, :patient) }
 
+    context "when the session contains a valid user id (Devise 5 hash format)" do
       it "identifies as current_user" do
-        connect "/cable", env: { "warden" => double(user: user) }
+        connect "/cable", session: { "warden.user.user.key" => { "id" => user.id, "token" => "x" } }
         expect(connection.current_user).to eq(user)
       end
     end
 
-    context "when warden has no user" do
-      it "rejects the connection" do
-        expect {
-          connect "/cable", env: { "warden" => double(user: nil) }
-        }.to have_rejected_connection
+    context "when the session contains a valid user id (Devise < 5 array format)" do
+      it "identifies as current_user" do
+        connect "/cable", session: { "warden.user.user.key" => [[user.id], "salt"] }
+        expect(connection.current_user).to eq(user)
       end
     end
 
-    context "when warden is absent" do
+    context "when the session has no warden key" do
+      it "rejects the connection" do
+        expect { connect "/cable" }.to have_rejected_connection
+      end
+    end
+
+    context "when the session user id does not match any user" do
       it "rejects the connection" do
         expect {
-          connect "/cable"
+          connect "/cable", session: { "warden.user.user.key" => { "id" => 0, "token" => "x" } }
         }.to have_rejected_connection
       end
     end
