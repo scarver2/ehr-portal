@@ -22,21 +22,14 @@ if [[ "$SERVICE" == "ehr-api" ]]; then
 fi
 
 # Notify Honeybadger of the deployment so it can correlate errors with releases.
-# Each service uses its own API key sourced from .kamal/secrets-common.
-SHA="${KAMAL_SERVICE_VERSION##*@}"
-case "$SERVICE" in
-  ehr-api)    HB_KEY="${HONEYBADGER_API_KEY:-}" ;;
-  ehr-portal) HB_KEY="${NEXT_PUBLIC_HONEYBADGER_API_KEY:-}" ;;
-  *)          HB_KEY="" ;;
-esac
-
-if [[ -n "$HB_KEY" ]]; then
-  curl -s -o /dev/null -w "%{http_code}" \
-    -X POST "https://api.honeybadger.io/v1/deploys" \
-    -H "X-API-Key: $HB_KEY" \
-    -H "Content-Type: application/json" \
-    -d "{\"deploy\":{\"environment\":\"production\",\"revision\":\"$SHA\",\"local_username\":\"${KAMAL_PERFORMER:-deploy}\"}}" \
-  | xargs -I{} echo "Honeybadger deploy notification: HTTP {}"
-else
-  echo "Honeybadger deploy notification skipped: no API key for $SERVICE"
+# Uses the honeybadger gem inside the ehr-api container; the API key is already
+# available there as HONEYBADGER_API_KEY. Runs only for ehr-api (the portal has
+# no Ruby runtime).
+if [[ "$SERVICE" == "ehr-api" ]]; then
+  kamal app exec --reuse -c "$CONFIG" -- \
+    bundle exec honeybadger deploy \
+      --repository https://github.com/scarver2/ehr-portal \
+      --revision "$KAMAL_VERSION" \
+      --environment production \
+      --user "$KAMAL_PERFORMER"
 fi
