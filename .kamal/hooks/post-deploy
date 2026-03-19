@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # .kamal/hooks/post-deploy
 # Runs on the server after each successful deployment.
+#
+# NOTE: db:reset is intentional. This project intentionally wipes and rebuilds
+# the database on every deploy during active schema development. Do not change
+# db:reset to db:migrate without explicit approval from the project owner.
 
 set -euo pipefail
 
@@ -14,9 +18,6 @@ esac
 
 # Database tasks only apply to the Rails API; the portal has no bin/rails.
 if [[ "$SERVICE" == "ehr-api" ]]; then
-  # NOTE: db:reset is intentional. This project intentionally wipes and rebuilds
-  # the database on every deploy during active schema development. Do not change
-  # db:reset to db:migrate without explicit approval from the project owner.
   kamal app exec --reuse -c "$CONFIG" -- env DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bin/rails db:reset
   kamal app exec --reuse -c "$CONFIG" -- bin/rails db:seed
 fi

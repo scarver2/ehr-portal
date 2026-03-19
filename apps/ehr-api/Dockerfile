@@ -23,17 +23,16 @@ FROM base AS build
 ARG GIT_SHA=dev
 ARG GIT_BRANCH=dev
 
-# Install build dependencies
-RUN apt-get update -qq && \
+# Install build dependencies (apt lists cached between builds; not written to image layer)
+RUN --mount=type=cache,id=apt-api-build,sharing=locked,target=/var/lib/apt/lists \
+  apt-get update -qq && \
   apt-get install -y --no-install-recommends \
   build-essential \
   git \
   curl \
   pkg-config \
-  nodejs \
   libpq-dev \
-  libyaml-dev \
-  && rm -rf /var/lib/apt/lists/*
+  libyaml-dev
 
 # Install gems with build cache
 COPY Gemfile Gemfile.lock ./
@@ -46,9 +45,8 @@ RUN --mount=type=cache,target=/usr/local/bundle/cache \
 # Copy application code
 COPY . .
 
-# Precompile Bootsnap caches
-RUN bundle exec bootsnap precompile --gemfile
-RUN bundle exec bootsnap precompile app/ lib/
+# Precompile Bootsnap caches (gemfile + app in one pass)
+RUN bundle exec bootsnap precompile --gemfile app/ lib/
 
 # Compile SCSS and precompile assets for production
 RUN SECRET_KEY_BASE=placeholder \
@@ -74,11 +72,11 @@ ENV RAILS_ENV=production \
   GIT_BRANCH=$GIT_BRANCH
 
 # Install runtime dependencies only
-RUN apt-get update -qq && \
+RUN --mount=type=cache,id=apt-api-runtime,sharing=locked,target=/var/lib/apt/lists \
+  apt-get update -qq && \
   apt-get install -y --no-install-recommends \
   libpq5 \
-  curl \
-  && rm -rf /var/lib/apt/lists/*
+  curl
 
 # Copy gems and app
 COPY --from=build /usr/local/bundle /usr/local/bundle
