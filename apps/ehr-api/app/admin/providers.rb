@@ -60,7 +60,7 @@ ActiveAdmin.register Provider do
 
     f.inputs "Account" do
       f.input :user, as: :select,
-              collection: User.where(role: :provider).order(:email).map { |u| [u.email, u.id] },
+              collection: User.provider_accounts.map { |u| [u.email, u.id] },
               include_blank: true
     end
 

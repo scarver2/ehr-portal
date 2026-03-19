@@ -16,4 +16,6 @@ class User < ApplicationRecord
 
   has_one :patient,  dependent: :destroy, inverse_of: :user
   has_one :provider, dependent: :nullify,  inverse_of: :user
+
+  scope :provider_accounts, -> { where(role: :provider).order(:email) }
 end
