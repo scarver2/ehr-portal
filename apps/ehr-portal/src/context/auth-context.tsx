@@ -2,7 +2,7 @@
 
 "use client"
 
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useState } from "react"
 import type { AuthUser } from "@/types/auth"
 
 export type { AuthUser }
@@ -16,23 +16,27 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [token, setTokenState] = useState<string | null>(null)
-  const [user, setUserState] = useState<AuthUser | null>(null)
+function initializeToken(): string | null {
+  if (typeof window === "undefined") return null
+  return localStorage.getItem("auth_token")
+}
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem("auth_token")
-    const storedUser = localStorage.getItem("auth_user")
-
-    if (storedToken) setTokenState(storedToken)
-    if (storedUser) {
-      try {
-        setUserState(JSON.parse(storedUser))
-      } catch {
-        localStorage.removeItem("auth_user")
-      }
+function initializeUser(): AuthUser | null {
+  if (typeof window === "undefined") return null
+  const storedUser = localStorage.getItem("auth_user")
+  if (storedUser) {
+    try {
+      return JSON.parse(storedUser)
+    } catch {
+      localStorage.removeItem("auth_user")
     }
-  }, [])
+  }
+  return null
+}
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [token, setTokenState] = useState<string | null>(initializeToken)
+  const [user, setUserState] = useState<AuthUser | null>(initializeUser)
 
   function setToken(t: string | null) {
     setTokenState(t)
