@@ -12,6 +12,9 @@ Rails.application.routes.draw do
   # ActionCable WebSocket endpoint
   mount ActionCable.server => "/cable"
 
+  # ActiveAdmin devise authentication (for /admin/login, /admin/logout, etc.)
+  devise_for :users, ActiveAdmin::Devise.config
+
   # Admin panel route
   ActiveAdmin.routes(self)
 
@@ -31,9 +34,12 @@ Rails.application.routes.draw do
     mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
   end
 
-  devise_for :users,
-    path: 'api/v1/auth',
-    path_names: { sign_in: 'login', sign_out: 'logout' },
-    controllers: { sessions: 'api/v1/auth/sessions' },
-    skip: %i[registrations confirmations passwords unlocks omniauth_callbacks]
+  # API JWT authentication — scoped to :api namespace with custom route helpers
+  scope path: 'api/v1', as: :api_v1 do
+    devise_for :users,
+      path: 'auth',
+      path_names: { sign_in: 'login', sign_out: 'logout' },
+      controllers: { sessions: 'api/v1/auth/sessions' },
+      skip: %i[registrations confirmations passwords unlocks omniauth_callbacks]
+  end
 end
