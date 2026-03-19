@@ -63,7 +63,7 @@ describe("useInsuranceVerificationStream", () => {
   it("connects to the correct ActionCable URL", () => {
     mockCreate.mockReturnValue({ unsubscribe: mockUnsubscribe })
     renderHook(() => useInsuranceVerificationStream())
-    expect(createConsumer).toHaveBeenCalledWith("wss://api.ehr.stancarver.com/cable")
+    expect(createConsumer).toHaveBeenCalledWith(expect.stringContaining("/cable"))
   })
 
   it("subscribes to InsuranceVerificationChannel", () => {
@@ -130,7 +130,7 @@ describe("startVerification", () => {
     )
     await startVerification()
     expect(fetchSpy).toHaveBeenCalledWith(
-      "https://api.ehr.stancarver.com/api/insurance_verifications",
+      expect.stringContaining("/api/insurance_verifications"),
       expect.objectContaining({ method: "POST", credentials: "include" })
     )
   })

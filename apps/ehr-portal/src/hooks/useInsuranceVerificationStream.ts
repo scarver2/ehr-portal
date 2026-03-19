@@ -22,7 +22,9 @@ export function useInsuranceVerificationStream() {
   const subscriptionRef = useRef<ReturnType<ReturnType<typeof createConsumer>["subscriptions"]["create"]> | null>(null)
 
   useEffect(() => {
-    const consumer = createConsumer("wss://api.ehr.stancarver.com/cable")
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "https://api.ehr.stancarver.com"
+    const wsUrl = apiUrl.replace(/^http/, "ws") + "/cable"
+    const consumer = createConsumer(wsUrl)
 
     subscriptionRef.current = consumer.subscriptions.create(
       { channel: "InsuranceVerificationChannel" },
@@ -49,7 +51,8 @@ export function useInsuranceVerificationStream() {
 }
 
 export async function startVerification(): Promise<InsuranceVerification> {
-  const res = await fetch("https://api.ehr.stancarver.com/api/insurance_verifications", {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "https://api.ehr.stancarver.com"
+  const res = await fetch(`${apiUrl}/api/insurance_verifications`, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
