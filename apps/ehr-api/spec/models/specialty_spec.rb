@@ -50,8 +50,8 @@ RSpec.describe Specialty, type: :model do
 
   describe ".by_category" do
     it "filters by category" do
-      medical  = create(:specialty, name: "Neurology",  category: "Medical")
-      surgical = create(:specialty, name: "Urology",    category: "Surgical")
+      medical  = create(:specialty, name: "Neurology", category: "Medical")
+      surgical = create(:specialty, name: "Urology",   category: "Surgical")
       expect(Specialty.by_category("Medical")).to include(medical)
       expect(Specialty.by_category("Medical")).not_to include(surgical)
     end
@@ -60,6 +60,12 @@ RSpec.describe Specialty, type: :model do
   describe ".ransackable_attributes" do
     it "includes searchable fields" do
       expect(Specialty.ransackable_attributes).to include("name", "category", "id")
+    end
+  end
+
+  describe ".ransackable_associations" do
+    it "includes associated models" do
+      expect(Specialty.ransackable_associations).to include("providers")
     end
   end
 end

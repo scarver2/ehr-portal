@@ -85,7 +85,7 @@ RSpec.describe Patient, type: :model do
 
   describe ".alphabetical" do
     it "orders by last_name then first_name" do
-      a = create(:patient, last_name: "Aldrich", first_name: "Bob")
+      a = create(:patient, last_name: "Aldrich",   first_name: "Bob")
       z = create(:patient, last_name: "Zimmerman", first_name: "Amy")
       expect(Patient.alphabetical.first).to eq(a)
       expect(Patient.alphabetical.last).to eq(z)
@@ -95,6 +95,12 @@ RSpec.describe Patient, type: :model do
   describe ".ransackable_attributes" do
     it "includes searchable fields" do
       expect(Patient.ransackable_attributes).to include("first_name", "last_name", "mrn", "date_of_birth")
+    end
+  end
+
+  describe ".ransackable_associations" do
+    it "includes associated models" do
+      expect(Patient.ransackable_associations).to include("encounters", "user")
     end
   end
 end

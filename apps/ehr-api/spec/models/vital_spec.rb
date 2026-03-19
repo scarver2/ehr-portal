@@ -1,3 +1,4 @@
+# spec/models/vital_spec.rb
 # frozen_string_literal: true
 
 require "rails_helper"
@@ -47,6 +48,17 @@ RSpec.describe Vital, type: :model do
         expect(vital).not_to be_valid
       end
     end
+
+    describe "vital_type predicates" do
+      it { expect(build(:vital, :blood_pressure)).to    be_blood_pressure }
+      it { expect(build(:vital, :heart_rate)).to        be_heart_rate }
+      it { expect(build(:vital, :temperature)).to       be_temperature }
+      it { expect(build(:vital, :weight)).to            be_weight }
+      it { expect(build(:vital, :height)).to            be_height }
+      it { expect(build(:vital, :oxygen_saturation)).to be_oxygen_saturation }
+      it { expect(build(:vital, :respiratory_rate)).to  be_respiratory_rate }
+      it { expect(build(:vital, :bmi)).to               be_bmi }
+    end
   end
 
   describe "UNITS constant" do
@@ -55,11 +67,23 @@ RSpec.describe Vital, type: :model do
         expect(Vital::UNITS).to have_key(type.to_sym)
       end
     end
+
+    it "maps blood_pressure to mmHg" do
+      expect(Vital::UNITS[:blood_pressure]).to eq("mmHg")
+    end
+
+    it "maps heart_rate to bpm" do
+      expect(Vital::UNITS[:heart_rate]).to eq("bpm")
+    end
+
+    it "maps oxygen_saturation to %" do
+      expect(Vital::UNITS[:oxygen_saturation]).to eq("%")
+    end
   end
 
   describe "scopes" do
-    let!(:bp_vital)   { create(:vital, :blood_pressure, observed_at: 2.hours.ago) }
-    let!(:hr_vital)   { create(:vital, :heart_rate,     observed_at: 1.hour.ago) }
+    let!(:bp_vital) { create(:vital, :blood_pressure, observed_at: 2.hours.ago) }
+    let!(:hr_vital) { create(:vital, :heart_rate,     observed_at: 1.hour.ago) }
 
     it ".recent orders by observed_at descending" do
       expect(Vital.recent.first).to eq(hr_vital)
@@ -67,6 +91,18 @@ RSpec.describe Vital, type: :model do
 
     it ".by_type filters by vital_type" do
       expect(Vital.by_type(:blood_pressure)).to contain_exactly(bp_vital)
+    end
+  end
+
+  describe ".ransackable_attributes" do
+    it "includes searchable fields" do
+      expect(Vital.ransackable_attributes).to include("vital_type", "value", "observed_at", "encounter_id")
+    end
+  end
+
+  describe ".ransackable_associations" do
+    it "includes associated models" do
+      expect(Vital.ransackable_associations).to include("encounter")
     end
   end
 end

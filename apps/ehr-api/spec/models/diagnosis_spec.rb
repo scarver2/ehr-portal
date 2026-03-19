@@ -1,3 +1,4 @@
+# spec/models/diagnosis_spec.rb
 # frozen_string_literal: true
 
 require "rails_helper"
@@ -23,6 +24,12 @@ RSpec.describe Diagnosis, type: :model do
 
     context "without description" do
       subject { build(:diagnosis, description: nil) }
+
+      it { is_expected.not_to be_valid }
+    end
+
+    context "without status" do
+      subject { build(:diagnosis, status: nil) }
 
       it { is_expected.not_to be_valid }
     end
@@ -67,6 +74,13 @@ RSpec.describe Diagnosis, type: :model do
         expect(diagnosis).not_to be_valid
       end
     end
+
+    describe "status predicates" do
+      it { expect(build(:diagnosis, :active)).to     be_active }
+      it { expect(build(:diagnosis, :resolved)).to   be_resolved }
+      it { expect(build(:diagnosis, :hypertension)).to be_chronic }
+      it { expect(build(:diagnosis, :ruled_out)).to  be_ruled_out }
+    end
   end
 
   describe "scopes" do
@@ -89,6 +103,22 @@ RSpec.describe Diagnosis, type: :model do
 
     it ".by_code filters by ICD-10 code" do
       expect(Diagnosis.by_code("I10")).to contain_exactly(chronic_dx)
+    end
+
+    it ".by_code returns empty when code does not match" do
+      expect(Diagnosis.by_code("Z99.99")).to be_empty
+    end
+  end
+
+  describe ".ransackable_attributes" do
+    it "includes searchable fields" do
+      expect(Diagnosis.ransackable_attributes).to include("icd10_code", "description", "status", "diagnosed_at")
+    end
+  end
+
+  describe ".ransackable_associations" do
+    it "includes associated models" do
+      expect(Diagnosis.ransackable_associations).to include("encounter")
     end
   end
 end

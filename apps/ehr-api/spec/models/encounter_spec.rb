@@ -1,3 +1,4 @@
+# spec/models/encounter_spec.rb
 # frozen_string_literal: true
 
 require "rails_helper"
@@ -37,6 +38,18 @@ RSpec.describe Encounter, type: :model do
 
       it { is_expected.not_to be_valid }
     end
+
+    context "without encounter_type" do
+      subject { build(:encounter, encounter_type: nil) }
+
+      it { is_expected.not_to be_valid }
+    end
+
+    context "without status" do
+      subject { build(:encounter, status: nil) }
+
+      it { is_expected.not_to be_valid }
+    end
   end
 
   describe "enums" do
@@ -65,6 +78,21 @@ RSpec.describe Encounter, type: :model do
         expect(encounter).not_to be_valid
       end
     end
+
+    describe "encounter_type predicates" do
+      it { expect(build(:encounter, :office_visit)).to  be_office_visit }
+      it { expect(build(:encounter, :telehealth)).to    be_telehealth }
+      it { expect(build(:encounter, :emergency)).to     be_emergency }
+      it { expect(build(:encounter, :follow_up)).to     be_follow_up }
+      it { expect(build(:encounter, :annual_exam)).to   be_annual_exam }
+    end
+
+    describe "status predicates" do
+      it { expect(build(:encounter, :scheduled)).to    be_scheduled }
+      it { expect(build(:encounter, :in_progress)).to  be_in_progress }
+      it { expect(build(:encounter, :completed)).to    be_completed }
+      it { expect(build(:encounter, :cancelled)).to    be_cancelled }
+    end
   end
 
   describe "scopes" do
@@ -83,11 +111,22 @@ RSpec.describe Encounter, type: :model do
       expect(Encounter.for_patient(new_encounter.patient)).to include(new_encounter)
       expect(Encounter.for_patient(new_encounter.patient)).not_to include(old_encounter)
     end
+
+    it ".for_provider filters by provider" do
+      expect(Encounter.for_provider(new_encounter.provider)).to include(new_encounter)
+      expect(Encounter.for_provider(new_encounter.provider)).not_to include(old_encounter)
+    end
   end
 
   describe ".ransackable_attributes" do
     it "includes key searchable fields" do
       expect(Encounter.ransackable_attributes).to include("status", "encounter_type", "encountered_at")
+    end
+  end
+
+  describe ".ransackable_associations" do
+    it "includes associated models" do
+      expect(Encounter.ransackable_associations).to include("patient", "provider", "vitals", "diagnoses")
     end
   end
 end

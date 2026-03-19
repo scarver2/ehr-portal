@@ -21,6 +21,32 @@ RSpec.describe Provider, type: :model do
       p = build(:provider, specialty: nil)
       expect(p).to be_valid
     end
+
+    it "belongs to a user (optional)" do
+      u = create(:user, :provider)
+      p = create(:provider, user: u)
+      expect(p.user).to eq(u)
+    end
+
+    it "can exist without a user account" do
+      p = build(:provider, user: nil)
+      expect(p).to be_valid
+    end
+
+    it "has many encounters" do
+      p = create(:provider)
+      enc = create(:encounter, provider: p)
+      expect(p.encounters).to include(enc)
+    end
+
+    it "restricts deletion when it has encounters" do
+      p = create(:provider)
+      create(:encounter, provider: p)
+      result = p.destroy
+      expect(result).to be_falsey
+      expect(p.errors[:base]).to be_present
+      expect(Provider.exists?(p.id)).to be true
+    end
   end
 
   describe "#full_name" do
@@ -53,5 +79,11 @@ RSpec.describe Provider, type: :model do
     it { is_expected.to include("first_name", "last_name", "npi", "specialty_id", "clinic_name") }
     it { is_expected.not_to include("encrypted_password") }
     it { is_expected.not_to include("specialty") }
+  end
+
+  describe ".ransackable_associations" do
+    subject { described_class.ransackable_associations }
+
+    it { is_expected.to include("specialty", "user", "encounters") }
   end
 end
