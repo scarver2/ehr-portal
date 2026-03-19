@@ -11,7 +11,7 @@ module Api
 
         def respond_with: (::User resource, **untyped opts) -> void
 
-        def respond_to_on_destroy: () -> void
+        def respond_to_on_destroy: (::User resource) -> void
       end
     end
   end
