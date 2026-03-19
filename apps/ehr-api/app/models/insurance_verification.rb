@@ -67,6 +67,9 @@ class InsuranceVerification < ApplicationRecord
         updated_at:          updated_at
       }
     )
+  # Gracefully handle Redis unavailability during seeding and initialization.
+  # Prevents failure of database seed tasks before Redis is booted. The broadcast
+  # is non-critical; loss during seeding is acceptable since seeds are ephemeral.
   rescue Errno::ECONNREFUSED, RedisClient::CannotConnectError => e
     Rails.logger.debug { "Redis broadcast failed (expected during seeding): #{e.message}" }
   end
