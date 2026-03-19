@@ -1,16 +1,17 @@
 # db/seeds/z_insurance_profiles.rb
 # frozen_string_literal: true
+
 #
 # Assigns an insurance profile to the first 10 seeded patients.
 # Runs last (z_ prefix) so payers and patients already exist.
 
-puts "Seeding insurance profiles..."
+Rails.logger.debug "Seeding insurance profiles..."
 
 payers   = Payer.active.to_a
-patients = Patient.includes(:user).order(:id).limit(10).to_a
+patients = Patient.includes(:user).order(:id).to_a
 
 if payers.empty?
-  puts "  ⚠ No active payers found — skipping insurance profiles"
+  Rails.logger.debug "  ⚠ No active payers found — skipping insurance profiles"
   return
 end
 
@@ -32,4 +33,4 @@ patients.each_with_index do |patient, i|
   seeded += 1
 end
 
-puts "Seeded #{seeded} insurance profiles (#{InsuranceProfile.count} total)"
+Rails.logger.debug { "Seeded #{seeded} insurance profiles (#{InsuranceProfile.count} total)" }

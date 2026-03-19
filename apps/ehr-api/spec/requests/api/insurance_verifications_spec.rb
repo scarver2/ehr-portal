@@ -53,7 +53,7 @@ RSpec.describe "Api::InsuranceVerifications", type: :request do
       it "returns 422 when the patient has no insurance profile" do
         other_user = create(:user, :patient)
         post "/api/insurance_verifications", params: { patient_id: other_user.id }, as: :json
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)["error"]).to include("no insurance profile")
       end
     end
