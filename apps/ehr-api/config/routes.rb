@@ -12,8 +12,7 @@ Rails.application.routes.draw do
   # ActionCable WebSocket endpoint
   mount ActionCable.server => "/cable"
 
-  devise_for :users, ActiveAdmin::Devise.config
-
+  # Admin panel route
   ActiveAdmin.routes(self)
 
   root to: redirect("/admin")
