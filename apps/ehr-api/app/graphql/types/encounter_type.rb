@@ -15,7 +15,7 @@ module Types
     field :created_at,      GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at,      GraphQL::Types::ISO8601DateTime, null: false
 
-    field :patient,    Types::UserType,            null: false
+    field :patient,    Types::PatientType,          null: false
     field :provider,   Types::ProviderType,        null: false
     field :vitals,     [Types::VitalType],         null: false
     field :diagnoses,  [Types::DiagnosisType],     null: false

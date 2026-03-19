@@ -22,4 +22,8 @@ class User < ApplicationRecord
   def provider?: () -> bool
   def staff?: () -> bool
   def patient?: () -> bool
+
+  # Profile associations
+  def patient: () -> ::Patient?
+  def provider: () -> ::Provider?
 end

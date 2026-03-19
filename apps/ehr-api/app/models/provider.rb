@@ -2,13 +2,22 @@
 # frozen_string_literal: true
 
 class Provider < ApplicationRecord
-  has_many :encounters, inverse_of: :provider, dependent: :restrict_with_error
+  belongs_to :user, optional: true, inverse_of: :provider
+  has_many   :encounters, inverse_of: :provider, dependent: :restrict_with_error
+
+  def full_name
+    "#{first_name} #{last_name}"
+  end
+
+  def location
+    [city, state].compact.join(", ")
+  end
 
   def self.ransackable_attributes(auth_object = nil)
-    %w[clinic_name created_at first_name id last_name npi specialty updated_at]
+    %w[city clinic_name created_at first_name id last_name npi specialty state updated_at zip]
   end
 
   def self.ransackable_associations(auth_object = nil)
-    %w[encounters]
+    %w[encounters user]
   end
 end

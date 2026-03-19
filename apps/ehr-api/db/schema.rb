@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_19_035156) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_19_060010) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -58,14 +58,39 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_035156) do
     t.index ["provider_id"], name: "index_encounters_on_provider_id"
   end
 
+  create_table "patients", force: :cascade do |t|
+    t.string "address"
+    t.datetime "created_at", null: false
+    t.date "date_of_birth"
+    t.string "emergency_contact_name"
+    t.string "emergency_contact_phone"
+    t.string "first_name", null: false
+    t.string "gender"
+    t.string "last_name", null: false
+    t.string "mrn"
+    t.string "phone"
+    t.virtual "searchable_name", type: :tsvector, as: "to_tsvector('simple'::regconfig, (((COALESCE(first_name, ''::character varying))::text || ' '::text) || (COALESCE(last_name, ''::character varying))::text))", stored: true
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["last_name", "first_name"], name: "index_patients_on_last_name_and_first_name"
+    t.index ["mrn"], name: "index_patients_on_mrn", unique: true
+    t.index ["searchable_name"], name: "index_patients_on_searchable_name", using: :gin
+    t.index ["user_id"], name: "index_patients_on_user_id", unique: true
+  end
+
   create_table "providers", force: :cascade do |t|
+    t.string "city"
     t.string "clinic_name"
     t.datetime "created_at", null: false
     t.string "first_name"
     t.string "last_name"
     t.string "npi"
     t.string "specialty"
+    t.string "state"
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.string "zip"
+    t.index ["user_id"], name: "index_providers_on_user_id", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -95,7 +120,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_035156) do
   end
 
   add_foreign_key "diagnoses", "encounters"
+  add_foreign_key "encounters", "patients"
   add_foreign_key "encounters", "providers"
-  add_foreign_key "encounters", "users", column: "patient_id"
+  add_foreign_key "patients", "users"
+  add_foreign_key "providers", "users"
   add_foreign_key "vitals", "encounters"
 end

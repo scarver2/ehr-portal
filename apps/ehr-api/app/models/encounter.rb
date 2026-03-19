@@ -2,8 +2,8 @@
 # frozen_string_literal: true
 
 class Encounter < ApplicationRecord
-  belongs_to :patient,  class_name: "User",     foreign_key: :patient_id, inverse_of: :encounters
-  belongs_to :provider, class_name: "Provider", foreign_key: :provider_id, inverse_of: :encounters
+  belongs_to :patient,  inverse_of: :encounters
+  belongs_to :provider, inverse_of: :encounters
 
   has_many :vitals,    dependent: :destroy, inverse_of: :encounter
   has_many :diagnoses, dependent: :destroy, inverse_of: :encounter
@@ -27,7 +27,7 @@ class Encounter < ApplicationRecord
   validates :encounter_type, presence: true
   validates :status,         presence: true
 
-  scope :for_patient,  ->(user)     { where(patient: user) }
+  scope :for_patient,  ->(patient)  { where(patient: patient) }
   scope :for_provider, ->(provider) { where(provider: provider) }
   scope :recent,                    -> { order(encountered_at: :desc) }
   scope :completed,                 -> { where(status: "completed") }

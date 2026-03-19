@@ -1,0 +1,25 @@
+# sig/app/models/patient.rbs
+
+class Patient < ApplicationRecord
+  attr_accessor id:                      ::Integer
+  attr_accessor user_id:                 ::Integer?
+  attr_accessor first_name:              ::String
+  attr_accessor last_name:               ::String
+  attr_accessor date_of_birth:           ::Date?
+  attr_accessor gender:                  ::String?
+  attr_accessor mrn:                     ::String?
+  attr_accessor phone:                   ::String?
+  attr_accessor address:                 ::String?
+  attr_accessor emergency_contact_name:  ::String?
+  attr_accessor emergency_contact_phone: ::String?
+  attr_accessor created_at:              ::Time
+  attr_accessor updated_at:              ::Time
+
+  def full_name: () -> ::String
+  def age: () -> ::Integer?
+
+  def self.search_by_name: (::String query) -> ::ActiveRecord::Relation
+  def self.alphabetical: () -> ::ActiveRecord::Relation
+  def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]
+  def self.ransackable_associations: (?untyped auth_object) -> ::Array[::String]
+end

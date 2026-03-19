@@ -3,7 +3,7 @@
 
 module Types
   class UserType < Types::BaseObject
-    description "A user of the EHR system."
+    description "An authenticated user account."
     implements Types::NodeType
 
     field :id,         ID,                              null: false
@@ -12,10 +12,7 @@ module Types
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
 
-    field :encounters, [Types::EncounterType], null: false
-
-    def encounters
-      object.encounters.recent
-    end
+    field :patient,  Types::PatientType,  null: true
+    field :provider, Types::ProviderType, null: true
   end
 end

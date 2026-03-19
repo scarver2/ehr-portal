@@ -21,6 +21,27 @@ module Types
       ids.map { |id| context.schema.object_from_id(id, context) }
     end
 
+    # Patients
+    field :patients, [Types::PatientType], null: false do
+      argument :name,   String, required: false, description: "Full-text search on first or last name."
+      argument :gender, String, required: false
+    end
+
+    def patients(name: nil, gender: nil)
+      scope = Patient.alphabetical
+      scope = scope.search_by_name(name) if name.present?
+      scope = scope.where(gender: gender) if gender.present?
+      scope
+    end
+
+    field :patient, Types::PatientType, null: true do
+      argument :id, ID, required: true
+    end
+
+    def patient(id:)
+      Patient.find_by(id: id)
+    end
+
     field :providers, [Types::ProviderType], null: false
 
     def providers

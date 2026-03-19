@@ -1,0 +1,7 @@
+# sig/app/graphql/types/patient_type.rbs
+
+module Types
+  class PatientType < Types::BaseObject
+    def encounters: () -> ::ActiveRecord::Associations::CollectionProxy
+  end
+end

@@ -58,7 +58,7 @@ ActiveAdmin.register Encounter do
 
   form do |f|
     f.inputs do
-      f.input :patient,        as: :select, collection: User.where(role: :patient).order(:email)
+      f.input :patient,        as: :select, collection: Patient.alphabetical.map { |p| [p.full_name, p.id] }
       f.input :provider,       as: :select, collection: Provider.order(:last_name)
       f.input :encounter_type, as: :select, collection: Encounter.encounter_types.keys
       f.input :status,         as: :select, collection: Encounter.statuses.keys

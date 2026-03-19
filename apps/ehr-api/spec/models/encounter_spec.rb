@@ -8,9 +8,9 @@ RSpec.describe Encounter, type: :model do
   it { is_expected.to be_valid }
 
   describe "associations" do
-    it "belongs to a patient (User)" do
+    it "belongs to a patient (Patient)" do
       enc = create(:encounter)
-      expect(enc.patient).to be_a(User)
+      expect(enc.patient).to be_a(Patient)
     end
 
     it "belongs to a provider (Provider)" do

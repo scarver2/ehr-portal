@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :encounter do
-    association :patient,  factory: :user, role: :patient
+    association :patient
     association :provider, factory: :provider
 
     encounter_type { :office_visit }
