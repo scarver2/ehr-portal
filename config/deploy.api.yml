@@ -19,6 +19,7 @@ env:
     - SECRET_KEY_BASE
     - DB_USER
     - DB_PASSWORD
+    - HONEYBADGER_API_KEY
   clear:
     DB_HOST: ehr-api-postgres
     DB_PORT: 5432
