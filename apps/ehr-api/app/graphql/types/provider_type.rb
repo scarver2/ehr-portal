@@ -11,7 +11,7 @@ module Types
     field :last_name,  String
     field :full_name,  String, null: false
     field :npi,        String
-    field :specialty,  String
+    field :specialty,  Types::SpecialtyType, null: true
     field :clinic_name, String
     field :city,       String
     field :state,      String

@@ -2,8 +2,8 @@
 # frozen_string_literal: true
 
 ActiveAdmin.register Provider do
-  permit_params :user_id, :first_name, :last_name, :npi, :specialty, :clinic_name,
-                :city, :state, :zip
+  permit_params :user_id, :specialty_id, :first_name, :last_name, :npi,
+                :clinic_name, :city, :state, :zip
 
   filter :first_name
   filter :last_name
@@ -16,11 +16,11 @@ ActiveAdmin.register Provider do
   index do
     selectable_column
     id_column
-    column(:name) { |p| p.full_name }
+    column(:name)      { |p| p.full_name }
     column :specialty
     column :clinic_name
     column :npi
-    column(:location) { |p| p.location }
+    column(:location)  { |p| p.location }
     actions
   end
 
@@ -46,7 +46,9 @@ ActiveAdmin.register Provider do
       f.input :first_name
       f.input :last_name
       f.input :npi
-      f.input :specialty
+      f.input :specialty, as: :select,
+              collection: Specialty.alphabetical.map { |s| [s.name, s.id] },
+              include_blank: true
       f.input :clinic_name
     end
 

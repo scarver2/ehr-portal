@@ -56,6 +56,25 @@ module Types
       Provider.find_by(id: id)
     end
 
+    # Specialties
+    field :specialties, [Types::SpecialtyType], null: false do
+      argument :category, String, required: false
+    end
+
+    def specialties(category: nil)
+      scope = Specialty.alphabetical
+      scope = scope.by_category(category) if category.present?
+      scope
+    end
+
+    field :specialty, Types::SpecialtyType, null: true do
+      argument :id, ID, required: true
+    end
+
+    def specialty(id:)
+      Specialty.find_by(id: id)
+    end
+
     # Encounters
     field :encounters, [Types::EncounterType], null: false do
       argument :patient_id,  ID,     required: false

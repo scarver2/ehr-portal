@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_19_060010) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_19_070005) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -85,12 +85,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_060010) do
     t.string "first_name"
     t.string "last_name"
     t.string "npi"
-    t.string "specialty"
+    t.bigint "specialty_id"
     t.string "state"
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.string "zip"
+    t.index ["specialty_id"], name: "index_providers_on_specialty_id"
     t.index ["user_id"], name: "index_providers_on_user_id", unique: true
+  end
+
+  create_table "specialties", force: :cascade do |t|
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category"], name: "index_specialties_on_category"
+    t.index ["name"], name: "index_specialties_on_name", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -123,6 +133,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_060010) do
   add_foreign_key "encounters", "patients"
   add_foreign_key "encounters", "providers"
   add_foreign_key "patients", "users"
+  add_foreign_key "providers", "specialties"
   add_foreign_key "providers", "users"
   add_foreign_key "vitals", "encounters"
 end
