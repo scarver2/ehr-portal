@@ -67,7 +67,7 @@ class InsuranceVerification < ApplicationRecord
         updated_at:          updated_at
       }
     )
-  rescue Redis::ConnectionError => e
+  rescue Errno::ECONNREFUSED, RedisClient::CannotConnectError => e
     Rails.logger.debug { "Redis broadcast failed (expected during seeding): #{e.message}" }
   end
 
