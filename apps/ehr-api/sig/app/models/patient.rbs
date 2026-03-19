@@ -18,6 +18,10 @@ class Patient < ApplicationRecord
   def full_name: () -> ::String
   def age: () -> ::Integer?
 
+  private
+
+  def birthday_passed_this_year?: (?::Date reference_date) -> bool
+
   def self.search_by_name: (::String query) -> ::ActiveRecord::Relation
   def self.alphabetical: () -> ::ActiveRecord::Relation
   def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]

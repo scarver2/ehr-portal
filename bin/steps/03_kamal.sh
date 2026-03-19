@@ -27,7 +27,6 @@ proxy:
   ssl: true
   host: api.ehr.stancarver.com
   app_port: 3000
-  # drain_timeout: 30
   healthcheck:
     path: /up
 
@@ -40,9 +39,42 @@ registry:
 servers:
   web:
     - 45.76.237.124
+  worker:
+    hosts:
+      - 45.76.237.124
+    cmd: bundle exec sidekiq -C config/sidekiq.yml
 
 ssh:
   user: deploy
+
+env:
+  secret:
+    - SECRET_KEY_BASE
+    - DB_USER
+    - DB_PASSWORD
+    - HONEYBADGER_API_KEY
+    - REDIS_URL
+
+accessories:
+  postgres:
+    image: postgres:18
+    host: 45.76.237.124
+    port: 5432
+    env:
+      clear:
+        POSTGRES_DB: ehr_api_production
+      secret:
+        - POSTGRES_USER
+        - POSTGRES_PASSWORD
+    volumes:
+      - ehr_api_postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    host: 45.76.237.124
+    port: 6379
+    volumes:
+      - ehr_api_redis_data:/data
 
 EOF
 

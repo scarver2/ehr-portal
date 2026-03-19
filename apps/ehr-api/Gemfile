@@ -39,8 +39,14 @@ gem "rails", "~> 8.1.2"
 # https://puma.io
 gem "puma", ">= 5.0"
 
-# https://github.com/rails/solid_queue
-gem "solid_queue", "~> 1.3"
+# https://github.com/mperham/sidekiq
+gem "sidekiq", "~> 8.0"
+
+# https://github.com/redis/redis-rb (required by ActionCable Redis pubsub adapter)
+gem "redis", "~> 5.0"
+
+# https://github.com/aasm/aasm
+gem "aasm", "~> 5.5"
 
 # https://github.com/tzinfo/tzinfo-data
 gem "tzinfo-data", platforms: %i[ windows jruby ]

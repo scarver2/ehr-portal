@@ -9,8 +9,6 @@
 
 source "$(dirname "$0")/_lib.sh"
 
-banner
-
 # Start Docker services. --wait blocks until Postgres healthcheck passes;
 # pgadmin4 has no healthcheck so it starts in parallel without delaying boot.
 echo "==> Starting Docker services (Postgres + pgAdmin4)..."

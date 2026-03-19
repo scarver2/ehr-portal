@@ -21,6 +21,12 @@ COPY . .
 
 EXPOSE 3000
 
-# CMD ["bin/rails", "server", "-b", "0.0.0.0"]
+# Web server (default)
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
+
+# Sidekiq worker — Kamal worker role overrides CMD:
+#   servers.worker.cmd: bundle exec sidekiq -C config/sidekiq.yml
 EOF
+
+info "Kamal worker role (config/deploy.api.yml servers.worker) runs:"
+info "  bundle exec sidekiq -C config/sidekiq.yml"

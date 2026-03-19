@@ -18,6 +18,13 @@ vi.mock("next/link", () => ({
   ),
 }))
 
+// Mock the client component — tested in its own suite
+vi.mock("./InsuranceVerificationPanel", () => ({
+  InsuranceVerificationPanel: ({ patientId }: { patientId: number }) => (
+    <div data-testid="insurance-panel" data-patient-id={patientId} />
+  ),
+}))
+
 import PatientPage from "./page"
 import { graphql } from "@/lib/graphql"
 
@@ -174,5 +181,34 @@ describe("PatientPage", () => {
     render(await PatientPage(params("1")))
     expect(screen.getByText("No encounters on record.")).toBeInTheDocument()
     expect(screen.queryByRole("listitem")).toBeNull()
+  })
+
+  it("falls back to raw gender string for unknown gender values", async () => {
+    vi.mocked(graphql.request).mockResolvedValue({
+      patient: { ...mockPatient, gender: "nonbinary" },
+    })
+    render(await PatientPage(params("1")))
+    expect(screen.getByText("Gender: nonbinary")).toBeInTheDocument()
+  })
+
+  // ── Insurance Verification ────────────────────────────────────────────────
+
+  it("renders the InsuranceVerificationPanel with the patient id", async () => {
+    render(await PatientPage(params("1")))
+    const panel = screen.getByTestId("insurance-panel")
+    expect(panel).toBeInTheDocument()
+    expect(panel).toHaveAttribute("data-patient-id", "1")
+  })
+
+  it("omits chief complaint when null", async () => {
+    vi.mocked(graphql.request).mockResolvedValue({
+      patient: {
+        ...mockPatient,
+        encounters: [{ ...mockEncounter, chiefComplaint: null }],
+      },
+    })
+    render(await PatientPage(params("1")))
+    const item = screen.getByRole("listitem")
+    expect(item.textContent).not.toMatch(/·/)
   })
 })

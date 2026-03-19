@@ -144,7 +144,7 @@ ActiveAdmin.setup do |config|
   # This allows your users to comment on any resource registered with Active Admin.
   #
   # You can completely disable comments:
-  # config.comments = false
+  config.comments = false
   #
   # You can change the name under which comments are registered:
   # config.comments_registration_name = 'AdminComment'
@@ -263,6 +263,10 @@ ActiveAdmin.setup do |config|
                   url:          "https://app.honeybadger.io/projects/138326/insights/dashboards",
                   priority:     2,
                   html_options: { target: "_blank", rel: "noopener noreferrer" }
+        tools.add label:        "Sidekiq",
+                  url:          "/sidekiq",
+                  priority:     3,
+                  html_options: { target: "_blank" }
       end
     end
   end

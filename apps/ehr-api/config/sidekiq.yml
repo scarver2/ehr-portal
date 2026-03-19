@@ -1,0 +1,6 @@
+# config/sidekiq.yml
+:concurrency: 3
+:queues:
+  - critical
+  - insurance
+  - default

@@ -23,9 +23,21 @@ class Patient < ApplicationRecord
     return nil unless date_of_birth
 
     now = Date.today
-    now.year - date_of_birth.year -
-      ((now.month > date_of_birth.month ||
-        (now.month == date_of_birth.month && now.day >= date_of_birth.day)) ? 0 : 1)
+    years_elapsed = now.year - date_of_birth.year
+    years_elapsed -= 1 unless birthday_passed_this_year?(now)
+    years_elapsed
+  end
+
+  private
+
+  # Check if the patient's birthday has already occurred this calendar year.
+  # Returns true if we've passed or are on the birthday month/day.
+  def birthday_passed_this_year?(reference_date = Date.today)
+    dob = date_of_birth
+    return false unless dob
+
+    reference_date.month > dob.month ||
+      (reference_date.month == dob.month && reference_date.day >= dob.day)
   end
 
   def self.ransackable_attributes(auth_object = nil)

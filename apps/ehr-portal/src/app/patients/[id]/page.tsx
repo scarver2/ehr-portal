@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic"
 import { graphql } from "@/lib/graphql"
 import { gql } from "graphql-request"
 import Link from "next/link"
+import { InsuranceVerificationPanel } from "./InsuranceVerificationPanel"
 
 const query = gql`
   query Patient($id: ID!) {
@@ -102,6 +103,8 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
         <p>Emergency Contact: {patient.emergencyContactName ?? "—"}</p>
         <p>Emergency Phone: {patient.emergencyContactPhone ?? "—"}</p>
       </section>
+
+      <InsuranceVerificationPanel patientId={Number(patient.id)} />
 
       <section>
         <h2>Encounters</h2>

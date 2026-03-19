@@ -1,0 +1,15 @@
+class InsuranceProfile < ApplicationRecord
+  # Associations
+  def user: () -> ::User
+  def payer: () -> ::Payer?
+  def insurance_verifications: () -> ::ActiveRecord::Associations::CollectionProxy
+
+  # DB columns
+  attr_accessor member_id: ::String
+  attr_accessor payer_name: ::String
+  attr_accessor status: ::String?
+
+  private
+
+  def trigger_verification: () -> void
+end

@@ -1,0 +1,4 @@
+module RedisClient
+  class CannotConnectError < StandardError
+  end
+end
