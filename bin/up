@@ -3,8 +3,6 @@
 
 source "$(dirname "$0")/_lib.sh"
 
-banner
-
 # Default behavior: up -d
 # You can override/extend by passing args, e.g.:
 #   bin/up --build

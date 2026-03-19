@@ -3,8 +3,6 @@
 
 source "$(dirname "$0")/_lib.sh"
 
-banner
-
 if prompt "Are you sure? (yN)"; then
   rm -rf bin/down bin/logs bin/restart bin/up \
     compose.yml \
