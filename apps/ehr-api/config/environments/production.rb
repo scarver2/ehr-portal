@@ -54,7 +54,7 @@ Rails.application.configure do
   config.action_cable.allowed_request_origins = [
     "https://ehr.stancarver.com",
     "https://api.ehr.stancarver.com",
-    /https?:\/\/localhost:\d+/  # Local development
+    %r{https?://localhost:\d+} # Local development
   ]
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
