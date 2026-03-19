@@ -1,6 +1,16 @@
 # sig/shims/aasm.rbs
 # Minimal stub for the aasm gem.
 # Remove once aasm ships official RBS definitions.
+#
+# Steep sees `aasm`, `state`, `event`, and `transitions` as calls on the class
+# singleton, so we declare them on ActiveRecord::Base.
 
 module AASM
+end
+
+class ActiveRecord::Base
+  def self.aasm: (?::Symbol, **untyped) { () -> void } -> void
+  def self.state: (::Symbol, **untyped) -> void
+  def self.event: (::Symbol) { () -> void } -> void
+  def self.transitions: (**untyped) -> void
 end

@@ -26,6 +26,8 @@ class User < ApplicationRecord
   # Profile associations
   def patient: () -> ::Patient?
   def provider: () -> ::Provider?
+  def insurance_profile: () -> ::InsuranceProfile?
+  def insurance_verifications: () -> ::ActiveRecord::Associations::CollectionProxy
 
   def self.provider_accounts: () -> ::ActiveRecord::Relation
 end

@@ -1,0 +1,12 @@
+# sig/shims/sidekiq.rbs
+# Minimal stub for Sidekiq worker interface.
+# Sidekiq 7+ ships partial RBS; this fills gaps Steep still flags.
+
+module Sidekiq
+  module Worker
+    def self.included: (untyped base) -> void
+
+    def self.perform_async: (*untyped) -> ::String
+    def self.get_sidekiq_options: () -> ::Hash[::String, untyped]
+  end
+end

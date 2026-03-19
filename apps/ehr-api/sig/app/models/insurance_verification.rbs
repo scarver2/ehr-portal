@@ -1,10 +1,29 @@
 class InsuranceVerification < ApplicationRecord
   include AASM
 
+  # Associations
   def user: () -> ::User
   def insurance_profile: () -> ::InsuranceProfile
+
+  # DB columns
+  attr_accessor request_uuid: ::String
+  attr_accessor status: ::String
+  attr_accessor payer_name: ::String?
+  attr_accessor plan_name: ::String?
+  attr_accessor copay_cents: ::Integer?
+  attr_accessor deductible_cents: ::Integer?
+  attr_accessor oop_max_cents: ::Integer?
+  attr_accessor verified_at: ::Time?
+  attr_accessor expires_at: ::Time?
+  attr_accessor error_message: ::String?
+  attr_accessor external_reference: ::String?
+  attr_accessor raw_response: untyped
+  attr_accessor updated_at: ::Time
+
+  # Public interface
   def broadcast!: () -> void
 
+  # AASM state predicates
   def pending?: () -> bool
   def queued?: () -> bool
   def requesting?: () -> bool
@@ -14,6 +33,7 @@ class InsuranceVerification < ApplicationRecord
   def expired?: () -> bool
   def canceled?: () -> bool
 
+  # AASM guard predicates
   def may_enqueue?: () -> bool
   def may_start_request?: () -> bool
   def may_start_parsing?: () -> bool
@@ -22,6 +42,7 @@ class InsuranceVerification < ApplicationRecord
   def may_mark_expired?: () -> bool
   def may_cancel?: () -> bool
 
+  # AASM events
   def enqueue!: () -> void
   def start_request!: () -> void
   def start_parsing!: () -> void
@@ -31,4 +52,8 @@ class InsuranceVerification < ApplicationRecord
   def cancel!: () -> void
 
   def with_lock: () { () -> void } -> void
+
+  private
+
+  def ensure_request_uuid: () -> void
 end

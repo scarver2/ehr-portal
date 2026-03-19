@@ -1,0 +1,5 @@
+class InsuranceVerificationWorker
+  include Sidekiq::Worker
+
+  def perform: (::Integer verification_id) -> void
+end
