@@ -50,6 +50,13 @@ Rails.application.configure do
     expires_in: 12.hours
   }
 
+  # ActionCable WebSocket connections from the portal
+  config.action_cable.allowed_request_origins = [
+    "https://ehr.stancarver.com",
+    "https://api.ehr.stancarver.com",
+    /https?:\/\/localhost:\d+/  # Local development
+  ]
+
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
