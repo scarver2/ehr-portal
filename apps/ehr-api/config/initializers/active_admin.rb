@@ -246,13 +246,23 @@ ActiveAdmin.setup do |config|
 
   # == Menu System
   #
-  # In development, add a GraphiQL link to the utility navigation (top-right header).
+  # "Tools" dropdown in the main navigation:
+  #   - GraphiQL (development only) — in-browser GraphQL IDE, opens in new tab
+  #   - Honeybadger               — Insights dashboard, opens in new tab
   #
-  if Rails.env.development?
-    config.namespace :admin do |admin|
-      admin.build_menu :utility_navigation do |menu|
-        menu.add label: "GraphiQL", url: "/graphiql", html_options: { target: "_blank" }
-        admin.add_logout_button_to_menu menu
+  config.namespace :admin do |admin|
+    admin.build_menu do |menu|
+      menu.add label: "Tools", priority: 98 do |tools|
+        if Rails.env.development?
+          tools.add label:         "GraphiQL",
+                    url:           "/graphiql",
+                    priority:      1,
+                    html_options:  { target: "_blank" }
+        end
+        tools.add label:        "Honeybadger",
+                  url:          "https://app.honeybadger.io/projects/138326/insights/dashboards",
+                  priority:     2,
+                  html_options: { target: "_blank", rel: "noopener noreferrer" }
       end
     end
   end
