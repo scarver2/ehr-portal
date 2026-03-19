@@ -67,6 +67,8 @@ class InsuranceVerification < ApplicationRecord
         updated_at:          updated_at
       }
     )
+  rescue Redis::ConnectionError => e
+    Rails.logger.debug { "Redis broadcast failed (expected during seeding): #{e.message}" }
   end
 
   private
