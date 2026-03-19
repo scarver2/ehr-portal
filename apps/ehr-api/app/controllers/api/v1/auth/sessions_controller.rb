@@ -17,6 +17,12 @@ module Api
           devise_parameter_sanitizer.permit(:sign_in, keys: [:email, :password])
         end
 
+        # Devise expects params at the top level, but JSON API sends them nested under 'user'.
+        # This method extracts and flattens them for Devise's authentication.
+        def sign_in_params
+          params.require(:user).permit(:email, :password)
+        end
+
         # Called on successful sign-in. The JWT is emitted automatically by
         # devise-jwt in the Authorization response header.
         def respond_with(resource, _opts = {})

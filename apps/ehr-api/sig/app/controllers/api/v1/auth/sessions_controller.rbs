@@ -11,6 +11,8 @@ module Api
 
         def configure_sign_in_params: () -> void
 
+        def sign_in_params: () -> untyped
+
         def respond_with: (::User resource, **untyped opts) -> void
 
         def respond_to_on_destroy: (::User resource) -> void
