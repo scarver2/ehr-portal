@@ -14,7 +14,29 @@ esac
 
 # Database tasks only apply to the Rails API; the portal has no bin/rails.
 if [[ "$SERVICE" == "ehr-api" ]]; then
-  # TODO: switch db:reset to db:migrate when schema is stabilized
+  # NOTE: db:reset is intentional. This project intentionally wipes and rebuilds
+  # the database on every deploy during active schema development. Do not change
+  # db:reset to db:migrate without explicit approval from the project owner.
   kamal app exec --reuse -c "$CONFIG" -- env DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bin/rails db:reset
   kamal app exec --reuse -c "$CONFIG" -- bin/rails db:seed
+fi
+
+# Notify Honeybadger of the deployment so it can correlate errors with releases.
+# Each service uses its own API key sourced from .kamal/secrets-common.
+SHA="${KAMAL_SERVICE_VERSION##*@}"
+case "$SERVICE" in
+  ehr-api)    HB_KEY="${HONEYBADGER_API_KEY:-}" ;;
+  ehr-portal) HB_KEY="${NEXT_PUBLIC_HONEYBADGER_API_KEY:-}" ;;
+  *)          HB_KEY="" ;;
+esac
+
+if [[ -n "$HB_KEY" ]]; then
+  curl -s -o /dev/null -w "%{http_code}" \
+    -X POST "https://api.honeybadger.io/v1/deploys" \
+    -H "X-API-Key: $HB_KEY" \
+    -H "Content-Type: application/json" \
+    -d "{\"deploy\":{\"environment\":\"production\",\"revision\":\"$SHA\",\"local_username\":\"${KAMAL_PERFORMER:-deploy}\"}}" \
+  | xargs -I{} echo "Honeybadger deploy notification: HTTP {}"
+else
+  echo "Honeybadger deploy notification skipped: no API key for $SERVICE"
 fi
