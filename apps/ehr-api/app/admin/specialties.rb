@@ -6,7 +6,7 @@ ActiveAdmin.register Specialty do
 
   filter :name
   filter :category, as: :select,
-                    collection: Specialty.distinct.pluck(:category).compact.sort
+                    collection: proc { Specialty.distinct.pluck(:category).compact.sort }
 
   index do
     selectable_column
