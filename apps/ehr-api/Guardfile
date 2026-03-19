@@ -40,6 +40,9 @@ guard :rspec, cmd: "bundle exec rspec --format documentation", all_on_start: fal
   # ActiveAdmin resources → spec/requests/admin/*_spec.rb
   watch(%r{^app/admin/(.+)\.rb$}) { |m| "spec/requests/admin/#{m[1]}_spec.rb" }
 
+  # API controllers → spec/controllers/api/**/*_spec.rb
+  watch(%r{^app/controllers/api/(.+)\.rb$}) { |m| "spec/controllers/api/#{m[1]}_spec.rb" }
+
   # GraphQL controller → spec/requests/graphql_spec.rb
   watch("app/controllers/graphql_controller.rb") { "spec/requests/graphql_spec.rb" }
 
