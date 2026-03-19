@@ -25,7 +25,7 @@ module Api
         end
 
         # Called on successful sign-out.
-        def respond_to_on_destroy
+        def respond_to_on_destroy(resource)
           render json: { message: "Logged out successfully" }, status: :ok
         end
       end

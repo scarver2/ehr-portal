@@ -12,8 +12,8 @@ RSpec.describe 'Api::V1::Auth::Sessions', type: :request do
     context 'with valid credentials' do
       before do
         post '/api/v1/auth/login',
-          params: { user: { email: user.email, password: password } }.to_json,
-          headers: { 'Content-Type' => 'application/json' }
+          params: { user: { email: user.email, password: password } },
+          as: :json
       end
 
       it 'returns 200' do
@@ -32,8 +32,8 @@ RSpec.describe 'Api::V1::Auth::Sessions', type: :request do
     context 'with invalid password' do
       before do
         post '/api/v1/auth/login',
-          params: { user: { email: user.email, password: 'wrong' } }.to_json,
-          headers: { 'Content-Type' => 'application/json' }
+          params: { user: { email: user.email, password: 'wrong' } },
+          as: :json
       end
 
       it 'returns 401' do
@@ -48,8 +48,8 @@ RSpec.describe 'Api::V1::Auth::Sessions', type: :request do
     context 'with an unknown email' do
       before do
         post '/api/v1/auth/login',
-          params: { user: { email: 'nobody@example.com', password: password } }.to_json,
-          headers: { 'Content-Type' => 'application/json' }
+          params: { user: { email: 'nobody@example.com', password: password } },
+          as: :json
       end
 
       it 'returns 401' do
@@ -63,13 +63,14 @@ RSpec.describe 'Api::V1::Auth::Sessions', type: :request do
       before do
         # Obtain a real token by logging in first
         post '/api/v1/auth/login',
-          params: { user: { email: user.email, password: password } }.to_json,
-          headers: { 'Content-Type' => 'application/json' }
+          params: { user: { email: user.email, password: password } },
+          as: :json
 
         token = response.headers['Authorization']
 
         delete '/api/v1/auth/logout',
-          headers: { 'Authorization' => token, 'Content-Type' => 'application/json' }
+          headers: { 'Authorization' => token },
+          as: :json
       end
 
       it 'returns 200' do
@@ -84,7 +85,7 @@ RSpec.describe 'Api::V1::Auth::Sessions', type: :request do
     context 'without a token' do
       before do
         delete '/api/v1/auth/logout',
-          headers: { 'Content-Type' => 'application/json' }
+          as: :json
       end
 
       it 'returns 401' do
