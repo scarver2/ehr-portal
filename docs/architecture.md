@@ -1,5 +1,8 @@
 # EHR Portal Architecture
 
+
+## API Request Flow
+
     Browser
         ↓
     Next.js Portal
@@ -9,6 +12,26 @@
     Redis Cache
         ↓
     PostgreSQL
+
+
+## Auth Flow
+# TODO: Add RBAC information&steps/flow
+
+
+    NextJS
+       │
+       │ login
+       ▼
+    POST /api/auth/login
+       │
+       │ JWT returned
+       ▼
+   NextJS stores token
+       │
+       │ Authorization header
+       ▼
+    Rails API
+
 
 ## License
 
