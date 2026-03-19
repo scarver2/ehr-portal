@@ -1,6 +1,6 @@
 // apps/ehr-portal/src/app/providers/page.tsx
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 import { graphql } from "@/lib/graphql"
 import { gql } from "graphql-request"
@@ -11,7 +11,10 @@ const query = gql`
     providers {
       id
       fullName
-      specialty
+      specialty {
+        id
+        name
+      }
     }
   }
 `
@@ -19,7 +22,7 @@ const query = gql`
 type Provider = {
   id: string
   fullName: string
-  specialty: string
+  specialty: { id: string; name: string } | null
 }
 
 export default async function ProvidersPage() {
@@ -33,7 +36,8 @@ export default async function ProvidersPage() {
         {data.providers.map((p) => (
           <li key={p.id}>
             <Link href={`/providers/${p.id}`}>
-              {p.fullName} — {p.specialty}
+              {p.fullName}
+              {p.specialty ? ` — ${p.specialty.name}` : ""}
             </Link>
           </li>
         ))}

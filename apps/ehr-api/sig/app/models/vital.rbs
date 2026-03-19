@@ -1,0 +1,30 @@
+# sig/app/models/vital.rbs
+
+class Vital < ApplicationRecord
+  attr_accessor id:          ::Integer
+  attr_accessor encounter_id: ::Integer
+  attr_accessor vital_type:  ::String
+  attr_accessor value:       ::String
+  attr_accessor unit:        ::String?
+  attr_accessor observed_at: ::Time
+  attr_accessor notes:       ::String?
+  attr_accessor created_at:  ::Time
+  attr_accessor updated_at:  ::Time
+
+  # enum predicates
+  def blood_pressure?:    () -> bool
+  def heart_rate?:        () -> bool
+  def temperature?:       () -> bool
+  def weight?:            () -> bool
+  def height?:            () -> bool
+  def oxygen_saturation?: () -> bool
+  def respiratory_rate?:  () -> bool
+  def bmi?:               () -> bool
+
+  UNITS: ::Hash[::Symbol, ::String]
+
+  def self.by_type: (::Symbol type) -> ::ActiveRecord::Relation
+  def self.recent: () -> ::ActiveRecord::Relation
+  def self.ransackable_attributes: (?untyped auth_object) -> ::Array[::String]
+  def self.ransackable_associations: (?untyped auth_object) -> ::Array[::String]
+end

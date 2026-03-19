@@ -21,6 +21,27 @@ module Types
       ids.map { |id| context.schema.object_from_id(id, context) }
     end
 
+    # Patients
+    field :patients, [Types::PatientType], null: false do
+      argument :name,   String, required: false, description: "Full-text search on first or last name."
+      argument :gender, String, required: false
+    end
+
+    def patients(name: nil, gender: nil)
+      scope = Patient.alphabetical
+      scope = scope.search_by_name(name) if name.present?
+      scope = scope.where(gender: gender) if gender.present?
+      scope
+    end
+
+    field :patient, Types::PatientType, null: true do
+      argument :id, ID, required: true
+    end
+
+    def patient(id:)
+      Patient.find_by(id: id)
+    end
+
     field :providers, [Types::ProviderType], null: false
 
     def providers
@@ -33,6 +54,70 @@ module Types
 
     def provider(id:)
       Provider.find_by(id: id)
+    end
+
+    # Specialties
+    field :specialties, [Types::SpecialtyType], null: false do
+      argument :category, String, required: false
+    end
+
+    def specialties(category: nil)
+      scope = Specialty.alphabetical
+      scope = scope.by_category(category) if category.present?
+      scope
+    end
+
+    field :specialty, Types::SpecialtyType, null: true do
+      argument :id, ID, required: true
+    end
+
+    def specialty(id:)
+      Specialty.find_by(id: id)
+    end
+
+    # Encounters
+    field :encounters, [Types::EncounterType], null: false do
+      argument :patient_id,  ID,     required: false
+      argument :provider_id, ID,     required: false
+      argument :status,      String, required: false
+    end
+
+    def encounters(patient_id: nil, provider_id: nil, status: nil)
+      scope = Encounter.recent
+      scope = scope.where(patient_id: patient_id)   if patient_id
+      scope = scope.where(provider_id: provider_id) if provider_id
+      scope = scope.where(status: status)            if status
+      scope
+    end
+
+    field :encounter, Types::EncounterType, null: true do
+      argument :id, ID, required: true
+    end
+
+    def encounter(id:)
+      Encounter.find_by(id: id)
+    end
+
+    # Vitals
+    field :vitals, [Types::VitalType], null: false do
+      argument :encounter_id, ID, required: true
+    end
+
+    def vitals(encounter_id:)
+      Vital.where(encounter_id: encounter_id).recent
+    end
+
+    # Diagnoses
+    field :diagnoses, [Types::DiagnosisType], null: false do
+      argument :encounter_id, ID,     required: false
+      argument :icd10_code,   String, required: false
+    end
+
+    def diagnoses(encounter_id: nil, icd10_code: nil)
+      scope = Diagnosis.recent
+      scope = scope.where(encounter_id: encounter_id) if encounter_id
+      scope = scope.by_code(icd10_code)               if icd10_code
+      scope
     end
   end
 end

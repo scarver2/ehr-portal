@@ -1,0 +1,6 @@
+# sig/app/graphql/types/specialty_type.rbs
+
+module Types
+  class SpecialtyType < Types::BaseObject
+  end
+end

@@ -1,0 +1,8 @@
+# sig/app/graphql/types/encounter_type.rbs
+
+module Types
+  class EncounterType < Types::BaseObject
+    def vitals:   () -> ::ActiveRecord::Associations::CollectionProxy
+    def diagnoses: () -> ::ActiveRecord::Associations::CollectionProxy
+  end
+end
