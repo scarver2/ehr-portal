@@ -4,6 +4,7 @@ service: ehr-portal
 image: scarver2/ehr-portal
 
 builder:
+  remote: ssh://deploy@45.76.237.124
   arch: amd64
   cache:
     type: registry
