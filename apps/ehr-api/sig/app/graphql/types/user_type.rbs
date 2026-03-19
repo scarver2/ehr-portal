@@ -1,0 +1,7 @@
+# sig/app/graphql/types/user_type.rbs
+
+module Types
+  class UserType < Types::BaseObject
+    def encounters: () -> ::ActiveRecord::Associations::CollectionProxy
+  end
+end

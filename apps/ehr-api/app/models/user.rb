@@ -13,4 +13,6 @@ class User < ApplicationRecord
   }, validate: true
 
   validates :role, presence: true
+
+  has_many :encounters, foreign_key: :patient_id, inverse_of: :patient, dependent: :destroy
 end

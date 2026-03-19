@@ -1,0 +1,25 @@
+# sig/app/models/encounter.rbs
+
+class Encounter < ApplicationRecord
+  attr_accessor id:              ::Integer
+  attr_accessor patient_id:      ::Integer
+  attr_accessor provider_id:     ::Integer
+  attr_accessor encounter_type:  ::String
+  attr_accessor status:          ::String
+  attr_accessor encountered_at:  ::Time
+  attr_accessor chief_complaint: ::String?
+  attr_accessor notes:           ::String?
+  attr_accessor created_at:      ::Time
+  attr_accessor updated_at:      ::Time
+
+  # enum predicates
+  def office_visit?: () -> bool
+  def telehealth?:   () -> bool
+  def emergency?:    () -> bool
+  def follow_up?:    () -> bool
+  def annual_exam?:  () -> bool
+  def scheduled?:    () -> bool
+  def in_progress?:  () -> bool
+  def completed?:    () -> bool
+  def cancelled?:    () -> bool
+end
