@@ -5,13 +5,29 @@ require "rails_helper"
 
 RSpec.describe InsuranceVerification, type: :model do
   describe "associations" do
-    it { is_expected.to belong_to(:user) }
-    it { is_expected.to belong_to(:insurance_profile) }
+    it "belongs to user (required)" do
+      verification = build(:insurance_verification, user: nil)
+      expect(verification).not_to be_valid
+    end
+
+    it "belongs to insurance_profile (required)" do
+      verification = build(:insurance_verification, insurance_profile: nil)
+      expect(verification).not_to be_valid
+    end
   end
 
   describe "validations" do
-    it { is_expected.to validate_presence_of(:request_uuid) }
-    it { is_expected.to validate_uniqueness_of(:request_uuid) }
+    it "requires request_uuid" do
+      verification = create(:insurance_verification)
+      verification.request_uuid = nil
+      expect(verification).not_to be_valid
+    end
+
+    it "validates uniqueness of request_uuid" do
+      existing = create(:insurance_verification)
+      duplicate = build(:insurance_verification, request_uuid: existing.request_uuid)
+      expect(duplicate).not_to be_valid
+    end
   end
 
   describe "before_validation :ensure_request_uuid" do

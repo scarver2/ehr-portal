@@ -5,14 +5,32 @@ require "rails_helper"
 
 RSpec.describe InsuranceProfile, type: :model do
   describe "associations" do
-    it { is_expected.to belong_to(:user) }
-    it { is_expected.to belong_to(:payer).optional }
-    it { is_expected.to have_many(:insurance_verifications).dependent(:destroy) }
+    it "belongs to user (required)" do
+      profile = build(:insurance_profile, user: nil)
+      expect(profile).not_to be_valid
+    end
+
+    it "belongs to payer optionally" do
+      assoc = described_class.reflect_on_association(:payer)
+      expect(assoc.options[:optional]).to be true
+    end
+
+    it "has many insurance_verifications destroyed with profile" do
+      assoc = described_class.reflect_on_association(:insurance_verifications)
+      expect(assoc.options[:dependent]).to eq(:destroy)
+    end
   end
 
   describe "validations" do
-    it { is_expected.to validate_presence_of(:member_id) }
-    it { is_expected.to validate_presence_of(:payer_name) }
+    it "requires member_id" do
+      profile = build(:insurance_profile, member_id: nil)
+      expect(profile).not_to be_valid
+    end
+
+    it "requires payer_name" do
+      profile = build(:insurance_profile, payer_name: nil)
+      expect(profile).not_to be_valid
+    end
   end
 
   describe "defaults" do

@@ -11,7 +11,7 @@ RSpec.describe InsuranceVerificationWorker, type: :worker do
 
   describe "sidekiq options" do
     it "uses the insurance queue" do
-      expect(described_class.get_sidekiq_options["queue"]).to eq("insurance")
+      expect(described_class.get_sidekiq_options["queue"].to_s).to eq("insurance")
     end
 
     it "retries up to 10 times" do

@@ -13,7 +13,7 @@ RSpec.describe InsuranceVerificationChannel, type: :channel do
       it "subscribes and streams for the current user" do
         subscribe
         expect(subscription).to be_confirmed
-        expect(streams).to include(InsuranceVerificationChannel.broadcasting_for(user))
+        expect(subscription).to have_stream_for(user)
       end
     end
 

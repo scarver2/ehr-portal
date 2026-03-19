@@ -5,12 +5,22 @@ require "rails_helper"
 
 RSpec.describe Payer, type: :model do
   describe "validations" do
-    it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_presence_of(:payer_code) }
+    it "requires name" do
+      payer = build(:payer, name: nil)
+      expect(payer).not_to be_valid
+    end
+
+    it "requires payer_code" do
+      payer = build(:payer, payer_code: nil)
+      expect(payer).not_to be_valid
+    end
   end
 
   describe "associations" do
-    it { is_expected.to have_many(:insurance_profiles) }
+    it "has many insurance_profiles" do
+      assoc = described_class.reflect_on_association(:insurance_profiles)
+      expect(assoc.macro).to eq(:has_many)
+    end
   end
 
   describe ".active scope" do

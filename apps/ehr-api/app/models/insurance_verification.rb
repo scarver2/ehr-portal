@@ -34,7 +34,7 @@ class InsuranceVerification < ApplicationRecord
     end
 
     event :mark_verified do
-      transitions from: %i[parsing requesting], to: :verified
+      transitions from: %i[queued parsing requesting], to: :verified
     end
 
     event :mark_failed do

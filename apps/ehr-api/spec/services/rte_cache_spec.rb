@@ -8,8 +8,10 @@ RSpec.describe RteCache do
   let(:member_id)  { "MBR0000001" }
   let(:data)       { { payer_name: "Aetna", copay_cents: 2500 } }
 
-  before { Rails.cache.clear }
-  after  { Rails.cache.clear }
+  before do
+    @mem_store = ActiveSupport::Cache::MemoryStore.new
+    allow(Rails).to receive(:cache).and_return(@mem_store)
+  end
 
   describe ".cache_key" do
     it "builds the canonical key format" do
