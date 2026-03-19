@@ -22,14 +22,13 @@ if [[ "$SERVICE" == "ehr-api" ]]; then
 fi
 
 # Notify Honeybadger of the deployment so it can correlate errors with releases.
-# Uses the honeybadger gem inside the ehr-api container; the API key is already
-# available there as HONEYBADGER_API_KEY. Runs only for ehr-api (the portal has
-# no Ruby runtime).
+# Uses the honeybadger gem inside the ehr-api container where HONEYBADGER_API_KEY
+# is injected by Kamal. That variable is NOT available in this hook's local shell,
+# so we wrap the command in sh -c and escape the dollar sign (\$) so the
+# container's shell expands it — not the hook's shell. KAMAL_VERSION and
+# KAMAL_PERFORMER ARE local hook vars, so they expand normally here.
+# --skip-rails-load avoids loading the full Rails stack for this one CLI call.
 if [[ "$SERVICE" == "ehr-api" ]]; then
-  kamal app exec --reuse -c "$CONFIG" -- \
-    bundle exec honeybadger deploy \
-      --repository https://github.com/scarver2/ehr-portal \
-      --revision "$KAMAL_VERSION" \
-      --environment production \
-      --user "$KAMAL_PERFORMER"
+  DEPLOY_CMD="bundle exec honeybadger deploy --skip-rails-load --api-key \$HONEYBADGER_API_KEY --repository https://github.com/scarver2/ehr-portal --revision $KAMAL_VERSION --environment production --user $KAMAL_PERFORMER"
+  kamal app exec --reuse -c "$CONFIG" -- sh -c "$DEPLOY_CMD"
 fi
