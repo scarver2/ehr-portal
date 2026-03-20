@@ -106,7 +106,6 @@ no explicit controller call required.
 - **Waystar** — Humana
 - **CMS** — Medicare
 - **State (TMHP)** — Medicaid Texas
->>>>>>> main
 
 ## License
 
