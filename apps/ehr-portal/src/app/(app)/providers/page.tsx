@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic"
 
-import { graphql } from "@/lib/graphql"
+import { getGraphQLClient } from "@/lib/graphql"
 import { gql } from "graphql-request"
 import Link from "next/link"
 import { Stethoscope, ChevronRight } from "lucide-react"
@@ -31,6 +31,7 @@ type Provider = {
 }
 
 export default async function ProvidersPage() {
+  const graphql = await getGraphQLClient()
   const data = await graphql.request<{ providers: Provider[] }>(query)
   const providers = data.providers
 
