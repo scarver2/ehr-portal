@@ -1,7 +1,7 @@
 # config/deploy.portal.yml
 service: ehr-portal
 
-image: scarver2/ehr-portal
+image: ghcr.io/scarver2/ehr-portal
 
 builder:
   remote: ssh://deploy@45.76.237.124
@@ -13,6 +13,12 @@ env:
     NEXT_PUBLIC_API_URL: https://api.ehr.stancarver.com
   secret:
     - NEXT_PUBLIC_HONEYBADGER_API_KEY
+
+registry:
+  server: ghcr.io
+  username: scarver2
+  password:
+    - GITHUB_TOKEN
 
 proxy:
   ssl: true

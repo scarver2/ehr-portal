@@ -1,12 +1,18 @@
 # config/deploy.api.yml
 service: ehr-api
 
-image: scarver2/ehr-api
+image: ghcr.io/scarver2/ehr-api
 
 builder:
   remote: ssh://deploy@45.76.237.124
   arch: amd64
   context: apps/ehr-api
+
+registry:
+  server: ghcr.io
+  username: scarver2
+  password:
+    - GITHUB_TOKEN
 
 proxy:
   ssl: true
