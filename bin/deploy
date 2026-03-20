@@ -71,6 +71,7 @@ reset_deployment() {
   # kamal remove may fail due to permission errors when cleaning up postgres data dir
   # (postgres user ownership), but the volume removal below handles cleanup properly.
   kamal remove -c "$config" 2>&1 | grep -v "Permission denied" || true
+  success "Containers and images removed"
 
   info "Removing volumes for $service..."
   # Extract service name from config to identify volumes
@@ -82,10 +83,21 @@ reset_deployment() {
   fi
 
   # Remove named volumes for this service (postgres and redis data)
-  docker volume rm "${service_name}-postgres_data" 2>/dev/null || true
-  docker volume rm "${service_name}-redis_data" 2>/dev/null || true
+  local volumes_removed=0
+  if docker volume rm "${service_name}-postgres_data" 2>/dev/null; then
+    volumes_removed=$((volumes_removed + 1))
+  fi
+  if docker volume rm "${service_name}-redis_data" 2>/dev/null; then
+    volumes_removed=$((volumes_removed + 1))
+  fi
 
-  success "$service deployment removed"
+  if [[ $volumes_removed -gt 0 ]]; then
+    success "Removed $volumes_removed volume(s)"
+  else
+    info "No volumes found to remove"
+  fi
+
+  success "$service deployment fully cleaned"
 
   if prompt "Redeploy $service now? (y/N)"; then
     # For API, bring up accessories (Postgres, Redis) before the app
