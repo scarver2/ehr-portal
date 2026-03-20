@@ -10,6 +10,8 @@ builder:
 registry:
   server: docker.io
   username: scarver2
+  password:
+    - DOCKER_PASSWORD
 
 proxy:
   ssl: true
