@@ -2,8 +2,17 @@
 
 import { test, expect } from '@playwright/test'
 
+async function login(page) {
+  await page.goto('/')
+  await page.fill('input[type="email"]', 'provider@example.com')
+  await page.fill('input[type="password"]', 'password')
+  await page.click('button[type="submit"]')
+  await page.waitForURL('/providers/1')
+}
+
 test.describe('Providers list page (/providers)', () => {
   test.beforeEach(async ({ page }) => {
+    await login(page)
     await page.goto('/providers')
   })
 
@@ -29,6 +38,7 @@ test.describe('Providers list page (/providers)', () => {
 
 test.describe('Provider detail page (/providers/:id)', () => {
   test.beforeEach(async ({ page }) => {
+    await login(page)
     await page.goto('/providers/1')
   })
 
@@ -51,6 +61,7 @@ test.describe('Provider detail page (/providers/:id)', () => {
 
 test.describe('Navigation', () => {
   test('clicking a provider link navigates to their detail page', async ({ page }) => {
+    await login(page)
     await page.goto('/providers')
     await page.getByRole('link', { name: 'Alice Adams — Cardiology' }).click()
     await expect(page).toHaveURL(/\/providers\/1$/)
@@ -58,6 +69,7 @@ test.describe('Navigation', () => {
   })
 
   test('the second provider also navigates correctly', async ({ page }) => {
+    await login(page)
     await page.goto('/providers')
     await page.getByRole('link', { name: 'Bob Brown — Neurology' }).click()
     await expect(page).toHaveURL(/\/providers\/2$/)

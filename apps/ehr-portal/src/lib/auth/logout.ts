@@ -2,10 +2,11 @@
 
 export async function logout(): Promise<void> {
   const token = localStorage.getItem("auth_token")
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "https://api.ehr.stancarver.com"
 
   if (token) {
     // Best-effort server-side revocation — ignore errors (token expires anyway)
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/logout`, {
+    await fetch(`${apiUrl}/api/v1/auth/logout`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     }).catch(() => {})

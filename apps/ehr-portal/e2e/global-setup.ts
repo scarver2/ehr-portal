@@ -27,6 +27,36 @@ export const mockProviders = [
 ]
 
 function handleRequest(req: IncomingMessage, res: ServerResponse) {
+  // Handle login requests
+  if (req.method === 'POST' && req.url === '/api/v1/auth/login') {
+    let body = ''
+    req.on('data', (chunk: Buffer) => (body += chunk.toString()))
+    req.on('end', () => {
+      const { user } = JSON.parse(body) as { user: { email: string; password: string } }
+
+      // Mock successful login for test credentials
+      if (user.email === 'provider@example.com' && user.password === 'password') {
+        const mockJWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxMDAwMDAwMDAwMH0.test'
+        res.writeHead(200, {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${mockJWT}`
+        })
+        res.end(JSON.stringify({
+          user: {
+            id: '1',
+            email: 'provider@example.com',
+            role: 'provider',
+            provider_id: '1'
+          }
+        }))
+      } else {
+        res.writeHead(401, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ errors: { base: ['Invalid email or password'] } }))
+      }
+    })
+    return
+  }
+
   if (req.method !== 'POST' || req.url !== '/graphql') {
     res.writeHead(404)
     res.end('Not found')
