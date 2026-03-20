@@ -2,6 +2,7 @@
 
 export const dynamic = "force-dynamic"
 
+import Image from "next/image"
 import { graphql } from "@/lib/graphql"
 import { gql } from "graphql-request"
 import Link from "next/link"
@@ -83,6 +84,24 @@ function formatEncounterType(type: string): string {
   return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
+function encounterIconSrc(type: string): string {
+  const map: Record<string, string> = {
+    office_visit:   "/icons/stethoscope.png",
+    checkup:        "/icons/stethoscope.png",
+    consultation:   "/icons/stethoscope.png",
+    follow_up:      "/icons/stethoscope.png",
+    emergency:      "/icons/ekg-monitor.png",
+    urgent_care:    "/icons/ekg-monitor.png",
+    inpatient:      "/icons/hospital.png",
+    hospital:       "/icons/hospital.png",
+    surgery:        "/icons/hospital.png",
+    injection:      "/icons/syringe.png",
+    vaccination:    "/icons/syringe.png",
+    procedure:      "/icons/syringe.png",
+  }
+  return map[type] ?? "/icons/medical-report.png"
+}
+
 const statusStyles: Record<string, string> = {
   completed:   "bg-green-50 text-green-700",
   scheduled:   "bg-blue-50 text-blue-700",
@@ -110,7 +129,19 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
       </Link>
 
       {/* Patient hero */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-6">
+      <div className="relative bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-6 overflow-hidden">
+
+        {/* Decorative heart-ekg watermark */}
+        <div className="absolute right-4 top-4 opacity-[0.07] pointer-events-none select-none">
+          <Image
+            src="/icons/heart-ekg.png"
+            alt=""
+            width={120}
+            height={120}
+            className="w-28 h-28"
+          />
+        </div>
+
         <div className="flex items-start gap-5">
           <div className="flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 text-slate-600 font-bold text-xl shrink-0">
             {initials}
@@ -177,9 +208,41 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
         </div>
       )}
 
+      {/* Quick stats strip */}
+      <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm px-4 py-3 flex items-center gap-3">
+          <Image src="/icons/ekg-monitor.png" alt="Encounters" width={36} height={36} className="shrink-0" />
+          <div>
+            <p className="text-xs text-slate-400">Encounters</p>
+            <p className="text-lg font-semibold text-slate-800">{patient.encounters.length}</p>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm px-4 py-3 flex items-center gap-3">
+          <Image src="/icons/stethoscope.png" alt="Last visit" width={36} height={36} className="shrink-0" />
+          <div>
+            <p className="text-xs text-slate-400">Last Visit</p>
+            <p className="text-sm font-medium text-slate-800">
+              {patient.encounters.length > 0
+                ? formatDate(patient.encounters[0].encounteredAt)
+                : "—"}
+            </p>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm px-4 py-3 flex items-center gap-3">
+          <Image src="/icons/hand-heart.png" alt="Care" width={36} height={36} className="shrink-0" />
+          <div>
+            <p className="text-xs text-slate-400">Completed</p>
+            <p className="text-lg font-semibold text-slate-800">
+              {patient.encounters.filter((e) => e.status === "completed").length}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Insurance verification */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-6 overflow-hidden">
-        <div className="px-5 py-4 border-b border-slate-100">
+        <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2.5">
+          <Image src="/icons/shield-cross.png" alt="" width={28} height={28} className="shrink-0" />
           <h2 className="font-medium text-slate-900">Insurance Verification</h2>
         </div>
         <div className="px-5 py-4">
@@ -190,7 +253,10 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
       {/* Encounters */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-          <h2 className="font-medium text-slate-900">Encounters</h2>
+          <div className="flex items-center gap-2.5">
+            <Image src="/icons/medical-report.png" alt="" width={28} height={28} className="shrink-0" />
+            <h2 className="font-medium text-slate-900">Encounters</h2>
+          </div>
           <span className="text-xs text-slate-500">{patient.encounters.length} total</span>
         </div>
 
@@ -202,8 +268,18 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
               <li key={enc.id}>
                 <Link
                   href={`/encounters/${enc.id}`}
-                  className="group flex items-center justify-between px-5 py-4 hover:bg-slate-50 transition-colors"
+                  className="group flex items-center gap-3 px-5 py-4 hover:bg-slate-50 transition-colors"
                 >
+                  {/* Encounter type icon */}
+                  <div className="shrink-0 w-9 h-9 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center group-hover:bg-white transition-colors">
+                    <Image
+                      src={encounterIconSrc(enc.encounterType)}
+                      alt={enc.encounterType}
+                      width={24}
+                      height={24}
+                    />
+                  </div>
+
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-sm font-medium text-slate-800">
@@ -227,7 +303,8 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
                       </p>
                     )}
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-400 shrink-0 ml-3 transition-colors" />
+
+                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-400 shrink-0 transition-colors" />
                 </Link>
               </li>
             ))}
