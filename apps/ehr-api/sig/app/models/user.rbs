@@ -4,8 +4,12 @@
 # Ruby::MethodDefinitionMissing under all_error. Devise runtime methods
 # (valid_password?, authenticate, etc.) remain untyped until devise ships
 # official RBS definitions. Enum predicate methods are declared explicitly.
+# devise-jwt: JwtAuthenticatable mixin adds token dispatch/revocation at the
+# Warden level; no instance methods need to be declared here.
 
 class User < ApplicationRecord
+  include Devise::Models::JwtAuthenticatable
+
   ROLES: ::Array[::String]
 
   attr_accessor id: ::Integer

@@ -18,8 +18,8 @@ env:
   clear:
     NEXT_PUBLIC_API_URL: https://api.ehr.stancarver.com
   secret:
-    - NEXT_PUBLIC_HONEYBADGER_API_KEY
     - HONEYBADGER_API_KEY
+    - NEXT_PUBLIC_HONEYBADGER_API_KEY
 
 proxy:
   ssl: true
@@ -33,6 +33,7 @@ registry:
   username: scarver2
   password:
     - GITHUB_TOKEN
+
 
 servers:
   web:

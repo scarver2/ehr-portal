@@ -18,6 +18,32 @@ module Devise
 
     module Validatable
     end
+
+    # devise-jwt: token-based authentication strategy mixin.
+    # Remove once devise-jwt ships official RBS definitions.
+    module JwtAuthenticatable
+    end
+  end
+
+  module JWT
+    # Null revocation strategy — tokens are valid until expiry.
+    module RevocationStrategies
+      module Null
+        def self.jwt_revoked?: (untyped payload, untyped record) -> bool
+        def self.revoke_jwt: (untyped payload, untyped record) -> void
+      end
+    end
+  end
+
+  # Devise::SessionsController is the base for custom JSON sessions controllers.
+  class SessionsController < ActionController::Base
+    def create: () -> void
+    def destroy: () -> void
+
+    private
+
+    def respond_with: (untyped resource, **untyped opts) -> void
+    def respond_to_on_destroy: () -> void
   end
 end
 

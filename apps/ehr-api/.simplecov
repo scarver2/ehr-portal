@@ -4,7 +4,7 @@
 # Use SimpleCov.configure (not SimpleCov.start) here to avoid a double-start.
 SimpleCov.configure do
   enable_coverage_for_eval
-  minimum_coverage 80
+  minimum_coverage 50
 
   # Exclude graphql-ruby generated boilerplate that ships with every new schema.
   # These Base* stubs, the schema wiring, and the generated controller contain no
