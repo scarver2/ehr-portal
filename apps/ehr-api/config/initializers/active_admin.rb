@@ -267,6 +267,10 @@ ActiveAdmin.setup do |config|
                   url:          "/sidekiq",
                   priority:     3,
                   html_options: { target: "_blank" }
+        tools.add label:        "PGHero",
+                  url:          "/pghero",
+                  priority:     4,
+                  html_options: { target: "_blank" }
       end
     end
   end
