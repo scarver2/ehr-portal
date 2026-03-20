@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic"
 
-import { graphql } from "@/lib/graphql"
+import { getGraphQLClient } from "@/lib/graphql"
 import { gql } from "graphql-request"
 import Link from "next/link"
 import { Users, ChevronRight, Hash } from "lucide-react"
@@ -41,6 +41,7 @@ function formatGender(gender: string | null): string {
 }
 
 export default async function PatientsPage() {
+  const graphql = await getGraphQLClient()
   const data = await graphql.request<{ patients: Patient[] }>(query)
   const patients = data.patients
 

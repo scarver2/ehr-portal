@@ -16,14 +16,7 @@ module Api
     end
 
     def current_user
-      @current_user ||= begin
-        raw_key = request.session["warden.user.user.key"]
-        user_id = case raw_key
-                  when Array then raw_key.dig(0, 0)
-                  when Hash  then raw_key["id"]
-                  end
-        user_id && User.find_by(id: user_id)
-      end
+      @current_user ||= request.env["warden"]&.authenticate(scope: :user)
     end
   end
 end

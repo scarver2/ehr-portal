@@ -3,7 +3,7 @@
 export const dynamic = "force-dynamic"
 
 import Image from "next/image"
-import { graphql } from "@/lib/graphql"
+import { getGraphQLClient } from "@/lib/graphql"
 import { gql } from "graphql-request"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight, CreditCard, Building2 } from "lucide-react"
@@ -42,6 +42,7 @@ type Provider = {
 
 export default async function ProviderPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const graphql = await getGraphQLClient()
   const data = await graphql.request<{ provider: Provider }>(query, { id })
   const provider = data.provider
 

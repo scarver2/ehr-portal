@@ -3,7 +3,7 @@
 export const dynamic = "force-dynamic"
 
 import Image from "next/image"
-import { graphql } from "@/lib/graphql"
+import { getGraphQLClient } from "@/lib/graphql"
 import { gql } from "graphql-request"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight, Phone, MapPin, AlertCircle, Calendar, Hash } from "lucide-react"
@@ -111,6 +111,7 @@ const statusStyles: Record<string, string> = {
 
 export default async function PatientPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
+  const graphql = await getGraphQLClient()
   const data = await graphql.request<{ patient: Patient }>(query, { id })
   const patient = data.patient
 
