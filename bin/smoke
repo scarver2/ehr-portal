@@ -32,7 +32,7 @@ PASS=0
 FAIL=0
 
 ########################################
-# Core check function
+# Core check functions
 ########################################
 
 # smoke_check LABEL URL EXPECTED_STATUS [METHOD] [POST_BODY]
@@ -74,6 +74,63 @@ smoke_check() {
   fi
 }
 
+# smoke_login LABEL API_URL EMAIL PASSWORD
+smoke_login() {
+  local label="$1"
+  local url="$2/api/v1/auth/login"
+  local email="$3"
+  local password="$4"
+
+  local data
+  data=$(jq -n --arg email "$email" --arg password "$password" '{user: {email: $email, password: $password}}')
+
+  local response_file
+  response_file=$(mktemp)
+
+  local http_code
+  http_code=$(curl \
+    --silent \
+    --write-out "%{http_code}" \
+    --output "$response_file" \
+    --max-time 10 \
+    --connect-timeout 5 \
+    --request POST \
+    --header "Content-Type: application/json" \
+    --dump-header - \
+    --data "$data" \
+    "$url" 2>/dev/null | tail -1)
+
+  local padded
+  padded=$(printf "%-50s" "$label")
+
+  if [[ "$http_code" == "200" ]]; then
+    # Check for Authorization header with Bearer token
+    local auth_header
+    auth_header=$(curl \
+      --silent \
+      --max-time 10 \
+      --connect-timeout 5 \
+      --request POST \
+      --header "Content-Type: application/json" \
+      --data "$data" \
+      --dump-header - \
+      "$url" 2>/dev/null | grep -i "^Authorization:" | head -1)
+
+    if [[ "$auth_header" =~ Bearer\ [A-Za-z0-9._-]+ ]]; then
+      echo "  ✔ ${padded} HTTP 200 (JWT token received)"
+      PASS=$((PASS + 1))
+    else
+      echo "  ✖ ${padded} HTTP 200 but no valid JWT token in Authorization header"
+      FAIL=$((FAIL + 1))
+    fi
+  else
+    echo "  ✖ ${padded} expected HTTP 200, got HTTP ${http_code}"
+    FAIL=$((FAIL + 1))
+  fi
+
+  rm -f "$response_file"
+}
+
 ########################################
 # Test suites
 ########################################
@@ -87,6 +144,7 @@ smoke_api() {
 
   smoke_check "GET  /api/up   (health)"      "$base/api/up"  "200"
   smoke_check "POST /graphql  (introspect)"  "$base/graphql" "200" "POST" '{"query":"{__typename}"}'
+  smoke_login "POST /api/v1/auth/login (JWT)" "$base" "provider@example.com" "password"
   smoke_check "GET  /admin    (redirect)"    "$base/admin"   "302"
 }
 
