@@ -45,9 +45,10 @@ export default function Home() {
   return (
     <main style={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center" }}>
       <div style={{ width: "100%", maxWidth: "400px", padding: "2rem" }}>
-        <h1 style={{ fontSize: "10vw", fontWeight: 700, letterSpacing: "-0.05em", lineHeight: 1, marginBottom: "2rem", textAlign: "center" }}>
-          ⚕️ EHR
-        </h1>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.2em", marginBottom: "2rem" }}>
+          <span style={{ fontSize: "8vw", lineHeight: 1 }}>⚕️</span>
+          <h1 style={{ fontSize: "10vw", fontWeight: 700, letterSpacing: "-0.05em", lineHeight: 1, margin: 0 }}>EHR</h1>
+        </div>
 
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           {error && <p style={{ color: "red", margin: 0, fontSize: "0.875rem" }}>{error}</p>}

@@ -23,7 +23,7 @@ export function Sidebar() {
     await logout()
     setToken(null)
     setUser(null)
-    router.push("/login")
+    router.push("/")
   }
 
   return (
