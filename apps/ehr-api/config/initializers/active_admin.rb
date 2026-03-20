@@ -263,12 +263,12 @@ ActiveAdmin.setup do |config|
                   url:          "https://app.honeybadger.io/projects/138326/insights/dashboards",
                   priority:     2,
                   html_options: { target: "_blank", rel: "noopener noreferrer" }
-        tools.add label:        "Sidekiq",
-                  url:          "/sidekiq",
-                  priority:     3,
-                  html_options: { target: "_blank" }
         tools.add label:        "PGHero",
                   url:          "/pghero",
+                  priority:     3,
+                  html_options: { target: "_blank" }
+        tools.add label:        "Sidekiq",
+                  url:          "/sidekiq",
                   priority:     4,
                   html_options: { target: "_blank" }
       end

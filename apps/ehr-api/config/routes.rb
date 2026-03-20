@@ -6,8 +6,8 @@ require "sidekiq/web"
 Rails.application.routes.draw do
   # Sidekiq Web UI — admin role only
   authenticate(:user, ->(u) { u.admin? }) do
-    mount Sidekiq::Web => "/sidekiq"
     mount PgHero::Engine => "/pghero"
+    mount Sidekiq::Web => "/sidekiq"
   end
 
   # ActionCable WebSocket endpoint
