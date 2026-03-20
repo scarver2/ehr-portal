@@ -3,7 +3,7 @@
 
 # Fake Clinic Names so providers belong somewhere.
 
-puts "Seeding clinics..."
+Rails.logger.debug "Seeding clinics..."
 
 CLINICS = [
   "Anna Health Clinic",
@@ -16,4 +16,4 @@ CLINICS = [
   "Prairie Creek Medical",
   "Red River Health",
   "Texas Regional Medical"
-]
+].freeze

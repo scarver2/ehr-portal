@@ -42,6 +42,9 @@ gem "pundit", "~> 2.5"
 # https://github.com/cyu/rack-cors
 gem "rack-cors"
 
+# https://github.com/ankane/pghero
+gem "pghero"
+
 # https://rubyonrails.org
 gem "rails", "~> 8.1.2"
 

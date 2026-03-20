@@ -9,6 +9,7 @@ Rails.logger.debug "Creating seed Users..."
   { email: "staff@example.com",    role: :staff    },
   { email: "patient@example.com",  role: :patient  }
 ].each do |attrs|
+  Rails.logger.debug { "Seeding #{attrs[:email]} user..." }
   User.find_or_create_by!(email: attrs[:email]) do |u|
     u.role                 = attrs[:role]
     u.password             = "password"

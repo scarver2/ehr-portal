@@ -7,7 +7,7 @@ class FakePayerGateway
   end
 
   def check_eligibility
-    sleep(@verification.insurance_profile.payer&.simulated_latency || 1.5)
+    sleep(simulated_latency)
 
     {
       reference_id:      SecureRandom.hex(8),
@@ -23,5 +23,11 @@ class FakePayerGateway
         telehealth:   [true, false].sample
       }
     }
+  end
+
+  private
+
+  def simulated_latency
+    rand(0.5..2.0)
   end
 end

@@ -1,7 +1,6 @@
 # db/seeds/z_insurance_profiles.rb
 # frozen_string_literal: true
 
-#
 # Assigns an insurance profile to the first 10 seeded patients.
 # Runs last (z_ prefix) so payers and patients already exist.
 

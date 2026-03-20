@@ -2,5 +2,4 @@ class Payer < ApplicationRecord
   attr_accessor response_time_ms: ::Integer?
 
   def self.active: () -> ::ActiveRecord::Relation
-  def simulated_latency: () -> ::Float
 end
