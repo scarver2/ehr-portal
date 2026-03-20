@@ -6,5 +6,8 @@ source "$(dirname "$0")/_lib.sh"
 # Kill existing Rails process
 pkill -f "rails server"
 
+# Kill existing Puma process
+pkill -f "puma"
+
 # Remove the server pid file
 rm -rf tmp/pids/server.pid
