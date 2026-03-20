@@ -86,13 +86,14 @@ reset_deployment() {
   success "$service deployment removed"
 
   if prompt "Redeploy $service now? (y/N)"; then
-    # For API, we need to bring up accessories (Postgres, Redis) before the app
+    # For API, bring up accessories (Postgres, Redis) before the app
     if [[ "$service" == "api" ]]; then
-      info "Starting accessories (Postgres, Redis)..."
-      kamal accessory boot postgres -c "$config" || true
-      kamal accessory boot redis -c "$config" || true
+      info "Starting Postgres accessory..."
+      kamal accessory reboot postgres -c "$config" || true
+      info "Starting Redis accessory..."
+      kamal accessory reboot redis -c "$config" || true
       info "Waiting for accessories to be ready..."
-      sleep 10  # Give Postgres/Redis time to start
+      sleep 15  # Give Postgres/Redis time to start and be healthy
     fi
 
     case "$service" in
