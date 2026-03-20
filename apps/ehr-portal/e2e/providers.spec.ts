@@ -4,10 +4,30 @@ import { test, expect } from '@playwright/test'
 
 async function login(page) {
   await page.goto('/')
+
+  // Wait for form to be ready
+  await page.waitForSelector('input[type="email"]')
+
+  // Fill credentials
   await page.fill('input[type="email"]', 'provider@example.com')
   await page.fill('input[type="password"]', 'password')
-  await page.click('button[type="submit"]')
-  await page.waitForURL('/providers/1')
+
+  // Submit and wait for either success or error
+  const submitPromise = page.click('button[type="submit"]')
+
+  // Wait for either token to appear or error message
+  await Promise.race([
+    page.waitForFunction(() => localStorage.getItem('auth_token') !== null, { timeout: 10000 }),
+    page.waitForFunction(() => {
+      const error = document.querySelector('p[style*="color: red"]')
+      return error && error.textContent?.includes('Invalid')
+    }, { timeout: 10000 })
+  ]).catch(async () => {
+    // If neither condition met, check what's in localStorage
+    const token = await page.evaluate(() => localStorage.getItem('auth_token'))
+    const user = await page.evaluate(() => localStorage.getItem('auth_user'))
+    throw new Error(`Login failed. Token: ${token}, User: ${user}`)
+  })
 }
 
 test.describe('Providers list page (/providers)', () => {

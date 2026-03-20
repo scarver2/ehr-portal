@@ -16,6 +16,7 @@ export const mockProviders = [
     specialty: { id: '1', name: 'Cardiology' },
     npi: '1111111111',
     clinicName: 'Heart Clinic',
+    encounters: [], // Required by provider detail page
   },
   {
     id: '2',
@@ -23,6 +24,7 @@ export const mockProviders = [
     specialty: { id: '2', name: 'Neurology' },
     npi: '2222222222',
     clinicName: 'Brain Center',
+    encounters: [], // Required by provider detail page
   },
 ]
 
