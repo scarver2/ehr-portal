@@ -6,8 +6,8 @@ image: ghcr.io/scarver2/ehr-api
 builder:
   remote: ssh://deploy@45.76.237.124
   arch: amd64
-  context: apps/ehr-api
-  dockerfile: Dockerfile
+  context: .
+  dockerfile: apps/ehr-api/Dockerfile
 
 registry:
   server: ghcr.io

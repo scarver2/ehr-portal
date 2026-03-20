@@ -35,7 +35,7 @@ RUN --mount=type=cache,id=apt-api-build,sharing=locked,target=/var/lib/apt/lists
   libyaml-dev
 
 # Install gems with build cache
-COPY Gemfile Gemfile.lock ./
+COPY apps/ehr-api/Gemfile apps/ehr-api/Gemfile.lock ./
 
 RUN --mount=type=cache,target=/usr/local/bundle/cache \
   bundle install && \
@@ -43,7 +43,7 @@ RUN --mount=type=cache,target=/usr/local/bundle/cache \
   /usr/local/bundle/ruby/*/bundler/gems/*/.git
 
 # Copy application code
-COPY . .
+COPY apps/ehr-api/ .
 
 # Precompile Bootsnap caches (gemfile + app in one pass)
 RUN bundle exec bootsnap precompile --gemfile app/ lib/
