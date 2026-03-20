@@ -15,12 +15,12 @@ API_CONFIG="$ROOT_DIR/config/deploy.api.yml"
 
 deploy_api() {
   info "Deploying API"
-  kamal deploy -c "$API_CONFIG"
+  kamal deploy -c "$API_CONFIG" --skip-push
 }
 
 deploy_portal() {
   info "Deploying Portal"
-  kamal deploy -c "$PORTAL_CONFIG"
+  kamal deploy -c "$PORTAL_CONFIG" --skip-push
 }
 
 deploy_all() {
