@@ -7,12 +7,6 @@ builder:
   arch: amd64
   context: apps/ehr-portal
 
-registry:
-  server: docker.io
-  username: scarver2
-  password:
-    - DOCKER_PASSWORD
-
 proxy:
   ssl: true
   host: ehr.stancarver.com
