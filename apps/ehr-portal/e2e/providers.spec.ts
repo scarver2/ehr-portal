@@ -13,7 +13,7 @@ async function login(page) {
   await page.fill('input[type="password"]', 'password')
 
   // Submit and wait for either success or error
-  const submitPromise = page.click('button[type="submit"]')
+  void page.click('button[type="submit"]')
 
   // Wait for either token to appear or error message
   await Promise.race([
