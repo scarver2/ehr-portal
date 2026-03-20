@@ -33,6 +33,90 @@ deploy_rollback() {
   kamal rollback
 }
 
+reset_deployment() {
+  local service="${1:-all}"
+  local config=""
+
+  case "$service" in
+    api)    config="$API_CONFIG" ;;
+    portal) config="$PORTAL_CONFIG" ;;
+    all)
+      info "Resetting entire deployment (API + Portal)"
+      reset_deployment api
+      reset_deployment portal
+      return
+      ;;
+    *)
+      fail "Unknown service: $service"
+      ;;
+  esac
+
+  if [[ -z "$config" ]]; then
+    fail "No config found for service: $service"
+  fi
+
+  info "Resetting $service deployment..."
+  warn "This will:"
+  echo "  1. Stop all containers for $service"
+  echo "  2. Remove all volumes (DATABASE AND REDIS DATA WILL BE LOST)"
+  echo "  3. Remove all images"
+  echo "  4. Redeploy from scratch"
+  echo ""
+
+  if ! prompt "Continue reset for $service? (y/N)"; then
+    fail "Reset cancelled"
+  fi
+
+  info "Tearing down $service..."
+  # kamal remove may fail due to permission errors when cleaning up postgres data dir
+  # (postgres user ownership), but the volume removal below handles cleanup properly.
+  kamal remove -c "$config" 2>&1 | grep -v "Permission denied" || true
+  success "Containers and images removed"
+
+  info "Removing volumes for $service..."
+  # Extract service name from config to identify volumes
+  local service_name
+  if [[ "$config" == *"api"* ]]; then
+    service_name="ehr-api"
+  else
+    service_name="ehr-portal"
+  fi
+
+  # Remove named volumes for this service (postgres and redis data)
+  local volumes_removed=0
+  if docker volume rm "${service_name}-postgres_data" 2>/dev/null; then
+    volumes_removed=$((volumes_removed + 1))
+  fi
+  if docker volume rm "${service_name}-redis_data" 2>/dev/null; then
+    volumes_removed=$((volumes_removed + 1))
+  fi
+
+  if [[ $volumes_removed -gt 0 ]]; then
+    success "Removed $volumes_removed volume(s)"
+  else
+    info "No volumes found to remove"
+  fi
+
+  success "$service deployment fully cleaned"
+
+  if prompt "Redeploy $service now? (y/N)"; then
+    # For API, bring up accessories (Postgres, Redis) before the app
+    if [[ "$service" == "api" ]]; then
+      info "Starting Postgres accessory..."
+      kamal accessory reboot postgres -c "$config" || true
+      info "Starting Redis accessory..."
+      kamal accessory reboot redis -c "$config" || true
+      info "Waiting for accessories to be ready..."
+      sleep 15  # Give Postgres/Redis time to start and be healthy
+    fi
+
+    case "$service" in
+      api)    deploy_api ;;
+      portal) deploy_portal ;;
+    esac
+  fi
+}
+
 ########################################
 # Preflight
 ########################################
@@ -86,6 +170,11 @@ case "$CMD" in
     deploy_rollback
     ;;
 
+  reset)
+    # Allow: bin/deploy reset [api|portal|all]
+    reset_deployment "${2:-all}"
+    ;;
+
   help|-h|--help)
     echo ""
     echo "Usage:"
@@ -95,6 +184,8 @@ case "$CMD" in
     echo "  bin/deploy portal      Deploy Portal"
     echo "  bin/deploy all         Deploy Portal + API"
     echo "  bin/deploy rollback    Rollback last deploy"
+    echo "  bin/deploy reset       Teardown and rebuild (prompts for confirmation)"
+    echo "  bin/deploy reset [api|portal|all]  Reset specific service"
     echo ""
     ;;
 
@@ -105,13 +196,15 @@ case "$CMD" in
       "api" \
       "portal" \
       "all" \
-      "rollback")
+      "rollback" \
+      "reset")
 
     case "$selection" in
       api)      deploy_api ;;
       portal)   deploy_portal ;;
       all)      deploy_all ;;
       rollback) deploy_rollback ;;
+      reset)    reset_deployment "all" ;;
       *)        fail "Invalid option: $selection" ;;
     esac
     ;;

@@ -13,5 +13,6 @@ banner() {
 
 info()    { echo "→ $1"; }
 success() { echo "✔ $1"; }
+warn()    { echo "⚠ $1"; }
 fail()    { echo "✖ $1"; exit 1; }
 abort()   { echo "✖ $1"; exit 1; }
