@@ -16,15 +16,31 @@ cat <<EOF > compose.yml
 
 services:
   postgres:
-    image: postgres:18.3
+    image: postgres:18
     environment:
       POSTGRES_PASSWORD: \${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
-  # redis:
-  #   image: redis:8.6.1
-  #   ports:
-  #     - "6379:6379"
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
+      - "-c"
+      - "pg_stat_statements.track=all"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  redis:
+    image: redis:8.6.1
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 EOF
 
 cat <<EOF > bin/up
