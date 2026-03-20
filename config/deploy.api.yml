@@ -7,6 +7,9 @@ builder:
   arch: amd64
   context: apps/ehr-api
 
+registry:
+  server: localhost
+
 proxy:
   ssl: true
   host: api.ehr.stancarver.com
