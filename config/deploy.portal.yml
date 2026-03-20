@@ -4,11 +4,24 @@ service: ehr-portal
 image: ghcr.io/scarver2/ehr-portal
 
 builder:
+  remote: ssh://deploy@45.76.237.124
   arch: amd64
-  context: apps/ehr-portal
-  cache:
-    type: registry
-    options: mode=max
+  context: .
+  dockerfile: apps/ehr-portal/Dockerfile
+  args:
+    NEXT_PUBLIC_API_URL: https://api.ehr.stancarver.com
+
+env:
+  clear:
+    NEXT_PUBLIC_API_URL: https://api.ehr.stancarver.com
+  secret:
+    - NEXT_PUBLIC_HONEYBADGER_API_KEY
+
+registry:
+  server: ghcr.io
+  username: scarver2
+  password:
+    - GITHUB_TOKEN
 
 proxy:
   ssl: true
@@ -16,12 +29,6 @@ proxy:
   app_port: 3000
   healthcheck:
     path: /api/up
-
-registry:
-  server: ghcr.io
-  username: scarver2
-  password:
-    - GITHUB_TOKEN
 
 servers:
   web:

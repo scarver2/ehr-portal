@@ -4,11 +4,16 @@ service: ehr-api
 image: ghcr.io/scarver2/ehr-api
 
 builder:
+  remote: ssh://deploy@45.76.237.124
   arch: amd64
-  context: apps/ehr-api
-  cache:
-    type: registry
-    options: mode=max
+  context: .
+  dockerfile: apps/ehr-api/Dockerfile
+
+registry:
+  server: ghcr.io
+  username: scarver2
+  password:
+    - GITHUB_TOKEN
 
 proxy:
   ssl: true
@@ -16,12 +21,6 @@ proxy:
   app_port: 3000
   healthcheck:
     path: /up
-
-registry:
-  server: ghcr.io
-  username: scarver2
-  password:
-    - GITHUB_TOKEN
 
 servers:
   web:
@@ -35,6 +34,8 @@ ssh:
   user: deploy
 
 env:
+  clear:
+    DB_HOST: ehr-api-postgres
   secret:
     - SECRET_KEY_BASE
     - DB_USER
