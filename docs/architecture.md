@@ -1,6 +1,6 @@
 # EHR Portal Architecture
 
-## Standard Request Flow
+## API Request Flow
 
     Browser
         ↓
@@ -9,6 +9,22 @@
     Rails API
         ↓
     PostgreSQL
+
+## Auth Flow
+
+    NextJS
+       │
+       │ login
+       ▼
+    POST /api/v1/auth/login
+       │
+       │ JWT returned in Authorization header
+       ▼
+   NextJS stores token in localStorage + cookie
+       │
+       │ Authorization: Bearer <token> header
+       ▼
+    Rails API (devise-jwt validates token)
 
 ## Real-Time Eligibility (RTE) Flow
 
@@ -90,6 +106,7 @@ no explicit controller call required.
 - **Waystar** — Humana
 - **CMS** — Medicare
 - **State (TMHP)** — Medicaid Texas
+>>>>>>> main
 
 ## License
 

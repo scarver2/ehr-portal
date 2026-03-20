@@ -1,0 +1,27 @@
+# sig/app/controllers/api/v1/auth/sessions_controller.rbs
+# JSON sessions controller for devise-jwt.
+# Overrides Devise's warden-based authentication to handle JSON parameter extraction.
+# devise-jwt automatically adds the JWT to the Authorization response header.
+
+module Api
+  module V1
+    module Auth
+      class SessionsController < Devise::SessionsController
+        def create: () -> void
+
+        def destroy: () -> void
+
+        def respond_with: (::User resource, **untyped opts) -> void
+
+        def respond_to_on_destroy: (::User resource) -> void
+
+        private
+
+        def configure_sign_in_params: () -> void
+      end
+    end
+  end
+end
+
+
+

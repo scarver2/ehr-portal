@@ -17,6 +17,7 @@ module Types
     field :state,      String
     field :zip,        String
     field :location,   String, null: true, description: "City and state joined for display."
+    field :encounters, [Types::EncounterType], null: false, description: "All encounters for this provider."
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
 

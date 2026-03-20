@@ -19,6 +19,10 @@ const mockProvider = {
   npi: "1111111111",
   specialty: { id: "1", name: "Cardiology" },
   clinicName: "Heart Clinic",
+  encounters: [
+    { patient: { id: "p1", firstName: "John", lastName: "Doe" } },
+    { patient: { id: "p2", firstName: "Jane", lastName: "Smith" } },
+  ],
 }
 
 // Helper: build params as an awaitable object matching Next.js App Router signature
@@ -68,5 +72,21 @@ describe("ProviderPage", () => {
   it("calls graphql.request once per render", async () => {
     await ProviderPage(params("1"))
     expect(graphql.request).toHaveBeenCalledTimes(1)
+  })
+
+  it("displays patients from encounters", async () => {
+    render(await ProviderPage(params("1")))
+    expect(screen.getByText("Patients (2)")).toBeInTheDocument()
+    expect(screen.getByText("John Doe")).toBeInTheDocument()
+    expect(screen.getByText("Jane Smith")).toBeInTheDocument()
+  })
+
+  it("displays no patients message when encounters is empty", async () => {
+    vi.mocked(graphql.request).mockResolvedValue({
+      provider: { ...mockProvider, encounters: [] },
+    })
+    render(await ProviderPage(params("1")))
+    expect(screen.getByText("Patients (0)")).toBeInTheDocument()
+    expect(screen.getByText("No patients found.")).toBeInTheDocument()
   })
 })

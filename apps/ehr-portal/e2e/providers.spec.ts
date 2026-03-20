@@ -2,8 +2,37 @@
 
 import { test, expect } from '@playwright/test'
 
+async function login(page) {
+  await page.goto('/')
+
+  // Wait for form to be ready
+  await page.waitForSelector('input[type="email"]')
+
+  // Fill credentials
+  await page.fill('input[type="email"]', 'provider@example.com')
+  await page.fill('input[type="password"]', 'password')
+
+  // Submit and wait for either success or error
+  const submitPromise = page.click('button[type="submit"]')
+
+  // Wait for either token to appear or error message
+  await Promise.race([
+    page.waitForFunction(() => localStorage.getItem('auth_token') !== null, { timeout: 10000 }),
+    page.waitForFunction(() => {
+      const error = document.querySelector('p[style*="color: red"]')
+      return error && error.textContent?.includes('Invalid')
+    }, { timeout: 10000 })
+  ]).catch(async () => {
+    // If neither condition met, check what's in localStorage
+    const token = await page.evaluate(() => localStorage.getItem('auth_token'))
+    const user = await page.evaluate(() => localStorage.getItem('auth_user'))
+    throw new Error(`Login failed. Token: ${token}, User: ${user}`)
+  })
+}
+
 test.describe('Providers list page (/providers)', () => {
   test.beforeEach(async ({ page }) => {
+    await login(page)
     await page.goto('/providers')
   })
 
@@ -29,6 +58,7 @@ test.describe('Providers list page (/providers)', () => {
 
 test.describe('Provider detail page (/providers/:id)', () => {
   test.beforeEach(async ({ page }) => {
+    await login(page)
     await page.goto('/providers/1')
   })
 
@@ -51,6 +81,7 @@ test.describe('Provider detail page (/providers/:id)', () => {
 
 test.describe('Navigation', () => {
   test('clicking a provider link navigates to their detail page', async ({ page }) => {
+    await login(page)
     await page.goto('/providers')
     await page.getByRole('link', { name: 'Alice Adams — Cardiology' }).click()
     await expect(page).toHaveURL(/\/providers\/1$/)
@@ -58,6 +89,7 @@ test.describe('Navigation', () => {
   })
 
   test('the second provider also navigates correctly', async ({ page }) => {
+    await login(page)
     await page.goto('/providers')
     await page.getByRole('link', { name: 'Bob Brown — Neurology' }).click()
     await expect(page).toHaveURL(/\/providers\/2$/)

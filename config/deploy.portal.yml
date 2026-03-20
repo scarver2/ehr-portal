@@ -1,25 +1,14 @@
 # config/deploy.portal.yml
 service: ehr-portal
 
-image: scarver2/ehr-portal
+image: ghcr.io/scarver2/ehr-portal
 
 builder:
-  remote: ssh://deploy@45.76.237.124
   arch: amd64
+  context: apps/ehr-portal
   cache:
     type: registry
     options: mode=max
-  context: apps/ehr-portal
-  dockerfile: apps/ehr-portal/Dockerfile
-  secrets:
-    - NEXT_PUBLIC_HONEYBADGER_API_KEY
-
-env:
-  clear:
-    NEXT_PUBLIC_API_URL: https://api.ehr.stancarver.com
-  secret:
-    - NEXT_PUBLIC_HONEYBADGER_API_KEY
-    - HONEYBADGER_API_KEY
 
 proxy:
   ssl: true
@@ -40,3 +29,4 @@ servers:
 
 ssh:
   user: deploy
+

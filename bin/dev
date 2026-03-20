@@ -18,6 +18,10 @@ docker compose up -d --wait
 # These are inherited by all overmind child processes; apps read them via database.yml.
 export DB_HOST=localhost DB_PORT=5433 DB_USER=postgres DB_PASSWORD=postgres
 
+# Export Redis connection (Homebrew Redis on local Mac).
+# Sidekiq uses DB 0, ActionCable uses DB 1 (see config/cable.yml and config/initializers/sidekiq.rb).
+export REDIS_URL=redis://localhost:6379/0
+
 # TODO: Remove db:reset once the schema and seeds are stable enough that a
 #       fresh database is no longer needed on every dev boot.
 echo "==> Resetting database..."

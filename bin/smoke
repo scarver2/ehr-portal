@@ -32,7 +32,7 @@ PASS=0
 FAIL=0
 
 ########################################
-# Core check function
+# Core check functions
 ########################################
 
 # smoke_check LABEL URL EXPECTED_STATUS [METHOD] [POST_BODY]
@@ -74,6 +74,164 @@ smoke_check() {
   fi
 }
 
+# smoke_login LABEL API_URL EMAIL PASSWORD
+# Tests JWT authentication (for API)
+smoke_login() {
+  local label="$1"
+  local url="$2/api/v1/auth/login"
+  local email="$3"
+  local password="$4"
+
+  local data
+  data=$(jq -n --arg email "$email" --arg password "$password" '{user: {email: $email, password: $password}}')
+
+  local response_file
+  response_file=$(mktemp)
+
+  local http_code
+  http_code=$(curl \
+    --silent \
+    --write-out "%{http_code}" \
+    --output "$response_file" \
+    --max-time 10 \
+    --connect-timeout 5 \
+    --request POST \
+    --header "Content-Type: application/json" \
+    --dump-header - \
+    --data "$data" \
+    "$url" 2>/dev/null | tail -1)
+
+  local padded
+  padded=$(printf "%-50s" "$label")
+
+  if [[ "$http_code" == "200" ]]; then
+    # Check for Authorization header with Bearer token
+    local auth_header
+    auth_header=$(curl \
+      --silent \
+      --max-time 10 \
+      --connect-timeout 5 \
+      --request POST \
+      --header "Content-Type: application/json" \
+      --data "$data" \
+      --dump-header - \
+      "$url" 2>/dev/null | grep -i "^Authorization:" | head -1)
+
+    if [[ "$auth_header" =~ Bearer\ [A-Za-z0-9._-]+ ]]; then
+      echo "  ✔ ${padded} HTTP 200 (JWT token received)"
+      PASS=$((PASS + 1))
+    else
+      echo "  ✖ ${padded} HTTP 200 but no valid JWT token in Authorization header"
+      FAIL=$((FAIL + 1))
+    fi
+  else
+    echo "  ✖ ${padded} expected HTTP 200, got HTTP ${http_code}"
+    FAIL=$((FAIL + 1))
+  fi
+
+  rm -f "$response_file"
+}
+
+# smoke_activeadmin_login LABEL API_URL EMAIL PASSWORD
+# Tests ActiveAdmin session-based authentication
+smoke_activeadmin_login() {
+  local label="$1"
+  local url="$2"
+  local email="$3"
+  local password="$4"
+
+  local cookie_file
+  cookie_file=$(mktemp)
+
+  local login_url="$url/admin/login"
+
+  # Step 1: GET the login page to extract CSRF token
+  local csrf_token
+  local login_page
+  login_page=$(curl \
+    --silent \
+    --max-time 10 \
+    --connect-timeout 5 \
+    --cookie-jar "$cookie_file" \
+    "$login_url" 2>/dev/null)
+
+  # Try multiple patterns for CSRF token extraction
+  csrf_token=$(echo "$login_page" | grep 'authenticity_token' | sed 's/.*value="\([^"]*\).*/\1/' | head -1)
+  if [[ -z "$csrf_token" ]]; then
+    csrf_token=$(echo "$login_page" | grep 'authenticity_token' | sed "s/.*value='\([^']*\).*/\1/" | head -1)
+  fi
+
+  local padded
+  padded=$(printf "%-50s" "$label")
+
+  if [[ -z "$csrf_token" ]]; then
+    echo "  ✖ ${padded} could not extract CSRF token from login page"
+    if [[ "${DEBUG:-}" == "1" ]]; then
+      echo "     Login page preview: $(echo "$login_page" | head -c 500)..."
+    fi
+    FAIL=$((FAIL + 1))
+    rm -f "$cookie_file"
+    return
+  fi
+
+  # Step 2: POST to /admin/login with email, password, and CSRF token
+  local response_file
+  response_file=$(mktemp)
+
+  local http_code
+  http_code=$(curl \
+    --silent \
+    --write-out "%{http_code}" \
+    --output "$response_file" \
+    --max-time 10 \
+    --connect-timeout 5 \
+    --request POST \
+    --cookie "$cookie_file" \
+    --cookie-jar "$cookie_file" \
+    --data-urlencode "authenticity_token=$csrf_token" \
+    --data-urlencode "user[email]=$email" \
+    --data-urlencode "user[password]=$password" \
+    "$login_url" 2>/dev/null)
+
+  # ActiveAdmin redirects after successful login, so we expect 302 or 200
+  if [[ "$http_code" == "302" || "$http_code" == "200" || "$http_code" == "303" ]]; then
+    # Step 3: Verify session works by accessing /admin dashboard
+    local verify_code
+    verify_code=$(curl \
+      --silent \
+      --write-out "%{http_code}" \
+      --output /dev/null \
+      --max-time 10 \
+      --connect-timeout 5 \
+      --request GET \
+      --cookie "$cookie_file" \
+      "$url/admin" 2>/dev/null)
+
+    if [[ "$verify_code" == "200" ]]; then
+      echo "  ✔ ${padded} HTTP ${http_code} (session authenticated)"
+      PASS=$((PASS + 1))
+    else
+      echo "  ✖ ${padded} login returned HTTP ${http_code} but session invalid (got HTTP ${verify_code} on /admin)"
+      FAIL=$((FAIL + 1))
+    fi
+  else
+    echo "  ✖ ${padded} expected HTTP 200/302, got HTTP ${http_code}"
+    if [[ "$http_code" == "422" ]]; then
+      echo "     Form validation failed (422)"
+      if [[ "${DEBUG:-}" == "1" ]]; then
+        echo "     CSRF token length: ${#csrf_token}"
+        echo "     Email: $email"
+        echo "     POST URL: $login_url"
+        echo "     Response body:"
+        cat "$response_file" | head -20
+      fi
+    fi
+    FAIL=$((FAIL + 1))
+  fi
+
+  rm -f "$cookie_file" "$response_file"
+}
+
 ########################################
 # Test suites
 ########################################
@@ -87,7 +245,12 @@ smoke_api() {
 
   smoke_check "GET  /api/up   (health)"      "$base/api/up"  "200"
   smoke_check "POST /graphql  (introspect)"  "$base/graphql" "200" "POST" '{"query":"{__typename}"}'
-  smoke_check "GET  /admin    (redirect)"    "$base/admin"   "302"
+  smoke_login "POST /api/v1/auth/login (JWT)" "$base" "provider@example.com" "password"
+
+  # Only test ActiveAdmin login in non-production (test credentials don't exist in production)
+  if [[ "$base" != *"stancarver.com"* ]]; then
+    smoke_activeadmin_login "POST /admin/login (ActiveAdmin)" "$base" "admin@example.com" "password"
+  fi
 }
 
 smoke_portal() {
