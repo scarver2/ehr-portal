@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# apps/ehr-api/bin/spec
+# Alias for bin/test — runs RSpec. Any arguments are forwarded.
+#
+# Examples:
+#   bin/spec                                        # run all specs
+#   bin/spec spec/models/provider_spec.rb           # run a single file
+#   bin/spec spec/models/provider_spec.rb:12        # run one example by line
+#   bin/spec --format documentation                 # verbose output
+
+source "$(dirname "$0")/_lib.sh"
+
+exec "$(dirname "$0")/test" "$@"

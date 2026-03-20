@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+# bin/health
+# Run test, lint, and coverage for every app and print a summarized status report.
+# Each check's full output is captured to tmp/health/ for inspection on failure.
+#
+# Usage:
+#   bin/health
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/_lib.sh"
+
+LOG_DIR="$ROOT_DIR/tmp/health"
+mkdir -p "$LOG_DIR"
+
+PASS=0
+FAIL=0
+OUTDATED=0
+
+run_check() {
+  local label="$1"
+  local app_dir="$2"
+  local script="$3"
+  local log="$LOG_DIR/${label// /_}.log"
+  local padded
+  padded=$(printf "%-36s" "$label")
+
+  if "$app_dir/bin/$script" &>"$log"; then
+    echo "  ✔ $padded PASSED"
+    PASS=$((PASS + 1))
+  else
+    echo "  ✖ $padded FAILED  →  ${log#"$ROOT_DIR/"}"
+    FAIL=$((FAIL + 1))
+  fi
+}
+
+# run_outdated LABEL APP_DIR
+# Runs bin/outdated, parses output for package-level updates (not toolchain),
+# and displays a summarized ✔/⚠ line. Informational — does not affect PASS/FAIL.
+#
+# Outdated package patterns:
+#   bundle outdated  →  "  * gem-name (newest …, installed …)"
+#   npm-check-updates →  " package   ^old  →  ^new"  (ncu exits 0 regardless)
+run_outdated() {
+  local label="$1"
+  local app_dir="$2"
+  local log="$LOG_DIR/${label// /_}.log"
+  local padded
+  padded=$(printf "%-36s" "$label")
+
+  "$app_dir/bin/outdated" &>"$log" || true
+
+  local count
+  count=$(grep -cE '^\s+\*\s|\s→\s' "$log" 2>/dev/null || echo 0)
+
+  if [[ "$count" -eq 0 ]]; then
+    echo "  ✔ $padded up to date"
+  else
+    echo "  ⚠ $padded ${count} outdated  →  ${log#"$ROOT_DIR/"}"
+    OUTDATED=$((OUTDATED + count))
+  fi
+}
+
+########################################
+# ehr-api
+########################################
+
+echo ""
+info "ehr-api"
+echo "  ──────────────────────────────────────────────────"
+run_check   "ehr-api / test"     "$ROOT_DIR/apps/ehr-api"    test
+run_check   "ehr-api / lint"     "$ROOT_DIR/apps/ehr-api"    lint
+run_check   "ehr-api / coverage" "$ROOT_DIR/apps/ehr-api"    coverage
+run_outdated "ehr-api / outdated" "$ROOT_DIR/apps/ehr-api"
+
+########################################
+# ehr-portal
+########################################
+
+echo ""
+info "ehr-portal"
+echo "  ──────────────────────────────────────────────────"
+run_check   "ehr-portal / test"     "$ROOT_DIR/apps/ehr-portal"  test
+run_check   "ehr-portal / lint"     "$ROOT_DIR/apps/ehr-portal"  lint
+run_check   "ehr-portal / coverage" "$ROOT_DIR/apps/ehr-portal"  coverage
+run_outdated "ehr-portal / outdated" "$ROOT_DIR/apps/ehr-portal"
+
+########################################
+# Summary
+########################################
+
+echo ""
+echo "  ══════════════════════════════════════════════════"
+printf "  Checks:   %d passed  /  %d failed\n" "$PASS" "$FAIL"
+printf "  Outdated: %d package(s)\n" "$OUTDATED"
+echo "  ══════════════════════════════════════════════════"
+echo ""
+
+if [[ "$FAIL" -gt 0 ]]; then
+  fail "Health check FAILED — ${FAIL} step(s) failed"
+else
+  success "All ${PASS} health checks passed"
+fi
