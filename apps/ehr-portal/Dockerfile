@@ -4,6 +4,8 @@
 FROM oven/bun:1 AS base
 WORKDIR /app
 
+ARG NEXT_PUBLIC_API_URL=https://api.ehr.stancarver.com
+
 # ---------- Dependencies ----------
 FROM base AS deps
 COPY apps/ehr-portal/package.json apps/ehr-portal/bun.lockb* ./
@@ -16,6 +18,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY apps/ehr-portal/ .
 
 RUN --mount=type=secret,id=NEXT_PUBLIC_HONEYBADGER_API_KEY \
+    NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
     NEXT_PUBLIC_HONEYBADGER_API_KEY=$(cat /run/secrets/NEXT_PUBLIC_HONEYBADGER_API_KEY 2>/dev/null || echo "") \
     bun run build
 

@@ -8,6 +8,8 @@ builder:
   arch: amd64
   context: .
   dockerfile: apps/ehr-portal/Dockerfile
+  args:
+    NEXT_PUBLIC_API_URL: https://api.ehr.stancarver.com
 
 env:
   clear:
