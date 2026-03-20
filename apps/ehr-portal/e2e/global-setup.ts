@@ -73,11 +73,14 @@ function handleRequest(req: IncomingMessage, res: ServerResponse) {
 
     let data: Record<string, unknown> = {}
 
-    // `\bproviders\b` matches "providers" but NOT "provider" (no trailing s)
-    if (/\bproviders\b/.test(query)) {
+    // Handle provider queries (single or plural)
+    // For single provider, match by ID (handle both string and number types)
+    if (/\bproviders\b/.test(query) && !/\bprovider\b/.test(query.replace(/\bproviders\b/, ''))) {
       data = { providers: mockProviders }
     } else if (/\bprovider\b/.test(query)) {
-      const provider = mockProviders.find((p) => p.id === variables?.id) ?? null
+      // ID might come as string or number, normalize for comparison
+      const lookupId = variables?.id ? String(variables.id) : undefined
+      const provider = mockProviders.find((p) => p.id === lookupId) ?? null
       data = { provider }
     }
 
