@@ -5,6 +5,8 @@ image: ghcr.io/scarver2/ehr-portal
 
 builder:
   arch: amd64
+  dockerfile: apps/ehr-portal/Dockerfile
+  context: .
   cache:
     type: registry
     options: mode=max
