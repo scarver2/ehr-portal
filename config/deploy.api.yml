@@ -5,8 +5,8 @@ image: ghcr.io/scarver2/ehr-api
 
 builder:
   arch: amd64
-  dockerfile: apps/ehr-api/Dockerfile
-  context: .
+  dockerfile: Dockerfile
+  context: apps/ehr-api
   cache:
     type: registry
     options: mode=max
