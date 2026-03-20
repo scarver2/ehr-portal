@@ -34,7 +34,7 @@ export function Sidebar() {
         <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-600">
           <Cross className="w-4 h-4 text-white" strokeWidth={2.5} />
         </div>
-        <span className="text-white font-semibold text-sm tracking-wide">EHR Portal</span>
+        <span className="text-white font-semibold text-sm tracking-wide">⚕️ EHR Portal</span>
       </div>
 
       {/* Nav */}

@@ -46,7 +46,7 @@ export default function Home() {
     <main style={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center" }}>
       <div style={{ width: "100%", maxWidth: "400px", padding: "2rem" }}>
         <h1 style={{ fontSize: "10vw", fontWeight: 700, letterSpacing: "-0.05em", lineHeight: 1, marginBottom: "2rem", textAlign: "center" }}>
-          EHR
+          ⚕️ EHR
         </h1>
 
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
