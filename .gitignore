@@ -7,3 +7,5 @@ apps/ehr-api/.rbs_collection
 # local environment variables
 .env.production
 .env.development
+
+/resources
