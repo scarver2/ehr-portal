@@ -34,6 +34,8 @@ ssh:
   user: deploy
 
 env:
+  clear:
+    DB_HOST: ehr-api-postgres
   secret:
     - SECRET_KEY_BASE
     - DB_USER
