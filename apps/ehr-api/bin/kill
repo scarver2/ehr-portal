@@ -1,0 +1,10 @@
+#!/bin/bash
+# apps/ehr-api/bin/kill
+
+source "$(dirname "$0")/_lib.sh"
+
+# Kill existing Rails process
+pkill -f "rails server"
+
+# Remove the server pid file
+rm -rf tmp/pids/server.pid
