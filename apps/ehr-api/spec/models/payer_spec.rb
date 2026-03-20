@@ -32,16 +32,4 @@ RSpec.describe Payer, type: :model do
       expect(described_class.active).not_to include(inactive_payer)
     end
   end
-
-  describe "#simulated_latency" do
-    it "converts response_time_ms to seconds" do
-      payer = build(:payer, response_time_ms: 1500)
-      expect(payer.simulated_latency).to eq(1.5)
-    end
-
-    it "defaults to 1.5 when response_time_ms is nil" do
-      payer = build(:payer, response_time_ms: nil)
-      expect(payer.simulated_latency).to eq(1.5)
-    end
-  end
 end

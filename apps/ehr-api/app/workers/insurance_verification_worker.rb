@@ -53,6 +53,8 @@ class InsuranceVerificationWorker
 
   def apply_response(verification, response)
     verification.with_lock do
+      return unless verification.may_mark_verified?
+
       verification.update!(
         payer_name:         response[:payer_name],
         plan_name:          response[:plan_name],
@@ -71,6 +73,8 @@ class InsuranceVerificationWorker
 
   def apply_cached_response(verification, response)
     verification.with_lock do
+      return unless verification.may_mark_verified?
+
       verification.update!(
         raw_response: response,
         verified_at:  Time.current
