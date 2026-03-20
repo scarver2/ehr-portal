@@ -219,13 +219,7 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
                     <p className="text-xs text-slate-500 mt-0.5">
                       {formatDate(enc.encounteredAt)}
                       {" · "}
-                      <Link
-                        href={`/providers/${enc.provider.id}`}
-                        className="hover:text-blue-600 transition-colors"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {enc.provider.fullName}
-                      </Link>
+                      {enc.provider.fullName}
                     </p>
                     {enc.chiefComplaint && (
                       <p className="text-xs text-slate-400 mt-0.5 italic truncate">
