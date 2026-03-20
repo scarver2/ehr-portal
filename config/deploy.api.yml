@@ -1,14 +1,11 @@
 # config/deploy.api.yml
 service: ehr-api
 
-image: ghcr.io/scarver2/ehr-api
+image: scarver2/ehr-api
 
 builder:
   arch: amd64
   context: apps/ehr-api
-  cache:
-    type: registry
-    options: mode=max
 
 proxy:
   ssl: true
@@ -16,12 +13,6 @@ proxy:
   app_port: 3000
   healthcheck:
     path: /up
-
-registry:
-  server: ghcr.io
-  username: scarver2
-  password:
-    - GITHUB_TOKEN
 
 servers:
   web:
