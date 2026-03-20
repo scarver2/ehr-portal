@@ -10,6 +10,7 @@ builder:
 registry:
   server: localhost
   username: local
+  password: local
 
 proxy:
   ssl: true
