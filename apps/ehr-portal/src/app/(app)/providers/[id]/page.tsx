@@ -136,7 +136,7 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
           <Image src="/icons/hospital.png" alt="Clinic" width={36} height={36} className="shrink-0" />
           <div>
             <p className="text-xs text-slate-400">Clinic</p>
-            <p className="text-sm font-medium text-slate-800 truncate">{provider.clinicName ?? "—"}</p>
+            <p className="text-sm font-medium text-slate-800 truncate max-w-[120px]">{provider.clinicName ?? "—"}</p>
           </div>
         </div>
       </div>
