@@ -8,7 +8,7 @@ RSpec.describe 'Admin::Dashboard', type: :request do
     context 'when not authenticated' do
       it 'redirects to login' do
         get '/admin'
-        expect(response).to redirect_to(new_user_session_path)
+        expect(response).to redirect_to(new_admin_user_session_path)
       end
     end
 
@@ -31,7 +31,7 @@ RSpec.describe 'Admin::Dashboard', type: :request do
 
         it 'signs out and redirects to login' do
           get '/admin'
-          expect(response).to redirect_to(new_user_session_path)
+          expect(response).to redirect_to(new_admin_user_session_path)
         end
       end
     end

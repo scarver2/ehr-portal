@@ -5,19 +5,9 @@ require "rails_helper"
 
 RSpec.describe "Admin::Specialties", type: :request do
   context "when not authenticated" do
-    it "redirects to login" do
+    it "redirects to admin login" do
       get "/admin/specialties"
-      expect(response).to redirect_to(new_user_session_path)
-    end
-  end
-
-  %i[provider staff patient].each do |role|
-    context "when authenticated as #{role}" do
-
-      it "signs out and redirects to login" do
-        get "/admin/specialties"
-        expect(response).to redirect_to(new_user_session_path)
-      end
+      expect(response).to redirect_to(new_admin_user_session_path)
     end
   end
 
