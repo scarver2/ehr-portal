@@ -32,3 +32,38 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+/* ECG waveform animation */
+@keyframes ecg-draw {
+  0% {
+    stroke-dashoffset: 1000;
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes ecg-fade {
+  0%, 100% { opacity: 0; }
+  10%, 85% { opacity: 1; }
+}
+
+.ecg-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: ecg-draw 3.5s ease-in-out infinite;
+}
+
+.ecg-path-delayed {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: ecg-draw 3.5s ease-in-out infinite 1.75s;
+}
