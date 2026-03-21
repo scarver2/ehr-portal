@@ -10,19 +10,8 @@
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
-  config.jwt do |jwt|
-    jwt.secret = Rails.application.credentials.secret_key_base
-
-    jwt.dispatch_requests = [
-      ['POST', %r{^/api/v1/auth/login$}]
-    ]
-
-    jwt.revocation_requests = [
-      ['DELETE', %r{^/api/v1/auth/logout$}]
-    ]
-
-    jwt.expiration_time = 1.day.to_i
-  end
+  # JWT config removed — Rodauth handles JWT for User model
+  # Devise is now used only for AdminUser (session-based authentication)
 
   # The secret key used by Devise. Devise uses this key to generate
   # random tokens. Changing this key will render invalid all existing

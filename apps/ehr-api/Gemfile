@@ -15,8 +15,11 @@ gem "dartsass-rails", "~> 0.5"
 # https://github.com/heartcombo/devise
 gem "devise", "~> 5.0"
 
-# TODO: add devise-jwt project url
-gem "devise-jwt"
+# https://github.com/jeremyevans/rodauth
+gem "rodauth", "~> 2.30"
+
+# https://github.com/RolifyCommunity/rolify
+gem "rolify", "~> 6.0"
 
 # https://github.com/faker-ruby/faker
 gem "faker", "~> 3.6"
