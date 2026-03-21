@@ -72,7 +72,7 @@ RSpec.describe User, type: :model do
 
   describe '.provider_accounts' do
     let!(:provider_user) { create(:user, :provider) }
-    let!(:admin_user)    { create(:user, :admin) }
+    let!(:admin_user)    { create(:admin_user) }
     let!(:patient_user)  { create(:user, :patient) }
 
     it 'includes only provider-role users' do

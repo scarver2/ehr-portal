@@ -13,7 +13,7 @@ RSpec.describe 'Admin::Dashboard', type: :request do
     end
 
     context 'when authenticated as admin' do
-      before { sign_in create(:user, :admin) }
+      before { sign_in create(:admin_user) }
 
       it 'returns ok' do
         get '/admin'

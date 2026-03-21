@@ -3,21 +3,43 @@
 FactoryBot.define do
   factory :user do
     sequence(:email) { |n| "user#{n}@example.com" }
-    password              { 'Password1!' }
-    password_confirmation { 'Password1!' }
-    role                  { :patient }
 
-    trait :admin do
-      role { :admin }
+    # Default role: patient
+    after(:create) do |user|
+      # Create Rodauth Account with password
+      Account.create!(
+        user_id: user.id,
+        email: user.email,
+        password_hash: BCrypt::Password.create('Password1!'),
+        status: 'verified'
+      )
+
+      # Assign default patient role via Rolify
+      user.add_role(:patient) unless user.roles.any?
     end
+
+    # Role assignment traits
     trait :provider do
-      role { :provider }
+      after(:create) do |user|
+        user.roles.destroy_all
+        user.add_role(:provider)
+      end
     end
+
     trait :staff do
-      role { :staff }
+      after(:create) do |user|
+        user.roles.destroy_all
+        user.add_role(:staff)
+      end
     end
+
     trait :patient do
-      role { :patient }
+      after(:create) do |user|
+        user.roles.destroy_all
+        user.add_role(:patient)
+      end
     end
+
+    # Note: :admin trait removed — admin users are now AdminUser model only
   end
 end

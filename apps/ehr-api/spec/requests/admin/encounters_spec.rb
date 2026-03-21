@@ -23,7 +23,7 @@ RSpec.describe "Admin::Encounters", type: :request do
   end
 
   context "when authenticated as admin" do
-    let(:admin_user) { create(:user, :admin) }
+    let(:admin_user) { create(:admin_user) }
     let(:patient)    { create(:patient) }
     let(:provider)   { create(:provider) }
 

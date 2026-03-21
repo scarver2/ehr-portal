@@ -63,7 +63,7 @@ RSpec.describe Types::UserType do
     end
 
     context "when the user has no patient profile" do
-      let(:user) { create(:user, :admin) }
+      let(:user) { create(:admin_user) }
 
       it "patient is nil" do
         expect(user.patient).to be_nil
