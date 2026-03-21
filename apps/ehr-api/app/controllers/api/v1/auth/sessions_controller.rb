@@ -3,12 +3,13 @@
 module Api
   module V1
     module Auth
-      class SessionsController < ActionController::API
+      class SessionsController < Api::ApplicationController
         # Rodauth JWT Authentication (replaces Devise + devise-jwt)
         # JWT tokens are stateless and signed with HMAC
         # Each login generates a new token; logout invalidates it (via Rodauth token list)
 
-        skip_forgery_protection # API doesn't use CSRF tokens
+        # Skip authentication requirement for login/logout
+        skip_before_action :authenticate_api_user!
 
         def create
           email = params.dig(:user, :email)

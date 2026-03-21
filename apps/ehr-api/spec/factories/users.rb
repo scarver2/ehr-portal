@@ -4,6 +4,9 @@ FactoryBot.define do
   factory :user do
     sequence(:email) { |n| "user#{n}@example.com" }
 
+    # Skip validation during creation since roles are assigned in after(:create) hook
+    to_create { |instance| instance.save!(validate: false) }
+
     # Default role: patient
     after(:create) do |user|
       # Create Rodauth Account with password

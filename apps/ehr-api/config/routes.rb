@@ -4,8 +4,8 @@
 require "sidekiq/web"
 
 Rails.application.routes.draw do
-  # Sidekiq Web UI — admin role only
-  authenticate(:user, ->(u) { u.admin? }) do
+  # Sidekiq Web UI — admin only
+  authenticate(:admin_user) do
     mount PgHero::Engine => "/pghero"
     mount Sidekiq::Web => "/sidekiq"
   end
@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   mount ActionCable.server => "/cable"
 
   # ActiveAdmin devise authentication (for /admin/login, /admin/logout, etc.)
-  devise_for :users, ActiveAdmin::Devise.config
+  devise_for :admin_users, ActiveAdmin::Devise.config
 
   # Admin panel route
   ActiveAdmin.routes(self)
@@ -35,12 +35,13 @@ Rails.application.routes.draw do
     mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
   end
 
-  # API JWT authentication — scoped to :api namespace with custom route helpers
-  scope path: 'api/v1', as: :api_v1 do
-    devise_for :users,
-      path: 'auth',
-      path_names: { sign_in: 'login', sign_out: 'logout' },
-      controllers: { sessions: 'api/v1/auth/sessions' },
-      skip: %i[registrations confirmations passwords unlocks omniauth_callbacks]
+  # API JWT authentication — custom Rodauth controllers
+  namespace :api do
+    namespace :v1 do
+      namespace :auth do
+        post :login, to: 'sessions#create'
+        delete :logout, to: 'sessions#destroy'
+      end
+    end
   end
 end
