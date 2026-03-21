@@ -13,7 +13,6 @@ RSpec.describe "Admin::Specialties", type: :request do
 
   %i[provider staff patient].each do |role|
     context "when authenticated as #{role}" do
-      before { sign_in create(:user, role) }
 
       it "signs out and redirects to login" do
         get "/admin/specialties"

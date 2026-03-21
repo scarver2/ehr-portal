@@ -25,7 +25,7 @@ RSpec.describe "Api::InsuranceVerifications", type: :request do
     end
 
     context "when authenticated" do
-      before { sign_in user }
+      before { get "/api/insurance_verifications", headers: auth_headers_for(user), as: :json }
 
       it "returns 202 accepted" do
         post "/api/insurance_verifications", params: { patient_id: user.id }, as: :json
@@ -70,7 +70,7 @@ RSpec.describe "Api::InsuranceVerifications", type: :request do
     end
 
     context "when authenticated" do
-      before { sign_in user }
+      before { get "/api/insurance_verifications", headers: auth_headers_for(user), as: :json }
 
       it "returns 200 with the verification" do
         get "/api/insurance_verifications/#{verification.id}"
@@ -85,7 +85,7 @@ RSpec.describe "Api::InsuranceVerifications", type: :request do
     let!(:verification) { create(:insurance_verification, :verified, user: user, insurance_profile: profile) }
 
     context "when authenticated" do
-      before { sign_in user }
+      before { get "/api/insurance_verifications", headers: auth_headers_for(user), as: :json }
 
       it "returns an array of verifications" do
         get "/api/insurance_verifications"
