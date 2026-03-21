@@ -1,7 +1,7 @@
 # apps/ehr-api/db/seeds/clinics.rb
 # frozen_string_literal: true
 
-# Fake Clinic Names so providers belong somewhere.
+# Clinic Names for providers
 
 Rails.logger.debug "Seeding clinics..."
 
@@ -14,6 +14,7 @@ CLINICS = [
   "North Dallas Medical Group",
   "Parkview Medical Associates",
   "Prairie Creek Medical",
+  "Princeton-Plainsboro Teaching Hospital",
   "Red River Health",
   "Texas Regional Medical"
 ].freeze

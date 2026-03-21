@@ -8,10 +8,11 @@ Rails.logger.debug "Seeding Dr. House"
 provider_user = User.find_by(email: "provider@example.com")
 internal_medicine = Specialty.find_by(name: "Internal Medicine")
 
-Provider.find_or_create_by!(first_name: "Gregory", last_name: "House") do |p|
-  p.npi         = 1_234_567_890
-  p.specialty   = internal_medicine
+Provider.find_or_create_by!(npi: 1_234_567_890) do |p|
+  p.first_name  = "Gregory"
+  p.last_name   = "House"
   p.clinic_name = "Princeton-Plainsboro Teaching Hospital"
+  p.specialty   = internal_medicine
   p.user        = provider_user
 end
 
@@ -21,10 +22,10 @@ Rails.logger.debug { "Seeding #{provider_count} additional providers..." }
 
 provider_count.times do
   Provider.create!(
+    clinic_name: CLINICS.sample,
     first_name:  Faker::Name.first_name,
     last_name:   Faker::Name.last_name,
     npi:         Faker::Number.number(digits: 10),
-    specialty:   Specialty.all.sample,
-    clinic_name: CLINICS.sample
+    specialty:   Specialty.all.sample
   )
 end
