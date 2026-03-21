@@ -43,7 +43,7 @@ export default function Home() {
   }
 
   return (
-    <main style={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center" }}>
+    <main style={{ display: "flex", minHeight: "100vh", alignItems: "center", justifyContent: "center" }}>
       <div style={{ width: "100%", maxWidth: "400px", padding: "2rem" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.2em", marginBottom: "2rem" }}>
           <span style={{ fontSize: "8vw", lineHeight: 1 }}>⚕️</span>
