@@ -8,18 +8,6 @@ RSpec.describe ApplicationPolicy do
 
   let(:record) { double("record") }
 
-  context "when the user is an admin" do
-    let(:user) { build(:user, :admin) }
-
-    it { is_expected.to be_index }
-    it { is_expected.to be_show }
-    it { is_expected.to be_create }
-    it { is_expected.to be_new }
-    it { is_expected.to be_update }
-    it { is_expected.to be_edit }
-    it { is_expected.to be_destroy }
-  end
-
   context "when the user is a provider" do
     let(:user) { build(:user, :provider) }
 
@@ -51,7 +39,7 @@ RSpec.describe ApplicationPolicy do
   end
 
   describe "#new? delegates to #create?" do
-    let(:user) { build(:user, :admin) }
+    let(:user) { build(:user, :provider) }
 
     it "returns the same value as create?" do
       expect(policy.new?).to eq(policy.create?)
@@ -59,7 +47,7 @@ RSpec.describe ApplicationPolicy do
   end
 
   describe "#edit? delegates to #update?" do
-    let(:user) { build(:user, :admin) }
+    let(:user) { build(:user, :provider) }
 
     it "returns the same value as update?" do
       expect(policy.edit?).to eq(policy.update?)
@@ -69,7 +57,7 @@ RSpec.describe ApplicationPolicy do
   describe ApplicationPolicy::Scope do
     subject(:scope) { described_class.new(user, relation) }
 
-    let(:user)     { build(:user, :admin) }
+    let(:user)     { build(:user, :provider) }
     let(:relation) { double("relation") }
 
     it "raises NotImplementedError when resolve is called" do

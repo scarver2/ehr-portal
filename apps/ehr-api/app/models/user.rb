@@ -23,7 +23,7 @@ class User < ApplicationRecord
 
   has_many :insurance_verifications, dependent: :destroy
 
-  scope :provider_accounts, -> { where(roles: { name: :provider }).joins(:roles) }
+  scope :provider_accounts, -> { where(roles: { name: :provider }).joins(:roles).distinct.order(:email) }
 
   private
 

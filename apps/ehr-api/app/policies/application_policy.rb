@@ -3,6 +3,8 @@
 
 # Base class for all Pundit authorization policies.
 # Subclass this and override methods to define resource-specific rules.
+# AdminUser model is for ActiveAdmin interface (separate from portal User model)
+# Portal users are authenticated via JWT and may have roles: provider, staff, patient
 class ApplicationPolicy
   attr_reader :user, :record
 
@@ -11,13 +13,15 @@ class ApplicationPolicy
     @record = record
   end
 
-  def index?  = user.admin?
-  def show?   = user.admin?
-  def create? = user.admin?
+  # Default: deny access unless a specific policy grants it
+  # Subclasses can override to grant access based on user roles
+  def index?  = false
+  def show?   = false
+  def create? = false
   def new?    = create?
-  def update? = user.admin?
+  def update? = false
   def edit?   = update?
-  def destroy? = user.admin?
+  def destroy? = false
 
   class Scope
     def initialize(user, scope)
