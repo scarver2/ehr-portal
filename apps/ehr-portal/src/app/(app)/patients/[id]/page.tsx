@@ -8,6 +8,7 @@ import { gql } from "graphql-request"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight, Phone, MapPin, AlertCircle, Calendar, Hash } from "lucide-react"
 import { InsuranceVerificationPanel } from "./InsuranceVerificationPanel"
+import { EcgAnimation } from "@/components/ecg-animation"
 
 const query = gql`
   query Patient($id: ID!) {
@@ -142,6 +143,8 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
             className="w-28 h-28"
           />
         </div>
+
+        <EcgAnimation />
 
         <div className="flex items-start gap-5">
           <div className="flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 text-slate-600 font-bold text-xl shrink-0">
