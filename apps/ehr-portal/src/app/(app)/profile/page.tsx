@@ -271,10 +271,13 @@ function ProfileContent({ user }: { user: { id: number; email: string; role: str
 
 export default function ProfilePage() {
   const { user } = useAuth()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => setMounted(true), [])
 
   return (
     <Protected>
-      {user ? (
+      {mounted && user ? (
         <ProfileContent user={user} />
       ) : (
         <LoadingSkeleton />
