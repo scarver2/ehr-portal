@@ -1,11 +1,11 @@
 # apps/ehr-api/db/seeds/medical_specialties.rb
 # frozen_string_literal: true
 
-puts "Seeding medical specialties..."
+Rails.logger.debug "Seeding medical specialties..."
 
 Specialty.insert_all(
   [
-    { name: "Allergy & Immunology",               category: "Medical",      created_at: Time.current, updated_at: Time.current },
+    { name: "Allergy & Immunology",                category: "Medical",      created_at: Time.current, updated_at: Time.current },
     { name: "Anesthesiology",                      category: "Surgical",     created_at: Time.current, updated_at: Time.current },
     { name: "Cardiology",                          category: "Medical",      created_at: Time.current, updated_at: Time.current },
     { name: "Colorectal Surgery",                  category: "Surgical",     created_at: Time.current, updated_at: Time.current },
@@ -13,7 +13,7 @@ Specialty.insert_all(
     { name: "Dermatology",                         category: "Medical",      created_at: Time.current, updated_at: Time.current },
     { name: "Emergency Medicine",                  category: "Medical",      created_at: Time.current, updated_at: Time.current },
     { name: "Endocrinology",                       category: "Medical",      created_at: Time.current, updated_at: Time.current },
-    { name: "ENT / Otolaryngology",               category: "Surgical",     created_at: Time.current, updated_at: Time.current },
+    { name: "ENT / Otolaryngology",                category: "Surgical",     created_at: Time.current, updated_at: Time.current },
     { name: "Family Medicine",                     category: "Primary Care", created_at: Time.current, updated_at: Time.current },
     { name: "Gastroenterology",                    category: "Medical",      created_at: Time.current, updated_at: Time.current },
     { name: "Geriatric Medicine",                  category: "Primary Care", created_at: Time.current, updated_at: Time.current },
@@ -36,7 +36,7 @@ Specialty.insert_all(
     { name: "Radiology",                           category: "Medical",      created_at: Time.current, updated_at: Time.current },
     { name: "Rheumatology",                        category: "Medical",      created_at: Time.current, updated_at: Time.current },
     { name: "Urology",                             category: "Surgical",     created_at: Time.current, updated_at: Time.current }
-  ],
+  ]
 )
 
-puts "  → #{Specialty.count} specialties seeded."
+Rails.logger.debug { "  → #{Specialty.count} specialties seeded." }

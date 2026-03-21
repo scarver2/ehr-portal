@@ -19,14 +19,6 @@ payers = [
     response_time_ms: 1800
   },
   {
-    name:             "UnitedHealthcare",
-    payer_code:       "UHC001",
-    clearinghouse:    "Optum",
-    api_endpoint:     "https://api.optum.com/rte",
-    requires_auth:    true,
-    response_time_ms: 1500
-  },
-  {
     name:             "Cigna",
     payer_code:       "CIGNA01",
     clearinghouse:    "Availity",
@@ -57,6 +49,14 @@ payers = [
     api_endpoint:     "https://api.tmhp.com/eligibility",
     requires_auth:    true,
     response_time_ms: 2200
+  },
+  {
+    name:             "UnitedHealthcare",
+    payer_code:       "UHC001",
+    clearinghouse:    "Optum",
+    api_endpoint:     "https://api.optum.com/rte",
+    requires_auth:    true,
+    response_time_ms: 1500
   }
 ]
 
@@ -66,4 +66,4 @@ payers.each do |attrs|
   end
 end
 
-puts "Seeded #{Payer.count} payers"
+Rails.logger.debug { "Seeded #{Payer.count} payers" }
