@@ -10,6 +10,9 @@ class User < ApplicationRecord
   # Supported roles: :provider, :staff, :patient (admins use separate AdminUser model)
   rolify
 
+  # Rodauth Account — manages password and JWT tokens
+  has_one :account, dependent: :destroy, inverse_of: :user
+
   # Validate email presence (Rodauth manages password via account table)
   validates :email, presence: true, uniqueness: true
   validate :has_at_least_one_role

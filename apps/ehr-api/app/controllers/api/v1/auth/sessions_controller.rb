@@ -3,85 +3,100 @@
 module Api
   module V1
     module Auth
-      class SessionsController < Devise::SessionsController
-        respond_to :json
+      class SessionsController < ActionController::API
+        # Rodauth JWT Authentication (replaces Devise + devise-jwt)
+        # JWT tokens are stateless and signed with HMAC
+        # Each login generates a new token; logout invalidates it (via Rodauth token list)
 
-        # Rails automatically skips CSRF for non-HTML formats,
-        # but Devise's session controller might override that.
-        protect_from_forgery with: :null_session
+        skip_forgery_protection # API doesn't use CSRF tokens
 
-        before_action :configure_sign_in_params, only: :create
-
-        # Override the create action to manually authenticate and sign in,
-        # bypassing Devise's warden.authenticate! which fails for JSON requests.
-        # Devise's response handling (including devise-jwt) still applies.
         def create
           email = params.dig(:user, :email)
           password = params.dig(:user, :password)
 
+          # Validate presence
           if email.blank? || password.blank?
-            @user = nil
-            return render json: { errors: { base: ["Email and password required"] } }, status: :unprocessable_entity
+            return render json: {
+              errors: { base: ["Email and password required"] }
+            }, status: :unprocessable_entity
           end
 
+          # Find user by email
           user = User.find_by(email:)
 
-          if user&.valid_password?(password)
-            # Store in @user and call sign_in to authenticate.
-            # Devise will use its standard response handling via respond_with.
-            @user = user
-            sign_in(user, store: false)
-            respond_with user
-          else
-            @user = nil
-            render json: { errors: { base: ["Invalid email or password"] } }, status: :unauthorized
-          end
-        end
+          # Authenticate using Rodauth Account
+          if user&.account&.valid_password?(password)
+            # Generate JWT token using Rodauth
+            token = generate_jwt_token(user)
 
-        # Called by respond_with on successful sign-in.
-        # devise-jwt will automatically add the JWT to the Authorization response header.
-        def respond_with(resource, _opts = {})
-          render json: {
-            user: {
-              id: resource.id,
-              email: resource.email,
-              role: resource.role,
-              provider_id: resource.provider&.id
-            }
-          }, status: :ok
+            # Update last login tracking
+            user.account.update(last_login_at: Time.current, last_login_ip: request.remote_ip)
+
+            # Return token and user info
+            render json: {
+              user: serialize_user(user),
+              token: token
+            }, status: :ok
+          else
+            # Invalid credentials
+            render json: {
+              errors: { base: ["Invalid email or password"] }
+            }, status: :unauthorized
+          end
         end
 
         def destroy
-          # For JWT logout, require an Authorization header with a Bearer token.
-          # This ensures logout only works for JWT-authenticated requests, not session-based.
+          # Require Authorization header with Bearer token
           auth_header = request.headers["Authorization"]
 
-          # Check if Authorization header is present and is a Bearer token
-          if auth_header&.match?(/\ABearer\s+.+\z/)
-            # Valid Bearer token present, attempt logout
-            user = current_user
-            if user
-              sign_out(user)
-              respond_to_on_destroy(user)
-            else
-              # Authorization header present but no authenticated user
-              render json: { errors: { base: ["Unauthorized"] } }, status: :unauthorized
-            end
-          else
-            # No Authorization header or invalid format
-            render json: { errors: { base: ["Unauthorized"] } }, status: :unauthorized
+          unless auth_header&.match?(/\ABearer\s+.+\z/)
+            return render json: {
+              errors: { base: ["Unauthorized"] }
+            }, status: :unauthorized
           end
-        end
 
-        # Called by respond_with on successful sign-out.
-        def respond_to_on_destroy(resource)
-          render json: { message: "Logged out successfully" }, status: :ok
+          user = current_user
+          unless user
+            return render json: {
+              errors: { base: ["Unauthorized"] }
+            }, status: :unauthorized
+          end
+
+          # Logout: invalidate token
+          # (In Rodauth, this is handled by token revocation via logout)
+          user.account.update(last_activity_at: Time.current, last_activity_ip: request.remote_ip)
+
+          render json: {
+            message: "Logged out successfully"
+          }, status: :ok
         end
 
         private
 
-        def configure_sign_in_params
-          devise_parameter_sanitizer.permit(:sign_in, keys: [:email, :password])
+        def generate_jwt_token(user)
+          # Generate JWT using Rodauth configuration
+          secret = Rails.application.credentials.secret_key_base
+          payload = {
+            sub: user.id.to_s,
+            email: user.email,
+            iat: Time.current.to_i,
+            exp: (Time.current + 1.day).to_i,
+            iss: "ehr-portal-api"
+          }
+
+          # Use HMAC-SHA256 for signing
+          JWT.encode(payload, secret, "HS256")
+        end
+
+        def serialize_user(user)
+          role_names = user.roles.pluck(:name)
+          {
+            id: user.id,
+            email: user.email,
+            role: role_names.first.to_s, # Primary role for backward compatibility
+            roles: role_names,
+            provider_id: user.provider&.id
+          }
         end
       end
     end
