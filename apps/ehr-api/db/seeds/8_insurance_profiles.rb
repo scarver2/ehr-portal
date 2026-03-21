@@ -6,8 +6,8 @@
 
 Rails.logger.debug "Seeding insurance profiles..."
 
-payers   = Payer.active.to_a
 patients = Patient.includes(:user).order(:id).to_a
+payers   = Payer.active.to_a
 
 if payers.empty?
   Rails.logger.debug "  ⚠ No active payers found — skipping insurance profiles"
@@ -22,11 +22,11 @@ patients.each_with_index do |patient, i|
   payer = payers[i % payers.size]
 
   InsuranceProfile.create!(
-    user:       patient.user,
-    payer:      payer,
-    payer_name: payer.name,
     member_id:  "MBR#{Faker::Number.unique.number(digits: 9)}",
-    status:     "pending"
+    payer_name: payer.name,
+    payer:      payer,
+    status:     "pending",
+    user:       patient.user
   )
 
   seeded += 1
