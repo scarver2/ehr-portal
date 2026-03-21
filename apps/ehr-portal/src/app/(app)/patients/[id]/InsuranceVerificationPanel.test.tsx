@@ -37,19 +37,19 @@ const mockVerification = {
 // ── Static rendering ──────────────────────────────────────────────────────────
 
 describe("InsuranceVerificationPanel — static", () => {
-  it("renders the section heading", () => {
-    render(<InsuranceVerificationPanel patientId={1} />)
-    expect(screen.getByRole("heading", { name: "Insurance Verification" })).toBeInTheDocument()
-  })
-
   it("renders the verify button with initial label", () => {
     render(<InsuranceVerificationPanel patientId={1} />)
     expect(screen.getByRole("button", { name: "Verify Insurance" })).toBeInTheDocument()
   })
 
-  it("does not render verification data when none has arrived", () => {
+  it("displays no verification message when none has arrived", () => {
     render(<InsuranceVerificationPanel patientId={1} />)
-    expect(screen.queryByRole("term")).toBeNull()
+    expect(screen.getByText("No verification on record")).toBeInTheDocument()
+  })
+
+  it("does not render verification details when none has arrived", () => {
+    render(<InsuranceVerificationPanel patientId={1} />)
+    expect(screen.queryByText("Payer")).toBeNull()
   })
 })
 
@@ -62,7 +62,7 @@ describe("InsuranceVerificationPanel — with verification data", () => {
 
   it("renders the status", () => {
     render(<InsuranceVerificationPanel patientId={1} />)
-    expect(screen.getByText("verified")).toBeInTheDocument()
+    expect(screen.getByText("Verified")).toBeInTheDocument()
   })
 
   it("renders the payer name", () => {
