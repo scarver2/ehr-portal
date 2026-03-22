@@ -17,12 +17,23 @@
 
 Modern Electronic Health Record (EHR) portal for clinical staff.
 
+## Quick Start
+
+👉 **New Developer?** Start with [CLEAN_SETUP.md](./CLEAN_SETUP.md) for fast setup (~5 minutes)
+
+👉 **Setting up Authentication?** See [docs/AUTHENTICATION.md](./docs/AUTHENTICATION.md)
+
+👉 **Need Development Guidance?** See [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md)
+
 ## Tech Stack
+
 - **API (Ruby on Rails)**
     - [ActiveAdmin](https://activeadmin.info/) administrative dashboard
     - [Brakeman](https://brakemanscanner.org/) security scanner
     - [GraphQL](https://graphql.org/) API
     - [Rails 8](https://rubyonrails.org/)
+    - [Rodauth](https://rodauth.jeremyevans.net/) JWT authentication
+    - [Rolify](https://github.com/RolifyCommunity/rolify) role management
     - [Ruby 3](https://www.ruby-lang.org/en/)
     - [RSpec](https://rspec.info/) test suite
     - [Rubocop](https://rubocop.org/) linter
@@ -54,6 +65,15 @@ Modern Electronic Health Record (EHR) portal for clinical staff.
 - [Vultr](https://www.vultr.com/) server provisioning
 - Bash scripts for deployment and management
 - Environment secrets management
+
+## Documentation
+
+- **[CLEAN_SETUP.md](./CLEAN_SETUP.md)** — Quick app setup for new developers (5 min)
+- **[docs/AUTHENTICATION.md](./docs/AUTHENTICATION.md)** — JWT auth architecture & implementation details
+- **[docs/MIGRATION.md](./docs/MIGRATION.md)** — Upgrading from old Devise-JWT system
+- **[docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md)** — Development guide & API examples
+- **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)** — System design and component layout
+- **[docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md)** — Development guidelines & Git workflow
 
 ## Roadmap
 
