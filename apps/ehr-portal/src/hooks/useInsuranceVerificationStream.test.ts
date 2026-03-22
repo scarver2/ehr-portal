@@ -122,6 +122,8 @@ describe("useInsuranceVerificationStream", () => {
 describe("startVerification", () => {
   beforeEach(() => {
     vi.restoreAllMocks()
+    // Provide a JWT token so startVerification passes the auth check
+    vi.spyOn(Storage.prototype, "getItem").mockReturnValue("fake-jwt-token")
   })
 
   it("POSTs to the insurance verifications endpoint", async () => {
@@ -156,6 +158,11 @@ describe("startVerification", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response("Unauthorized", { status: 401 })
     )
-    await expect(startVerification(42)).rejects.toThrow("Unable to start verification")
+    await expect(startVerification(42)).rejects.toThrow("Insurance verification failed")
+  })
+
+  it("throws when not authenticated", async () => {
+    vi.spyOn(Storage.prototype, "getItem").mockReturnValue(null)
+    await expect(startVerification(42)).rejects.toThrow("Not authenticated")
   })
 })

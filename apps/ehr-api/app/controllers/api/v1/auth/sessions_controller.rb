@@ -76,7 +76,7 @@ module Api
 
         def generate_jwt_token(user)
           # Generate JWT using Rodauth configuration
-          secret = Rails.application.credentials.secret_key_base
+          secret = Rails.application.secret_key_base
           payload = {
             sub: user.id.to_s,
             email: user.email,

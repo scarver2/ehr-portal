@@ -42,4 +42,11 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
+
+  # Stable secret for JWT signing in tests. When credentials/test.key is absent
+  # (e.g. CI without RAILS_MASTER_KEY), credentials.secret_key_base is nil and
+  # JWT.decode raises JWT::DecodeError: No verification key available, returning
+  # 401 for every authenticated request. A fixed test secret avoids this without
+  # exposing any production key.
+  config.secret_key_base ||= "ehr-portal-test-secret-key-base-do-not-use-in-production-#{Rails.env}"
 end

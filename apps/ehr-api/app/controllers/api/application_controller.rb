@@ -26,7 +26,7 @@ module Api
       return nil unless token
 
       begin
-        secret = Rails.application.credentials.secret_key_base
+        secret = Rails.application.secret_key_base
         payload = JWT.decode(token, secret, true, { algorithm: "HS256" }).first
         user_id = payload["sub"]&.to_i
         user = User.find_by(id: user_id)
