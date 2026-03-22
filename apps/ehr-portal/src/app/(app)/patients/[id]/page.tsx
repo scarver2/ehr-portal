@@ -119,43 +119,43 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
   const initials = patient.fullName.split(" ").map((n) => n[0]).join("").slice(0, 2)
 
   return (
-    <div className="p-8 max-w-3xl">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-3xl">
 
       {/* Back */}
       <Link
         href="/patients"
-        className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-blue-600 transition-colors mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-blue-600 transition-colors mb-4 sm:mb-6 min-h-10 sm:min-h-auto"
       >
         <ChevronLeft className="w-4 h-4" />
         Patients
       </Link>
 
       {/* ECG Waveform Animation */}
-      <div className="mb-6 rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="mb-4 sm:mb-6 rounded-lg sm:rounded-xl border border-slate-200 overflow-hidden shadow-sm">
         <EcgAnimation />
       </div>
 
       {/* Patient hero */}
-      <div className="relative bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-6 overflow-hidden">
+      <div className="relative bg-white rounded-lg sm:rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6 mb-4 sm:mb-6 overflow-hidden">
 
         {/* Decorative heart-ekg watermark */}
-        <div className="absolute right-4 top-4 opacity-[0.07] pointer-events-none select-none">
+        <div className="absolute right-2 sm:right-4 top-2 sm:top-4 opacity-[0.07] pointer-events-none select-none">
           <Image
             src="/icons/heart-ekg.png"
             alt=""
             width={120}
             height={120}
-            className="w-28 h-28"
+            className="w-20 h-20 sm:w-28 sm:h-28"
           />
         </div>
 
-        <div className="flex items-start gap-5">
-          <div className="flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 text-slate-600 font-bold text-xl shrink-0">
+        <div className="flex items-start gap-3 sm:gap-5">
+          <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-slate-100 text-slate-600 font-bold text-lg sm:text-xl shrink-0">
             {initials}
           </div>
 
-          <div className="flex-1">
-            <h1 className="text-xl font-semibold text-slate-900">{patient.fullName}</h1>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-lg sm:text-xl font-semibold text-slate-900 truncate sm:truncate">{patient.fullName}</h1>
 
             <div className="flex items-center gap-2 mt-1 flex-wrap">
               {patient.gender && (
