@@ -2,17 +2,9 @@
 # Authentication helpers for testing
 
 module AuthHelper
-  # Authenticate API request with JWT token
+  # Authenticate API request with JWT token using Rodauth Account
   def auth_headers_for(user)
-    secret = Rails.application.secret_key_base
-    payload = {
-      sub: user.id.to_s,
-      email: user.email,
-      iat: Time.current.to_i,
-      exp: (Time.current + 1.day).to_i,
-      iss: 'ehr-portal-api'
-    }
-    token = JWT.encode(payload, secret, 'HS256')
+    token = user.account.generate_jwt_token
     { 'Authorization' => "Bearer #{token}" }
   end
 

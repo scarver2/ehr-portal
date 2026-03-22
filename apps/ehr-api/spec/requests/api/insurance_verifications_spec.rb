@@ -24,34 +24,49 @@ RSpec.describe "Api::InsuranceVerifications", type: :request do
     end
 
     context "when authenticated" do
-      before { get "/api/insurance_verifications", headers: auth_headers_for(user), as: :json }
+      let(:headers) { auth_headers_for(user) }
 
-      skip "returns 202 accepted" do
-        post "/api/insurance_verifications", params: { patient_id: user.id }, as: :json
+      it "returns 202 accepted" do
+        post "/api/insurance_verifications",
+          params: { patient_id: user.id },
+          headers: headers,
+          as: :json
         expect(response).to have_http_status(:accepted)
       end
 
-      skip "creates a new InsuranceVerification" do
+      it "creates a new InsuranceVerification" do
         expect {
-          post "/api/insurance_verifications", params: { patient_id: user.id }, as: :json
+          post "/api/insurance_verifications",
+            params: { patient_id: user.id },
+            headers: headers,
+            as: :json
         }.to change(InsuranceVerification, :count).by(1)
       end
 
-      skip "enqueues a worker job" do
+      it "enqueues a worker job" do
         Sidekiq::Worker.clear_all
-        post "/api/insurance_verifications", params: { patient_id: user.id }, as: :json
+        post "/api/insurance_verifications",
+          params: { patient_id: user.id },
+          headers: headers,
+          as: :json
         expect(InsuranceVerificationWorker.jobs.size).to eq(1)
       end
 
-      skip "returns status queued in the response body" do
-        post "/api/insurance_verifications", params: { patient_id: user.id }, as: :json
+      it "returns status queued in the response body" do
+        post "/api/insurance_verifications",
+          params: { patient_id: user.id },
+          headers: headers,
+          as: :json
         body = JSON.parse(response.body)
         expect(body["status"]).to eq("queued")
       end
 
-      skip "returns 422 when the patient has no insurance profile" do
+      it "returns 422 when the patient has no insurance profile" do
         other_user = create(:user, :patient)
-        post "/api/insurance_verifications", params: { patient_id: other_user.id }, as: :json
+        post "/api/insurance_verifications",
+          params: { patient_id: other_user.id },
+          headers: headers,
+          as: :json
         expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)["error"]).to include("no insurance profile")
       end
@@ -69,10 +84,12 @@ RSpec.describe "Api::InsuranceVerifications", type: :request do
     end
 
     context "when authenticated" do
-      before { get "/api/insurance_verifications", headers: auth_headers_for(user), as: :json }
+      let(:headers) { auth_headers_for(user) }
 
-      skip "returns 200 with the verification" do
-        get "/api/insurance_verifications/#{verification.id}"
+      it "returns 200 with the verification" do
+        get "/api/insurance_verifications/#{verification.id}",
+          headers: headers,
+          as: :json
         expect(response).to have_http_status(:ok)
         body = JSON.parse(response.body)
         expect(body["status"]).to eq("verified")
@@ -84,10 +101,12 @@ RSpec.describe "Api::InsuranceVerifications", type: :request do
     let!(:verification) { create(:insurance_verification, :verified, user: user, insurance_profile: profile) }
 
     context "when authenticated" do
-      before { get "/api/insurance_verifications", headers: auth_headers_for(user), as: :json }
+      let(:headers) { auth_headers_for(user) }
 
-      skip "returns an array of verifications" do
-        get "/api/insurance_verifications"
+      it "returns an array of verifications" do
+        get "/api/insurance_verifications",
+          headers: headers,
+          as: :json
         expect(response).to have_http_status(:ok)
         body = JSON.parse(response.body)
         expect(body).to be_an(Array)
