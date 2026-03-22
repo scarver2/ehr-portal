@@ -4,7 +4,7 @@
 module AuthHelper
   # Authenticate API request with JWT token
   def auth_headers_for(user)
-    secret = Rails.application.credentials.secret_key_base
+    secret = Rails.application.secret_key_base
     payload = {
       sub: user.id.to_s,
       email: user.email,
