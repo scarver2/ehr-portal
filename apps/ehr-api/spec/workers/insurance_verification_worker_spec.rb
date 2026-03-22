@@ -2,12 +2,10 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "sidekiq/testing"
 
 RSpec.describe InsuranceVerificationWorker, type: :worker do
-  around do |example|
-    Sidekiq::Testing.fake! { example.run }
-  end
+  # Sidekiq testing mode is configured in rails_helper.rb using Sidekiq.testing!(:fake)
+  # No need for around block as all tests run in fake mode by default
 
   describe "sidekiq options" do
     it "uses the insurance queue" do
