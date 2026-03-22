@@ -130,6 +130,11 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
         Patients
       </Link>
 
+      {/* ECG Waveform Animation */}
+      <div className="mb-6 rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+        <EcgAnimation />
+      </div>
+
       {/* Patient hero */}
       <div className="relative bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-6 overflow-hidden">
 
@@ -143,8 +148,6 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
             className="w-28 h-28"
           />
         </div>
-
-        <EcgAnimation />
 
         <div className="flex items-start gap-5">
           <div className="flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 text-slate-600 font-bold text-xl shrink-0">

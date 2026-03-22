@@ -1,0 +1,144 @@
+#!/usr/bin/env bash
+# bin/e2e - Playwright E2E testing script
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/_lib.sh"
+
+########################################
+# E2E Testing Functions
+########################################
+
+e2e_local() {
+  info "Running E2E tests against local development server"
+  info "Starting local dev server and mock API..."
+
+  # Run Playwright tests
+  npx playwright test
+
+  if [[ $? -eq 0 ]]; then
+    success "E2E tests passed"
+  else
+    fail "E2E tests failed"
+  fi
+}
+
+e2e_production() {
+  info "Running E2E tests against production server"
+  warn "This will test against: https://ehr-portal.example.com"
+  echo ""
+
+  if ! prompt "Continue testing production? (y/N)"; then
+    fail "Production testing cancelled"
+  fi
+
+  # Run tests against production baseURL
+  PLAYWRIGHT_TEST_BASE_URL="https://ehr-portal.example.com" npx playwright test
+
+  if [[ $? -eq 0 ]]; then
+    success "E2E tests passed against production"
+  else
+    fail "E2E tests failed against production"
+  fi
+}
+
+e2e_ui() {
+  info "Opening Playwright UI (interactive test runner)"
+  info "This allows you to run tests interactively and debug failures"
+  echo ""
+
+  npx playwright test --ui
+}
+
+e2e_debug() {
+  info "Running E2E tests in debug mode (headed, single worker)"
+  info "Tests will run visibly and stop on first failure"
+  echo ""
+
+  npx playwright test --debug --workers=1
+}
+
+########################################
+# Preflight
+########################################
+
+preflight() {
+  info "Running preflight checks..."
+
+  require_command npx
+  require_command node
+
+  # Check if we're in the right directory
+  if [[ ! -f "playwright.config.ts" ]]; then
+    fail "playwright.config.ts not found. Please run this script from the project root"
+  fi
+
+  success "Preflight checks passed"
+}
+
+########################################
+# CLI
+########################################
+
+CMD="${1:-}"
+
+case "$CMD" in
+
+  local)
+    preflight
+    e2e_local
+    ;;
+
+  production|prod)
+    preflight
+    e2e_production
+    ;;
+
+  ui)
+    preflight
+    e2e_ui
+    ;;
+
+  debug)
+    preflight
+    e2e_debug
+    ;;
+
+  help|-h|--help)
+    echo ""
+    echo "Usage:"
+    echo ""
+    echo "  bin/e2e                 Interactive menu"
+    echo "  bin/e2e local           Run tests against local dev server"
+    echo "  bin/e2e production      Run tests against production"
+    echo "  bin/e2e ui              Open Playwright UI (interactive)"
+    echo "  bin/e2e debug           Run tests in debug mode (headed, verbose)"
+    echo ""
+    ;;
+
+  "")
+    preflight
+
+    selection=$(select_menu "E2E Testing Target" \
+      "local" \
+      "production" \
+      "ui" \
+      "debug")
+
+    case "$selection" in
+      local)       e2e_local ;;
+      production)  e2e_production ;;
+      ui)          e2e_ui ;;
+      debug)       e2e_debug ;;
+      *)           fail "Invalid option: $selection" ;;
+    esac
+    ;;
+
+  *)
+    echo "Unknown command: $CMD"
+    echo "Run: bin/e2e help"
+    exit 1
+    ;;
+
+esac

@@ -66,20 +66,33 @@ export async function startVerification(patientId: number): Promise<InsuranceVer
   }
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "https://api.ehr.stancarver.com"
-  const res = await fetch(`${apiUrl}/api/insurance_verifications`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`,
-    },
-    body: JSON.stringify({ patient_id: patientId }),
-  })
+  const url = `${apiUrl}/api/insurance_verifications`
 
-  if (!res.ok) {
-    const error = await res.text()
-    throw new Error(`Insurance verification failed: ${res.status} ${res.statusText}. ${error}`)
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({ patient_id: patientId }),
+    })
+
+    if (!res.ok) {
+      const error = await res.text()
+      throw new Error(`Insurance verification failed: ${res.status} ${res.statusText}. ${error}`)
+    }
+
+    return res.json()
+  } catch (error) {
+    if (error instanceof TypeError && error.message.includes("Failed to fetch")) {
+      console.error("Network error when connecting to:", url)
+      console.error("API URL configured as:", apiUrl)
+      throw new Error(
+        `Failed to reach API at ${apiUrl}. Is the API server running? Check that NEXT_PUBLIC_API_URL is set correctly.`
+      )
+    }
+    throw error
   }
-
-  return res.json()
 }
