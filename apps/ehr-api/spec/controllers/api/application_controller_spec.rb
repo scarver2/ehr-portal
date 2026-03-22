@@ -19,7 +19,7 @@ RSpec.describe Api::ApplicationController, type: :controller do
       sub:   user.id.to_s,
       email: user.email,
       iat:   Time.current.to_i,
-      exp:   (Time.current + 1.day).to_i,
+      exp:   1.day.from_now.to_i,
       iss:   "ehr-portal-api"
     }
     token = JWT.encode(payload, secret, "HS256")
