@@ -1,0 +1,11 @@
+first_name,last_name,gender,condition,dob,mrn,actor,photo_url
+Amber,Volakis,female,Systemic lupus erythematosus,1975-03-22,10000002,Anne Dudek,https://upload.wikimedia.org/wikipedia/commons/8/8e/Anne_Dudek_2009.jpg
+Cameron,Palmer,female,Basilar artery thrombosis,1979-04-12,10000003,Jennifer Morrison,https://upload.wikimedia.org/wikipedia/commons/8/8e/JenniferMorrison2019.jpg
+Evelyn,Poulos,female,Sarcoidosis,1962-11-15,10000004,Carmen Argenziano,https://upload.wikimedia.org/wikipedia/commons/1/13/Carmen_Argenziano_2013.jpg
+Henry,Knight,male,Hemochromatosis,1948-09-22,10000005,John Cho,https://upload.wikimedia.org/wikipedia/commons/d/d5/John_Cho_SDCC_2017.jpg
+Jake,McCullough,male,Addison's disease,1985-07-10,10000006,Cole Evan Weiss,https://upload.wikimedia.org/wikipedia/commons/7/77/Cole_Evan_Weiss_2013.jpg
+Kris,Powell,female,Chronic arsenic poisoning,1972-05-08,10000007,Cynthia Nixon,https://upload.wikimedia.org/wikipedia/commons/4/47/Cynthia_Nixon_2017.jpg
+Mara,Cowan,female,Meningitis,1980-02-28,10000008,Mira Sorvino,https://upload.wikimedia.org/wikipedia/commons/5/56/Mira_Sorvino_2009.jpg
+Nathan,Paige,male,Neurosyphilis,1966-04-15,10000009,David Morse,https://upload.wikimedia.org/wikipedia/commons/3/35/David_Morse_2011.jpg
+Rebecca,Adler,female,Autoimmune encephalitis,1969-06-19,10000001,Robin Tunney,https://upload.wikimedia.org/wikipedia/commons/9/95/Robin_Tunney_2011.jpg
+Tom,Brock,male,Myxedema,1955-10-30,10000010,Scott Foley,https://upload.wikimedia.org/wikipedia/commons/0/0a/Scott_Foley_2012.jpg

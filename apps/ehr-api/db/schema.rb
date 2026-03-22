@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_21_180200) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_22_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -139,11 +139,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_21_180200) do
     t.string "last_name", null: false
     t.string "mrn"
     t.string "phone"
+    t.string "photo_url", comment: "URL to patient's profile photo"
     t.virtual "searchable_name", type: :tsvector, as: "to_tsvector('simple'::regconfig, (((COALESCE(first_name, ''::character varying))::text || ' '::text) || (COALESCE(last_name, ''::character varying))::text))", stored: true
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.index ["last_name", "first_name"], name: "index_patients_on_last_name_and_first_name"
     t.index ["mrn"], name: "index_patients_on_mrn", unique: true
+    t.index ["photo_url"], name: "index_patients_on_photo_url"
     t.index ["searchable_name"], name: "index_patients_on_searchable_name", using: :gin
     t.index ["user_id"], name: "index_patients_on_user_id", unique: true
   end
@@ -170,11 +172,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_21_180200) do
     t.string "first_name"
     t.string "last_name"
     t.string "npi"
+    t.string "photo_url", comment: "URL to provider's profile photo headshot"
     t.bigint "specialty_id"
     t.string "state"
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.string "zip"
+    t.index ["photo_url"], name: "index_providers_on_photo_url"
     t.index ["specialty_id"], name: "index_providers_on_specialty_id"
     t.index ["user_id"], name: "index_providers_on_user_id", unique: true
   end
