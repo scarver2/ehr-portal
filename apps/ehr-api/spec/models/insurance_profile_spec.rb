@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "sidekiq/testing"
 
 RSpec.describe InsuranceProfile, type: :model do
   describe "associations" do

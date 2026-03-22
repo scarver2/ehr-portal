@@ -1,69 +1,29 @@
 # db/seeds/payers.rb
 # frozen_string_literal: true
 
-payers = [
-  {
-    name:             "Aetna",
-    payer_code:       "AETNA001",
-    clearinghouse:    "Availity",
-    api_endpoint:     "https://api.availity.com/eligibility",
-    requires_auth:    true,
-    response_time_ms: 1200
-  },
-  {
-    name:             "Blue Cross Blue Shield of Texas",
-    payer_code:       "BCBSTX",
-    clearinghouse:    "ChangeHealthcare",
-    api_endpoint:     "https://api.changehealthcare.com/eligibility",
-    requires_auth:    true,
-    response_time_ms: 1800
-  },
-  {
-    name:             "Cigna",
-    payer_code:       "CIGNA01",
-    clearinghouse:    "Availity",
-    api_endpoint:     "https://api.availity.com/cigna/eligibility",
-    requires_auth:    true,
-    response_time_ms: 1400
-  },
-  {
-    name:             "Humana",
-    payer_code:       "HUMANA01",
-    clearinghouse:    "Waystar",
-    api_endpoint:     "https://api.waystar.com/eligibility",
-    requires_auth:    true,
-    response_time_ms: 1700
-  },
-  {
-    name:             "Medicare",
-    payer_code:       "MEDICARE",
-    clearinghouse:    "CMS",
-    api_endpoint:     "https://api.cms.gov/eligibility",
-    requires_auth:    false,
-    response_time_ms: 2000
-  },
-  {
-    name:             "Medicaid - Texas",
-    payer_code:       "TXMEDICAID",
-    clearinghouse:    "State",
-    api_endpoint:     "https://api.tmhp.com/eligibility",
-    requires_auth:    true,
-    response_time_ms: 2200
-  },
-  {
-    name:             "UnitedHealthcare",
-    payer_code:       "UHC001",
-    clearinghouse:    "Optum",
-    api_endpoint:     "https://api.optum.com/rte",
-    requires_auth:    true,
-    response_time_ms: 1500
-  }
-]
+require "csv"
 
-payers.each do |attrs|
-  Payer.find_or_create_by!(payer_code: attrs[:payer_code]) do |payer|
-    payer.assign_attributes(attrs.merge(active: true))
-  end
+Rails.logger.debug "Seeding payers from CSV..."
+
+csv_path = Rails.root.join("db/seeds/data/payers.csv")
+
+unless File.exist?(csv_path)
+  Rails.logger.warn "Payers CSV not found at #{csv_path}. Skipping payer seeding."
+  return
 end
 
-Rails.logger.debug { "Seeded #{Payer.count} payers" }
+payer_count = 0
+
+CSV.foreach(csv_path, headers: true) do |row|
+  Payer.find_or_create_by!(payer_code: row["payer_code"]) do |payer|
+    payer.name             = row["name"]
+    payer.clearinghouse    = row["clearinghouse"]
+    payer.api_endpoint     = row["api_endpoint"]
+    payer.requires_auth    = row["requires_auth"].downcase == "true"
+    payer.response_time_ms = row["response_time_ms"].to_i
+    payer.active           = true
+  end
+  payer_count += 1
+end
+
+Rails.logger.debug { "Seeded #{payer_count} payers from CSV" }

@@ -1,31 +1,55 @@
 # apps/ehr-api/db/seeds/providers.rb
 # frozen_string_literal: true
 
-Rails.logger.debug "Creating seed Providers..."
+require "csv"
 
-Rails.logger.debug "Seeding Dr. House"
-# Create Dr. Gregory House associated with provider@example.com user
-provider_user = User.find_by(email: "provider@example.com")
-internal_medicine = Specialty.find_by(name: "Internal Medicine")
+Rails.logger.debug "Creating seed Providers from CSV..."
 
-Provider.find_or_create_by!(npi: 1_234_567_890) do |p|
-  p.first_name  = "Gregory"
-  p.last_name   = "House"
-  p.clinic_name = "Princeton-Plainsboro Teaching Hospital"
-  p.specialty   = internal_medicine
-  p.user        = provider_user
+# Ensure required specialties exist
+specialty_names = ["Internal Medicine", "Oncology", "Immunology", "Infectious Disease", "Surgery", "Administration"]
+specialty_names.each do |name|
+  Specialty.find_or_create_by!(name: name)
 end
 
-provider_count = 5
+csv_path = Rails.root.join("db/seeds/data/providers.csv")
 
-Rails.logger.debug { "Seeding #{provider_count} additional providers..." }
-
-provider_count.times do
-  Provider.create!(
-    clinic_name: CLINICS.sample,
-    first_name:  Faker::Name.first_name,
-    last_name:   Faker::Name.last_name,
-    npi:         Faker::Number.number(digits: 10),
-    specialty:   Specialty.all.sample
-  )
+unless File.exist?(csv_path)
+  Rails.logger.warn "Providers CSV not found at #{csv_path}. Skipping provider seeding."
+  return
 end
+
+provider_count = 0
+
+CSV.foreach(csv_path, headers: true) do |row|
+  specialty = Specialty.find_by(name: row["specialty"])
+  role = row["role"] || "provider"
+
+  provider = Provider.find_or_create_by!(npi: row["npi"]) do |p|
+    p.first_name  = row["first_name"]
+    p.last_name   = row["last_name"]
+    p.clinic_name = row["clinic_name"]
+    p.specialty   = specialty
+    p.photo_url   = row["photo_url"]
+  end
+
+  # Create associated user with appropriate role if not already associated
+  unless provider.user
+    email = "#{row['first_name'].downcase}.#{row['last_name'].downcase}@ppth.med"
+    user = User.find_or_create_by!(email: email) do |u|
+      u.add_role(role.to_sym)
+    end
+
+    # Create Account for password management (Rodauth) if not already created
+    Account.find_or_create_by!(user_id: user.id) do |account|
+      account.email = user.email
+      account.password_hash = BCrypt::Password.create("password")
+      account.status = "verified"
+    end
+
+    provider.update!(user: user)
+  end
+
+  provider_count += 1
+end
+
+Rails.logger.debug { "Seeded #{provider_count} providers from CSV" }

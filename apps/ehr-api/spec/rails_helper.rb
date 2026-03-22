@@ -24,4 +24,7 @@ RSpec.configure do |config|
 
   config.include FactoryBot::Syntax::Methods
   config.include Devise::Test::IntegrationHelpers, type: :request
+
+  # Configure Sidekiq for testing (Sidekiq 8.1.1+ API)
+  Sidekiq.testing!(:fake)
 end

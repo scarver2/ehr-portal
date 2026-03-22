@@ -1,0 +1,8 @@
+name,payer_code,clearinghouse,api_endpoint,requires_auth,response_time_ms
+Aetna,AETNA001,Availity,https://api.availity.com/eligibility,true,1200
+Blue Cross Blue Shield of Texas,BCBSTX,ChangeHealthcare,https://api.changehealthcare.com/eligibility,true,1800
+Cigna,CIGNA01,Availity,https://api.availity.com/cigna/eligibility,true,1400
+Humana,HUMANA01,Waystar,https://api.waystar.com/eligibility,true,1700
+Medicare,MEDICARE,CMS,https://api.cms.gov/eligibility,false,2000
+Medicaid - Texas,TXMEDICAID,State,https://api.tmhp.com/eligibility,true,2200
+UnitedHealthcare,UHC001,Optum,https://api.optum.com/rte,true,1500

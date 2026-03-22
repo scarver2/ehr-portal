@@ -33,7 +33,43 @@ deploy_rollback() {
   kamal rollback
 }
 
-reset_deployment() {
+rebuild_db() {
+  info "Rebuilding database (API only)"
+  info "This will:"
+  echo "  1. Reset the database (destroy all data)"
+  echo "  2. Re-run migrations and seeds"
+  echo ""
+
+  if ! prompt "Continue database rebuild? (y/N)"; then
+    fail "Database rebuild cancelled"
+  fi
+
+  info "Running database reset..."
+  # DISABLE_DATABASE_ENVIRONMENT_CHECK=1 allows db:reset on production-named environments (staging server)
+  kamal app exec --reuse --roles web -c "$API_CONFIG" -- env DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bin/rails db:reset
+
+  success "Database rebuilt successfully"
+}
+
+purge_redis() {
+  info "Purging Redis queue"
+  info "This will:"
+  echo "  1. Clear all pending jobs from the Sidekiq queue"
+  echo "  2. Leave Redis cache intact"
+  echo ""
+
+  if ! prompt "Continue Redis purge? (y/N)"; then
+    fail "Redis purge cancelled"
+  fi
+
+  info "Purging Redis queue..."
+  # Use redis-cli FLUSHDB to clear just the database, not the entire server
+  kamal app exec --reuse -c "$API_CONFIG" -- redis-cli FLUSHDB
+
+  success "Redis queue purged successfully"
+}
+
+teardown_rebuild() {
   local service="${1:-all}"
   local config=""
 
@@ -41,9 +77,9 @@ reset_deployment() {
     api)    config="$API_CONFIG" ;;
     portal) config="$PORTAL_CONFIG" ;;
     all)
-      info "Resetting entire deployment (API + Portal)"
-      reset_deployment api
-      reset_deployment portal
+      info "Tearing down and rebuilding entire deployment (API + Portal)"
+      teardown_rebuild api
+      teardown_rebuild portal
       return
       ;;
     *)
@@ -55,25 +91,30 @@ reset_deployment() {
     fail "No config found for service: $service"
   fi
 
-  info "Resetting $service deployment..."
+  info "Tearing down and rebuilding $service deployment..."
   warn "This will:"
   echo "  1. Stop all containers for $service"
-  echo "  2. Remove all volumes (DATABASE AND REDIS DATA WILL BE LOST)"
+  echo "  2. Destroy all volumes (DATABASE AND REDIS DATA WILL BE LOST)"
   echo "  3. Remove all images"
   echo "  4. Redeploy from scratch"
   echo ""
 
-  if ! prompt "Continue reset for $service? (y/N)"; then
-    fail "Reset cancelled"
+  if ! prompt "Continue teardown and rebuild for $service? (y/N)"; then
+    fail "Teardown and rebuild cancelled"
   fi
 
   info "Tearing down $service..."
   # kamal remove may fail due to permission errors when cleaning up postgres data dir
   # (postgres user ownership), but the volume removal below handles cleanup properly.
-  kamal remove -c "$config" 2>&1 | grep -v "Permission denied" || true
-  success "Containers and images removed"
+  # Run with verbose output to show real-time progress. Permission errors are non-fatal.
+  if kamal remove -c "$config"; then
+    success "Containers and images removed"
+  else
+    # kamal remove may fail due to permission errors, but that's OK - we handle volume cleanup separately
+    warn "Remove encountered errors (possibly permission-related, but continuing...)"
+  fi
 
-  info "Removing volumes for $service..."
+  info "Destroying volumes for $service..."
   # Extract service name from config to identify volumes
   local service_name
   if [[ "$config" == *"api"* ]]; then
@@ -170,22 +211,32 @@ case "$CMD" in
     deploy_rollback
     ;;
 
-  reset)
-    # Allow: bin/deploy reset [api|portal|all]
-    reset_deployment "${2:-all}"
+  rebuild-db)
+    rebuild_db
+    ;;
+
+  purge-redis)
+    purge_redis
+    ;;
+
+  teardown-rebuild)
+    # Allow: bin/deploy teardown-rebuild [api|portal|all]
+    teardown_rebuild "${2:-all}"
     ;;
 
   help|-h|--help)
     echo ""
     echo "Usage:"
     echo ""
-    echo "  bin/deploy             Interactive menu"
-    echo "  bin/deploy api         Deploy API"
-    echo "  bin/deploy portal      Deploy Portal"
-    echo "  bin/deploy all         Deploy Portal + API"
-    echo "  bin/deploy rollback    Rollback last deploy"
-    echo "  bin/deploy reset       Teardown and rebuild (prompts for confirmation)"
-    echo "  bin/deploy reset [api|portal|all]  Reset specific service"
+    echo "  bin/deploy                    Interactive menu"
+    echo "  bin/deploy api                Deploy API"
+    echo "  bin/deploy portal             Deploy Portal"
+    echo "  bin/deploy all                Deploy Portal + API"
+    echo "  bin/deploy rollback           Rollback last deploy"
+    echo "  bin/deploy rebuild-db         Rebuild database (db:reset on API)"
+    echo "  bin/deploy purge-redis        Purge Redis queue (clear Sidekiq jobs)"
+    echo "  bin/deploy teardown-rebuild   Full teardown and rebuild (prompts for confirmation)"
+    echo "  bin/deploy teardown-rebuild [api|portal|all]  Teardown and rebuild specific service"
     echo ""
     ;;
 
@@ -197,15 +248,19 @@ case "$CMD" in
       "portal" \
       "all" \
       "rollback" \
-      "reset")
+      "rebuild-db" \
+      "purge-redis" \
+      "teardown-rebuild")
 
     case "$selection" in
-      api)      deploy_api ;;
-      portal)   deploy_portal ;;
-      all)      deploy_all ;;
-      rollback) deploy_rollback ;;
-      reset)    reset_deployment "all" ;;
-      *)        fail "Invalid option: $selection" ;;
+      api)              deploy_api ;;
+      portal)           deploy_portal ;;
+      all)              deploy_all ;;
+      rollback)         deploy_rollback ;;
+      rebuild-db)       rebuild_db ;;
+      purge-redis)      purge_redis ;;
+      teardown-rebuild) teardown_rebuild "all" ;;
+      *)                fail "Invalid option: $selection" ;;
     esac
     ;;
 

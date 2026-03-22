@@ -1,0 +1,9 @@
+first_name,last_name,specialty,npi,clinic_name,photo_url,role
+Gregory,House,Internal Medicine,1234567890,Princeton-Plainsboro Teaching Hospital,https://upload.wikimedia.org/wikipedia/commons/4/47/Laurie_Hugh.jpg,provider
+James,Wilson,Oncology,1234567891,Princeton-Plainsboro Teaching Hospital,https://upload.wikimedia.org/wikipedia/commons/e/e5/Robert_Sean_Leonard_2014.jpg,provider
+Robert,Chase,Internal Medicine,1234567892,Princeton-Plainsboro Teaching Hospital,https://upload.wikimedia.org/wikipedia/commons/a/a2/Jesse_Spencer_2011.jpg,provider
+Allison,Cameron,Immunology,1234567893,Princeton-Plainsboro Teaching Hospital,https://upload.wikimedia.org/wikipedia/commons/8/8e/JenniferMorrison2019.jpg,provider
+Eric,Foreman,Infectious Disease,1234567894,Princeton-Plainsboro Teaching Hospital,https://upload.wikimedia.org/wikipedia/commons/6/6f/Omar_Epps_2010.jpg,provider
+Christopher,Taub,Surgery,1234567895,Princeton-Plainsboro Teaching Hospital,https://upload.wikimedia.org/wikipedia/commons/f/f8/Peter_Jacobson_2009.jpg,provider
+Remy,Hadley,Internal Medicine,1234567896,Princeton-Plainsboro Teaching Hospital,https://upload.wikimedia.org/wikipedia/commons/1/17/Olivia_Wilde_2016.jpg,provider
+Lisa,Cuddy,Administration,1234567897,Princeton-Plainsboro Teaching Hospital,https://upload.wikimedia.org/wikipedia/commons/a/ab/Lisa_Edelstein_2014.jpg,administrator

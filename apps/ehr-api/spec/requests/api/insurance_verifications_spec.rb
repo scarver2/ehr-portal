@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "sidekiq/testing"
 
 RSpec.describe "Api::InsuranceVerifications", type: :request do
   let(:user)    { create(:user, :patient) }

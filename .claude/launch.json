@@ -2,8 +2,15 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "api",
+      "runtimeExecutable": "bin/rails",
+      "runtimeArgs": ["server", "-p", "3000"],
+      "cwd": "apps/ehr-api",
+      "port": 3000
+    },
+    {
       "name": "portal",
-      "runtimeExecutable": "bun",
+      "runtimeExecutable": "/usr/local/bin/bun",
       "runtimeArgs": ["run", "dev"],
       "cwd": "apps/ehr-portal",
       "port": 3001

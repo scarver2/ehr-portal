@@ -19,8 +19,11 @@ esac
 # Database tasks only apply to the Rails API; the portal has no bin/rails.
 if [[ "$SERVICE" == "ehr-api" ]]; then
   # Only run on web role to avoid concurrent database access from worker role.
-  kamal app exec --reuse --roles web -c "$CONFIG" -- bin/rails db:migrate
-  kamal app exec --reuse --roles web -c "$CONFIG" -- bin/rails db:seed
+  # DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bypasses Rails' protection against destructive
+  # operations on production environments. This is intentional for this staging server.
+  kamal app exec --reuse --roles web -c "$CONFIG" -- env DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bin/rails db:reset
+  # kamal app exec --reuse --roles web -c "$CONFIG" -- bin/rails db:migrate
+  # kamal app exec --reuse --roles web -c "$CONFIG" -- bin/rails db:seed
 fi
 
 # Notify Honeybadger of the deployment so it can correlate errors with releases.

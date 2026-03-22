@@ -1,20 +1,22 @@
 # apps/ehr-api/db/seeds/clinics.rb
 # frozen_string_literal: true
 
-# Clinic Names for providers
+require "csv"
 
-Rails.logger.debug "Seeding clinics..."
+Rails.logger.debug "Loading clinic names from CSV..."
 
-CLINICS = [
-  "Anna Health Clinic",
-  "Collin County Family Practice",
-  "DFW Internal Medicine",
-  "Heritage Family Medicine",
-  "Lone Star Primary Care",
-  "North Dallas Medical Group",
-  "Parkview Medical Associates",
-  "Prairie Creek Medical",
-  "Princeton-Plainsboro Teaching Hospital",
-  "Red River Health",
-  "Texas Regional Medical"
-].freeze
+csv_path = Rails.root.join("db/seeds/data/clinics.csv")
+
+if File.exist?(csv_path)
+  clinics = []
+  CSV.foreach(csv_path, headers: true) do |row|
+    clinics << row["name"]
+  end
+  CLINICS = clinics.freeze
+  Rails.logger.debug { "  → #{clinics.length} clinic names loaded." }
+else
+  Rails.logger.warn "Clinics CSV not found at #{csv_path}. Using default clinics."
+  CLINICS = [
+    "Princeton-Plainsboro Teaching Hospital"
+  ].freeze
+end

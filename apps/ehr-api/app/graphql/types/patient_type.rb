@@ -18,6 +18,7 @@ module Types
     field :address,                  String,                          null: true
     field :emergency_contact_name,   String,                          null: true
     field :emergency_contact_phone,  String,                          null: true
+    field :photo_url,                String,                          null: true, description: "URL to patient's profile photo"
     field :created_at,               GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at,               GraphQL::Types::ISO8601DateTime, null: false
 

@@ -29,3 +29,8 @@ GraphQL/ObjectDescription:
   Exclude:
     - 'app/graphql/ehr_api_schema.rb'
     - 'app/graphql/**/base_*.rb'
+
+# Schema files are auto-generated and contain many table definitions
+Metrics/BlockLength:
+  Exclude:
+    - 'db/schema.rb'
