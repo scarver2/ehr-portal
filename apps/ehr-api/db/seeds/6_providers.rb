@@ -73,11 +73,11 @@ house_md_providers = [
 ]
 
 internal_medicine = Specialty.find_by(name: "Internal Medicine")
-oncology = Specialty.find_by(name: "Oncology") || Specialty.create!(name: "Oncology", description: "Cancer treatment and management")
-immunology = Specialty.find_by(name: "Immunology") || Specialty.create!(name: "Immunology", description: "Immune system disorders")
-infectious_disease = Specialty.find_by(name: "Infectious Disease") || Specialty.create!(name: "Infectious Disease", description: "Infection treatment")
+oncology = Specialty.find_by(name: "Oncology") || Specialty.create!(name: "Oncology")
+immunology = Specialty.find_by(name: "Immunology") || Specialty.create!(name: "Immunology")
+infectious_disease = Specialty.find_by(name: "Infectious Disease") || Specialty.create!(name: "Infectious Disease")
 surgery = Specialty.find_by(name: "Surgery") || Specialty.find_by(name: "General Surgery")
-administration_specialty = Specialty.find_by(name: "Administration") || Specialty.create!(name: "Administration", description: "Hospital administration and management")
+administration_specialty = Specialty.find_by(name: "Administration") || Specialty.create!(name: "Administration")
 
 specialty_map = {
   "Internal Medicine" => internal_medicine,
@@ -103,21 +103,21 @@ house_md_providers.each do |provider_data|
   end
 
   # Create associated user with appropriate role if not already associated
-  unless provider.user
-    email = "#{provider_data[:first_name].downcase}.#{provider_data[:last_name].downcase}@ppth.med"
-    user = User.find_or_create_by!(email: email) do |u|
-      u.add_role(role.to_sym)
-    end
+  next if provider.user
 
-    # Create Account for password management (Rodauth) if not already created
-    Account.find_or_create_by!(user_id: user.id) do |account|
-      account.email = user.email
-      account.password_hash = BCrypt::Password.create("password")
-      account.status = "verified"
-    end
-
-    provider.update!(user: user)
+  email = "#{provider_data[:first_name].downcase}.#{provider_data[:last_name].downcase}@ppth.med"
+  user = User.find_or_create_by!(email: email) do |u|
+    u.add_role(role.to_sym)
   end
+
+  # Create Account for password management (Rodauth) if not already created
+  Account.find_or_create_by!(user_id: user.id) do |account|
+    account.email = user.email
+    account.password_hash = BCrypt::Password.create("password")
+    account.status = "verified"
+  end
+
+  provider.update!(user: user)
 end
 
 Rails.logger.debug { "Seeded #{house_md_providers.length} House MD medical staff with photos" }
