@@ -22,6 +22,8 @@ vi.mock('@/context/auth-context', () => ({
 import { logout } from '@/lib/auth/logout'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/auth-context'
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+import type { AuthContextType } from '@/context/auth-context'
 
 describe('LogoutButton', () => {
   const mockPush = vi.fn()
@@ -32,13 +34,13 @@ describe('LogoutButton', () => {
     vi.clearAllMocks()
     vi.mocked(useRouter).mockReturnValue({
       push: mockPush,
-    } as any)
+    } as AppRouterInstance)
     vi.mocked(useAuth).mockReturnValue({
       token: 'test-token',
       user: null,
       setToken: mockSetToken,
       setUser: mockSetUser,
-    } as any)
+    } as AuthContextType)
     vi.mocked(logout).mockResolvedValue(undefined)
   })
 

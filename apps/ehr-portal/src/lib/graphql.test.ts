@@ -10,15 +10,23 @@ vi.mock('next/headers', () => ({
 
 import { cookies } from 'next/headers'
 
+interface MockCookies {
+  get: (name: string) => { value: string } | undefined
+}
+
 describe('getGraphQLClient', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
+  const createMockCookies = (tokenValue?: string): MockCookies => ({
+    get: vi.fn().mockReturnValue(
+      tokenValue ? { value: tokenValue } : undefined
+    ),
+  })
+
   it('creates a GraphQL client successfully', async () => {
-    const mockCookies = {
-      get: vi.fn().mockReturnValue(undefined),
-    }
+    const mockCookies = createMockCookies()
     vi.mocked(cookies).mockResolvedValueOnce(mockCookies as any)
 
     const client = await getGraphQLClient()
@@ -28,9 +36,7 @@ describe('getGraphQLClient', () => {
   })
 
   it('reads auth_token from cookies', async () => {
-    const mockCookies = {
-      get: vi.fn().mockReturnValue({ value: 'test-token-123' }),
-    }
+    const mockCookies = createMockCookies('test-token-123')
     vi.mocked(cookies).mockResolvedValueOnce(mockCookies as any)
 
     await getGraphQLClient()
@@ -39,9 +45,7 @@ describe('getGraphQLClient', () => {
   })
 
   it('returns client when token exists', async () => {
-    const mockCookies = {
-      get: vi.fn().mockReturnValue({ value: 'valid-token' }),
-    }
+    const mockCookies = createMockCookies('valid-token')
     vi.mocked(cookies).mockResolvedValueOnce(mockCookies as any)
 
     const client = await getGraphQLClient()
@@ -50,9 +54,7 @@ describe('getGraphQLClient', () => {
   })
 
   it('returns client when token is missing', async () => {
-    const mockCookies = {
-      get: vi.fn().mockReturnValue(undefined),
-    }
+    const mockCookies = createMockCookies()
     vi.mocked(cookies).mockResolvedValueOnce(mockCookies as any)
 
     const client = await getGraphQLClient()
@@ -61,9 +63,7 @@ describe('getGraphQLClient', () => {
   })
 
   it('client is a GraphQLClient instance', async () => {
-    const mockCookies = {
-      get: vi.fn().mockReturnValue(undefined),
-    }
+    const mockCookies = createMockCookies()
     vi.mocked(cookies).mockResolvedValueOnce(mockCookies as any)
 
     const client = await getGraphQLClient()
