@@ -25,15 +25,8 @@ module Api
       token = extract_token_from_request
       return nil unless token
 
-      begin
-        secret = Rails.application.secret_key_base
-        payload = JWT.decode(token, secret, true, { algorithm: "HS256" }).first
-        user_id = payload["sub"]&.to_i
-        user = User.find_by(id: user_id)
-        user if user && user.account&.status == "verified"
-      rescue JWT::DecodeError, JWT::ExpiredSignature
-        nil
-      end
+      # Use Account's Rodauth-native token verification
+      Account.find_user_from_jwt(token)
     end
 
     def extract_token_from_request

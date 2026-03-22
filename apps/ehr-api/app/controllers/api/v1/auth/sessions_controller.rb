@@ -27,8 +27,8 @@ module Api
 
           # Authenticate using Rodauth Account
           if user&.account&.valid_password?(password)
-            # Generate JWT token using Rodauth
-            token = generate_jwt_token(user)
+            # Generate JWT token using Account's Rodauth-native method
+            token = user.account.generate_jwt_token
 
             # Update last login tracking
             user.account.update(last_login_at: Time.current, last_login_ip: request.remote_ip)
@@ -73,21 +73,6 @@ module Api
         end
 
         private
-
-        def generate_jwt_token(user)
-          # Generate JWT using Rodauth configuration
-          secret = Rails.application.secret_key_base
-          payload = {
-            sub: user.id.to_s,
-            email: user.email,
-            iat: Time.current.to_i,
-            exp: (Time.current + 1.day).to_i,
-            iss: "ehr-portal-api"
-          }
-
-          # Use HMAC-SHA256 for signing
-          JWT.encode(payload, secret, "HS256")
-        end
 
         def serialize_user(user)
           role_names = user.roles.pluck(:name)

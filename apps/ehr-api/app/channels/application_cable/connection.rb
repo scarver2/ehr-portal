@@ -27,16 +27,8 @@ module ApplicationCable
       token = extract_jwt_token
       return nil unless token
 
-      begin
-        secret = Rails.application.secret_key_base
-        payload = JWT.decode(token, secret, true, { algorithm: "HS256" }).first
-        user_id = payload["sub"]&.to_i
-        user = user_id && User.find_by(id: user_id)
-        # Verify account is active
-        user if user && user.account&.status == "verified"
-      rescue JWT::DecodeError, JWT::ExpiredSignature
-        nil
-      end
+      # Use Account's Rodauth-native token verification
+      Account.find_user_from_jwt(token)
     end
 
     def find_user_from_devise_session
