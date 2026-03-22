@@ -2,12 +2,21 @@
 
 "use client"
 
+import { useEffect, useState } from "react"
 import Protected from "@/components/protected"
 import { useAuth } from "@/context/auth-context"
 import { LayoutDashboard } from "lucide-react"
 
 export default function Dashboard() {
   const { user } = useAuth()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    // eslint-disable-next-line
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
 
   return (
     <Protected>
