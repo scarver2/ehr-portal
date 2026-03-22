@@ -112,4 +112,36 @@ describe('login', () => {
 
     expect(result.user).toEqual(userData)
   })
+
+  it('throws error when response is ok but token is missing', async () => {
+    const mockFetch = vi.mocked(global.fetch)
+    const responseData = {
+      user: { id: 1, email: 'test@example.com', role: 'provider', provider_id: 1, roles: ['provider'] }
+      // token is missing
+    }
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(responseData)
+    } as unknown as Response)
+
+    await expect(login('test@example.com', 'password')).rejects.toThrow('No token received from server')
+  })
+
+  it('sets cookie with auth token', async () => {
+    const mockFetch = vi.mocked(global.fetch)
+    const responseData = {
+      token: 'token123',
+      user: { id: 1, email: 'test@example.com', role: 'provider', provider_id: 1, roles: ['provider'] }
+    }
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(responseData)
+    } as unknown as Response)
+
+    const cookieSpy = vi.spyOn(document, 'cookie', 'set')
+    await login('test@example.com', 'password')
+
+    expect(cookieSpy).toHaveBeenCalledWith(expect.stringContaining('auth_token=token123'))
+    cookieSpy.mockRestore()
+  })
 })
