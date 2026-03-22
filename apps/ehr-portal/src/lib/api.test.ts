@@ -37,10 +37,8 @@ describe('apiFetch', () => {
 
     await apiFetch('/api/test')
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringEndingWith('/api/test'),
-      expect.any(Object)
-    )
+    const callUrl = mockFetch.mock.calls[0][0] as string
+    expect(callUrl).toMatch(/\/api\/test$/)
   })
 
   it('includes Content-Type header', async () => {
