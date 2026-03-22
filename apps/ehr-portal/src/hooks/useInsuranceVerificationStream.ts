@@ -22,9 +22,16 @@ export function useInsuranceVerificationStream() {
   const subscriptionRef = useRef<ReturnType<ReturnType<typeof createConsumer>["subscriptions"]["create"]> | null>(null)
 
   useEffect(() => {
+    // Get JWT token from localStorage (set by auth context)
+    const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null
+
     const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "https://api.ehr.stancarver.com"
     const wsUrl = apiUrl.replace(/^http/, "ws") + "/cable"
-    const consumer = createConsumer(wsUrl)
+
+    // Pass token as query parameter for WebSocket authentication
+    const wsUrlWithAuth = token ? `${wsUrl}?token=${encodeURIComponent(token)}` : wsUrl
+
+    const consumer = createConsumer(wsUrlWithAuth)
 
     subscriptionRef.current = consumer.subscriptions.create(
       { channel: "InsuranceVerificationChannel" },
@@ -51,13 +58,28 @@ export function useInsuranceVerificationStream() {
 }
 
 export async function startVerification(patientId: number): Promise<InsuranceVerification> {
+  // Get JWT token from localStorage (set by auth context)
+  const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null
+
+  if (!token) {
+    throw new Error("Not authenticated. Please login first.")
+  }
+
   const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "https://api.ehr.stancarver.com"
   const res = await fetch(`${apiUrl}/api/insurance_verifications`, {
     method: "POST",
     credentials: "include",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    },
     body: JSON.stringify({ patient_id: patientId }),
   })
-  if (!res.ok) throw new Error("Unable to start verification")
+
+  if (!res.ok) {
+    const error = await res.text()
+    throw new Error(`Insurance verification failed: ${res.status} ${res.statusText}. ${error}`)
+  }
+
   return res.json()
 }
