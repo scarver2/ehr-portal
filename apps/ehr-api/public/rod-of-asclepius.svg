@@ -1,0 +1,58 @@
+<svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <!-- Define gradients for depth -->
+  <defs>
+    <linearGradient id="staffGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1F40AF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0052CC;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1F40AF;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="wingGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#DAA520;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Wings at the top (gold) -->
+  <g id="wings">
+    <!-- Left wing -->
+    <path d="M 100 20 Q 70 30 50 45 Q 60 35 85 28 Z" fill="url(#wingGradient)" stroke="#B8860B" stroke-width="1"/>
+    <!-- Right wing -->
+    <path d="M 100 20 Q 130 30 150 45 Q 140 35 115 28 Z" fill="url(#wingGradient)" stroke="#B8860B" stroke-width="1"/>
+  </g>
+
+  <!-- Main staff (blue vertical pole) -->
+  <rect x="93" y="30" width="14" height="220" fill="url(#staffGradient)" stroke="#001A66" stroke-width="1" rx="2"/>
+
+  <!-- Top of staff (rounded) -->
+  <circle cx="100" cy="30" r="8" fill="url(#staffGradient)" stroke="#001A66" stroke-width="1"/>
+
+  <!-- Bottom of staff (pointed) -->
+  <polygon points="100,250 95,270 105,270" fill="url(#staffGradient)" stroke="#001A66" stroke-width="1"/>
+
+  <!-- Left serpent (intertwined) -->
+  <g id="leftSerpent" stroke="#0052CC" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Upper coil of left serpent -->
+    <path d="M 93 60 Q 75 70 70 85 Q 68 95 75 105"/>
+    <!-- Lower coil of left serpent -->
+    <path d="M 75 105 Q 70 120 80 140 Q 90 155 85 170"/>
+    <!-- Bottom of left serpent -->
+    <path d="M 85 170 Q 75 180 85 200"/>
+  </g>
+
+  <!-- Right serpent (intertwined) -->
+  <g id="rightSerpent" stroke="#0052CC" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Upper coil of right serpent -->
+    <path d="M 107 60 Q 125 70 130 85 Q 132 95 125 105"/>
+    <!-- Lower coil of right serpent -->
+    <path d="M 125 105 Q 130 120 120 140 Q 110 155 115 170"/>
+    <!-- Bottom of right serpent -->
+    <path d="M 115 170 Q 125 180 115 200"/>
+  </g>
+
+  <!-- Serpent heads (circles at ends) -->
+  <circle cx="85" cy="200" r="4" fill="#0052CC" stroke="#001A66" stroke-width="0.5"/>
+  <circle cx="115" cy="200" r="4" fill="#0052CC" stroke="#001A66" stroke-width="0.5"/>
+
+  <!-- Decorative band in middle where serpents cross -->
+  <rect x="85" y="130" width="30" height="8" fill="#0052CC" stroke="#001A66" stroke-width="1" rx="1"/>
+</svg>

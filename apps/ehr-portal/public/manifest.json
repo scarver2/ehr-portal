@@ -1,0 +1,25 @@
+{
+  "name": "EHR Portal",
+  "short_name": "EHR",
+  "description": "Electronic Health Records Portal",
+  "start_url": "/",
+  "display": "standalone",
+  "scope": "/",
+  "background_color": "#ffffff",
+  "theme_color": "#0052CC",
+  "icons": [
+    {
+      "src": "/rod-of-asclepius.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/rod-of-asclepius.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["medical", "healthcare"]
+}

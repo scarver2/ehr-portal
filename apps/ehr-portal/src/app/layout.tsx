@@ -18,6 +18,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "EHR Portal",
   description: "Electronic Health Records Portal",
+  icons: {
+    icon: "/rod-of-asclepius.svg",
+    apple: "/rod-of-asclepius.svg",
+  },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
