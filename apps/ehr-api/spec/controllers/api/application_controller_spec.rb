@@ -13,7 +13,10 @@ RSpec.describe Api::ApplicationController, type: :controller do
 
   let(:user) { create(:user, :patient) }
 
-  def jwt_header_for(user)
+  # Returns a signed JWT string for the given user using the same secret as the
+  # controller. Individual header assignment (not merge!) is required so that
+  # ActionDispatch::Http::Headers can translate "Authorization" → HTTP_AUTHORIZATION.
+  def authenticate_with_jwt(user)
     secret = Rails.application.credentials.secret_key_base
     payload = {
       sub:   user.id.to_s,
@@ -23,14 +26,14 @@ RSpec.describe Api::ApplicationController, type: :controller do
       iss:   "ehr-portal-api"
     }
     token = JWT.encode(payload, secret, "HS256")
-    { "Authorization" => "Bearer #{token}" }
+    request.headers["Authorization"] = "Bearer #{token}"
   end
 
   # ── current_user JWT resolution ───────────────────────────────────────────
 
   describe "#current_user" do
     context "with a valid JWT Bearer token" do
-      before { request.headers.merge!(jwt_header_for(user)) }
+      before { authenticate_with_jwt(user) }
 
       it "returns the authenticated user" do
         get :index
@@ -57,7 +60,7 @@ RSpec.describe Api::ApplicationController, type: :controller do
     context "when the token references a user whose account is not verified" do
       before do
         user.account.update!(status: "unverified")
-        request.headers.merge!(jwt_header_for(user))
+        authenticate_with_jwt(user)
       end
 
       it "resolves to nil (returns 401)" do
@@ -88,7 +91,7 @@ RSpec.describe Api::ApplicationController, type: :controller do
     end
 
     context "when a valid JWT token is provided" do
-      before { request.headers.merge!(jwt_header_for(user)) }
+      before { authenticate_with_jwt(user) }
 
       it "allows the request through" do
         get :index
