@@ -1,98 +1,162 @@
-import { render, screen, waitFor } from "@testing-library/react"
-import { describe, it, expect, beforeEach, vi } from "vitest"
-import Protected from "./protected"
-import { AuthProvider } from "@/context/auth-context"
+// src/components/protected.test.tsx
 
-// Mock next/navigation
-const mockPush = vi.fn()
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({
-    push: mockPush,
-  }),
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, waitFor } from '@testing-library/react'
+import Protected from './protected'
+
+// Mock useRouter
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(),
 }))
 
-// Mock localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {}
-  return {
-    getItem: (key: string) => store[key] || null,
-    setItem: (key: string, value: string) => {
-      store[key] = value.toString()
-    },
-    removeItem: (key: string) => {
-      delete store[key]
-    },
-    clear: () => {
-      store = {}
-    },
-  }
-})()
+// Mock auth context
+vi.mock('@/context/auth-context', () => ({
+  useAuth: vi.fn(),
+}))
 
-Object.defineProperty(window, "localStorage", { value: localStorageMock })
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/context/auth-context'
 
-describe("Protected", () => {
+describe('Protected', () => {
+  const mockPush = vi.fn()
+
   beforeEach(() => {
     vi.clearAllMocks()
-    localStorageMock.clear()
-    mockPush.mockClear()
+    vi.mocked(useRouter).mockReturnValue({
+      push: mockPush,
+    } as any)
   })
 
-  it("renders children when token is present", () => {
-    localStorageMock.setItem("auth_token", "valid-token")
+  it('renders children when token exists', () => {
+    vi.mocked(useAuth).mockReturnValue({
+      token: 'test-token',
+      user: null,
+      setToken: vi.fn(),
+      setUser: vi.fn(),
+    } as any)
 
     render(
-      <AuthProvider>
-        <Protected>
-          <div>Protected Content</div>
-        </Protected>
-      </AuthProvider>
+      <Protected>
+        <div>Protected Content</div>
+      </Protected>
     )
 
-    expect(screen.getByText("Protected Content")).toBeInTheDocument()
+    expect(screen.getByText('Protected Content')).toBeInTheDocument()
   })
 
-  it("does not render children when token is absent", () => {
+  it('does not render children when token is null', () => {
+    vi.mocked(useAuth).mockReturnValue({
+      token: null,
+      user: null,
+      setToken: vi.fn(),
+      setUser: vi.fn(),
+    } as any)
+
     render(
-      <AuthProvider>
-        <Protected>
-          <div>Protected Content</div>
-        </Protected>
-      </AuthProvider>
+      <Protected>
+        <div>Protected Content</div>
+      </Protected>
     )
 
-    expect(screen.queryByText("Protected Content")).not.toBeInTheDocument()
+    expect(screen.queryByText('Protected Content')).not.toBeInTheDocument()
   })
 
-  it("redirects to login when token is absent", async () => {
+  it('redirects to login when token is null', async () => {
+    vi.mocked(useAuth).mockReturnValue({
+      token: null,
+      user: null,
+      setToken: vi.fn(),
+      setUser: vi.fn(),
+    } as any)
+
     render(
-      <AuthProvider>
-        <Protected>
-          <div>Protected Content</div>
-        </Protected>
-      </AuthProvider>
+      <Protected>
+        <div>Protected Content</div>
+      </Protected>
     )
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/login")
+      expect(mockPush).toHaveBeenCalledWith('/login')
     })
   })
 
-  it("returns null while token is null to prevent flash", async () => {
-    // Start without token
+  it('does not redirect when token exists', () => {
+    vi.mocked(useAuth).mockReturnValue({
+      token: 'test-token',
+      user: null,
+      setToken: vi.fn(),
+      setUser: vi.fn(),
+    } as any)
+
     render(
-      <AuthProvider>
-        <Protected>
-          <div>Protected Content</div>
-        </Protected>
-      </AuthProvider>
+      <Protected>
+        <div>Protected Content</div>
+      </Protected>
     )
 
-    // Content should not be visible (component returns null)
-    expect(screen.queryByText("Protected Content")).not.toBeInTheDocument()
+    expect(mockPush).not.toHaveBeenCalled()
+  })
 
-    // Should redirect to login
+  it('suppresses flash by returning null during hydration', () => {
+    vi.mocked(useAuth).mockReturnValue({
+      token: null,
+      user: null,
+      setToken: vi.fn(),
+      setUser: vi.fn(),
+    } as any)
+
+    const { container } = render(
+      <Protected>
+        <div>Protected Content</div>
+      </Protected>
+    )
+
+    // Container should be empty initially (null return)
+    expect(container.firstChild).toBeNull()
+  })
+
+  it('handles token becoming null after being truthy', async () => {
+    const mockSetToken = vi.fn()
+    const mockSetUser = vi.fn()
+    
+    const { rerender } = render(
+      <Protected>
+        <div>Protected Content</div>
+      </Protected>
+    )
+
+    // First render with token
+    vi.mocked(useAuth).mockReturnValue({
+      token: 'test-token',
+      user: null,
+      setToken: mockSetToken,
+      setUser: mockSetUser,
+    } as any)
+
+    rerender(
+      <Protected>
+        <div>Protected Content</div>
+      </Protected>
+    )
+
+    expect(screen.getByText('Protected Content')).toBeInTheDocument()
+
+    // Then token becomes null
+    vi.mocked(useAuth).mockReturnValue({
+      token: null,
+      user: null,
+      setToken: mockSetToken,
+      setUser: mockSetUser,
+    } as any)
+
+    rerender(
+      <Protected>
+        <div>Protected Content</div>
+      </Protected>
+    )
+
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/login")
+      expect(mockPush).toHaveBeenCalledWith('/login')
     })
   })
 })

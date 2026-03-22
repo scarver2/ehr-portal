@@ -1,6 +1,8 @@
-import { render, screen, waitFor } from "@testing-library/react"
-import { describe, it, expect, beforeEach, vi } from "vitest"
-import { AuthProvider, useAuth } from "./auth-context"
+// src/context/auth-context.test.tsx
+
+import { describe, it, expect, beforeEach } from 'vitest'
+import { render, screen, waitFor } from '@testing-library/react'
+import { AuthProvider, useAuth } from './auth-context'
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -19,129 +21,181 @@ const localStorageMock = (() => {
   }
 })()
 
-Object.defineProperty(window, "localStorage", { value: localStorageMock })
+Object.defineProperty(window, 'localStorage', { value: localStorageMock })
 
+// Test component that uses auth context
 function TestComponent() {
   const { token, user, setToken, setUser } = useAuth()
   return (
     <div>
-      <div data-testid="token">{token}</div>
-      <div data-testid="user">{user?.email}</div>
-      <button onClick={() => setToken("new-token")}>Set Token</button>
-      <button onClick={() => setUser({ id: 1, email: "test@example.com", role: "provider", provider_id: 1, roles: ["provider"] })}>Set User</button>
+      <div data-testid="token">{token || 'no-token'}</div>
+      <div data-testid="user">{user?.email || 'no-user'}</div>
+      <button onClick={() => setToken('new-token')}>Set Token</button>
+      <button onClick={() => setUser({ id: 1, email: 'test@example.com', role: 'patient', provider_id: null, roles: ['patient'] })}>Set User</button>
       <button onClick={() => setToken(null)}>Clear Token</button>
       <button onClick={() => setUser(null)}>Clear User</button>
     </div>
   )
 }
 
-describe("AuthContext", () => {
+describe('AuthContext', () => {
   beforeEach(() => {
     localStorageMock.clear()
   })
 
-  it("provides initial null token and user", () => {
+  it('provides initial null values when localStorage is empty', () => {
     render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>
     )
-    expect(screen.getByTestId("token")).toHaveTextContent("")
-    expect(screen.getByTestId("user")).toHaveTextContent("")
+
+    expect(screen.getByTestId('token')).toHaveTextContent('no-token')
+    expect(screen.getByTestId('user')).toHaveTextContent('no-user')
   })
 
-  it("initializes from localStorage if present", () => {
-    localStorageMock.setItem("auth_token", "stored-token")
-    localStorageMock.setItem("auth_user", JSON.stringify({ id: 1, email: "stored@example.com", role: "patient", provider_id: null, roles: ["patient"] }))
+  it('initializes token from localStorage', () => {
+    localStorageMock.setItem('auth_token', 'stored-token')
 
     render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>
     )
-    expect(screen.getByTestId("token")).toHaveTextContent("stored-token")
-    expect(screen.getByTestId("user")).toHaveTextContent("stored@example.com")
+
+    expect(screen.getByTestId('token')).toHaveTextContent('stored-token')
   })
 
-  it("updates localStorage when token is set", async () => {
+  it('initializes user from localStorage', () => {
+    const userData = { id: 1, email: 'stored@example.com', role: 'provider', provider_id: 1, roles: ['provider'] }
+    localStorageMock.setItem('auth_user', JSON.stringify(userData))
+
     render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>
     )
-    screen.getByText("Set Token").click()
+
+    expect(screen.getByTestId('user')).toHaveTextContent('stored@example.com')
+  })
+
+  it('persists token to localStorage when setToken is called', async () => {
+    render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    )
+
+    screen.getByRole('button', { name: /set token/i }).click()
 
     await waitFor(() => {
-      expect(localStorageMock.getItem("auth_token")).toBe("new-token")
+      expect(localStorageMock.getItem('auth_token')).toBe('new-token')
     })
   })
 
-  it("updates localStorage when user is set", async () => {
+  it('persists user to localStorage when setUser is called', async () => {
     render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>
     )
-    screen.getByText("Set User").click()
+
+    screen.getByRole('button', { name: /set user/i }).click()
 
     await waitFor(() => {
-      const stored = localStorageMock.getItem("auth_user")
-      expect(stored).toBeDefined()
+      const stored = localStorageMock.getItem('auth_user')
+      expect(stored).toBeTruthy()
       const parsed = JSON.parse(stored!)
-      expect(parsed.email).toBe("test@example.com")
+      expect(parsed.email).toBe('test@example.com')
     })
   })
 
-  it("clears localStorage when token is cleared", async () => {
-    localStorageMock.setItem("auth_token", "token-to-clear")
+  it('removes token from localStorage when setToken(null) is called', async () => {
+    localStorageMock.setItem('auth_token', 'token')
+
     render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>
     )
-    screen.getByText("Clear Token").click()
+
+    screen.getByRole('button', { name: /clear token/i }).click()
 
     await waitFor(() => {
-      expect(localStorageMock.getItem("auth_token")).toBeNull()
+      expect(localStorageMock.getItem('auth_token')).toBeNull()
     })
   })
 
-  it("clears localStorage when user is cleared", async () => {
-    localStorageMock.setItem("auth_user", JSON.stringify({ id: 1, email: "test@example.com" }))
+  it('removes user from localStorage when setUser(null) is called', async () => {
+    const userData = { id: 1, email: 'test@example.com', role: 'patient', provider_id: null, roles: ['patient'] }
+    localStorageMock.setItem('auth_user', JSON.stringify(userData))
+
     render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>
     )
-    screen.getByText("Clear User").click()
+
+    screen.getByRole('button', { name: /clear user/i }).click()
 
     await waitFor(() => {
-      expect(localStorageMock.getItem("auth_user")).toBeNull()
+      expect(localStorageMock.getItem('auth_user')).toBeNull()
     })
   })
 
-  it("throws error when useAuth is used outside AuthProvider", () => {
-    // Suppress console.error for this test
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {})
+  it('handles invalid JSON in localStorage gracefully', () => {
+    localStorageMock.setItem('auth_user', 'invalid-json')
+
+    render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    )
+
+    expect(screen.getByTestId('user')).toHaveTextContent('no-user')
+    // Should remove the invalid entry
+    expect(localStorageMock.getItem('auth_user')).toBeNull()
+  })
+
+  it('throws error when useAuth is used outside AuthProvider', () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
 
     expect(() => {
       render(<TestComponent />)
-    }).toThrow("useAuth must be used inside AuthProvider")
+    }).toThrow('useAuth must be used inside AuthProvider')
 
-    consoleSpy.mockRestore()
+    consoleError.mockRestore()
   })
 
-  it("handles invalid JSON in localStorage", () => {
-    localStorageMock.setItem("auth_user", "invalid-json{")
-
+  it('updates UI when token changes', async () => {
     render(
       <AuthProvider>
         <TestComponent />
       </AuthProvider>
     )
 
-    // Should not crash and should have cleared the invalid item
-    expect(screen.getByTestId("user")).toHaveTextContent("")
-    expect(localStorageMock.getItem("auth_user")).toBeNull()
+    expect(screen.getByTestId('token')).toHaveTextContent('no-token')
+
+    screen.getByRole('button', { name: /set token/i }).click()
+
+    await waitFor(() => {
+      expect(screen.getByTestId('token')).toHaveTextContent('new-token')
+    })
+  })
+
+  it('updates UI when user changes', async () => {
+    render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    )
+
+    expect(screen.getByTestId('user')).toHaveTextContent('no-user')
+
+    screen.getByRole('button', { name: /set user/i }).click()
+
+    await waitFor(() => {
+      expect(screen.getByTestId('user')).toHaveTextContent('test@example.com')
+    })
   })
 })

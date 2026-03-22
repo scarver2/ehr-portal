@@ -1,95 +1,119 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react"
-import { describe, it, expect, beforeEach, vi } from "vitest"
-import LogoutButton from "./logout-button"
-import { AuthProvider } from "@/context/auth-context"
+// src/components/logout-button.test.tsx
 
-// Mock next/navigation
-const mockPush = vi.fn()
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({
-    push: mockPush,
-  }),
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import LogoutButton from './logout-button'
+
+// Mock the logout function
+vi.mock('@/lib/auth/logout', () => ({
+  logout: vi.fn(),
 }))
 
-// Mock auth/logout
-vi.mock("@/lib/auth/logout", () => ({
-  logout: vi.fn(async () => {
-    // Simulate logout API call
-    return Promise.resolve()
-  }),
+// Mock useRouter
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(),
 }))
 
-// Mock localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {}
-  return {
-    getItem: (key: string) => store[key] || null,
-    setItem: (key: string, value: string) => {
-      store[key] = value.toString()
-    },
-    removeItem: (key: string) => {
-      delete store[key]
-    },
-    clear: () => {
-      store = {}
-    },
-  }
-})()
+// Mock auth context
+vi.mock('@/context/auth-context', () => ({
+  useAuth: vi.fn(),
+}))
 
-Object.defineProperty(window, "localStorage", { value: localStorageMock })
+import { logout } from '@/lib/auth/logout'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/context/auth-context'
 
-describe("LogoutButton", () => {
+describe('LogoutButton', () => {
+  const mockPush = vi.fn()
+  const mockSetToken = vi.fn()
+  const mockSetUser = vi.fn()
+
   beforeEach(() => {
     vi.clearAllMocks()
-    localStorageMock.clear()
-    mockPush.mockClear()
+    vi.mocked(useRouter).mockReturnValue({
+      push: mockPush,
+    } as any)
+    vi.mocked(useAuth).mockReturnValue({
+      token: 'test-token',
+      user: null,
+      setToken: mockSetToken,
+      setUser: mockSetUser,
+    } as any)
+    vi.mocked(logout).mockResolvedValue(undefined)
   })
 
-  it("renders a logout button", () => {
-    render(
-      <AuthProvider>
-        <LogoutButton />
-      </AuthProvider>
-    )
-    expect(screen.getByText("Logout")).toBeInTheDocument()
+  it('renders a logout button', () => {
+    render(<LogoutButton />)
+    const button = screen.getByRole('button', { name: /logout/i })
+    expect(button).toBeInTheDocument()
   })
 
-  it("clears auth state and redirects on logout", async () => {
-    // Set up initial auth state
-    localStorageMock.setItem("auth_token", "token123")
-    localStorageMock.setItem("auth_user", JSON.stringify({ id: 1, email: "test@example.com", role: "provider", provider_id: 1, roles: ["provider"] }))
+  it('calls logout function when clicked', async () => {
+    render(<LogoutButton />)
+    const button = screen.getByRole('button', { name: /logout/i })
 
-    render(
-      <AuthProvider>
-        <LogoutButton />
-      </AuthProvider>
-    )
-
-    const logoutButton = screen.getByText("Logout")
-    fireEvent.click(logoutButton)
+    fireEvent.click(button)
 
     await waitFor(() => {
-      // Should redirect to login
-      expect(mockPush).toHaveBeenCalledWith("/login")
-      // Auth state should be cleared
-      expect(localStorageMock.getItem("auth_token")).toBeNull()
-      expect(localStorageMock.getItem("auth_user")).toBeNull()
+      expect(logout).toHaveBeenCalled()
     })
   })
 
-  it("attempts redirect even if logout API call fails", async () => {
-    // Note: logout function catches errors, so button should still work
-    render(
-      <AuthProvider>
-        <LogoutButton />
-      </AuthProvider>
-    )
+  it('clears token from context when clicked', async () => {
+    render(<LogoutButton />)
+    const button = screen.getByRole('button', { name: /logout/i })
 
-    const logoutButton = screen.getByText("Logout")
-    fireEvent.click(logoutButton)
+    fireEvent.click(button)
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/login")
+      expect(mockSetToken).toHaveBeenCalledWith(null)
+    })
+  })
+
+  it('clears user from context when clicked', async () => {
+    render(<LogoutButton />)
+    const button = screen.getByRole('button', { name: /logout/i })
+
+    fireEvent.click(button)
+
+    await waitFor(() => {
+      expect(mockSetUser).toHaveBeenCalledWith(null)
+    })
+  })
+
+  it('redirects to login page after logout', async () => {
+    render(<LogoutButton />)
+    const button = screen.getByRole('button', { name: /logout/i })
+
+    fireEvent.click(button)
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith('/login')
+    })
+  })
+
+  it('executes logout sequence in correct order', async () => {
+    const callOrder: string[] = []
+    vi.mocked(logout).mockImplementation(async () => {
+      callOrder.push('logout')
+    })
+    mockSetToken.mockImplementation(() => {
+      callOrder.push('setToken')
+    })
+    mockSetUser.mockImplementation(() => {
+      callOrder.push('setUser')
+    })
+    mockPush.mockImplementation(() => {
+      callOrder.push('push')
+    })
+
+    render(<LogoutButton />)
+    const button = screen.getByRole('button', { name: /logout/i })
+
+    fireEvent.click(button)
+
+    await waitFor(() => {
+      expect(callOrder).toEqual(['logout', 'setToken', 'setUser', 'push'])
     })
   })
 })

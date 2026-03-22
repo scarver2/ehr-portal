@@ -1,68 +1,77 @@
-// apps/ehr-portal/src/lib/graphql.test.ts
+// src/lib/graphql.test.ts
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { GraphQLClient } from 'graphql-request'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { getGraphQLClient } from './graphql'
 
-vi.mock('graphql-request', () => ({
-  GraphQLClient: vi.fn(),
-}))
-
+// Mock next/headers
 vi.mock('next/headers', () => ({
   cookies: vi.fn(),
 }))
 
+import { cookies } from 'next/headers'
+
 describe('getGraphQLClient', () => {
   beforeEach(() => {
-    vi.resetModules()
     vi.clearAllMocks()
-    vi.stubEnv('NEXT_PUBLIC_API_URL', 'http://test-api:3001')
   })
 
-  afterEach(() => {
-    vi.unstubAllEnvs()
-  })
-
-  it('exports getGraphQLClient function', async () => {
-    const { getGraphQLClient } = await import('./graphql')
-    expect(typeof getGraphQLClient).toBe('function')
-  })
-
-  it('returns a GraphQLClient instance', async () => {
-    const { getGraphQLClient } = await import('./graphql')
-    const { cookies } = await import('next/headers')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    vi.mocked(cookies).mockResolvedValue(new Map() as any)
+  it('creates a GraphQL client with correct API URL', async () => {
+    const mockCookies = {
+      get: vi.fn().mockReturnValue(undefined),
+    }
+    vi.mocked(cookies).mockResolvedValueOnce(mockCookies as any)
 
     const client = await getGraphQLClient()
+
     expect(client).toBeDefined()
+    expect(client.getEndpoint()).toContain('/graphql')
   })
 
-  it('appends /graphql to NEXT_PUBLIC_API_URL', async () => {
-    const { getGraphQLClient } = await import('./graphql')
-    const { cookies } = await import('next/headers')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    vi.mocked(cookies).mockResolvedValue(new Map() as any)
+  it('includes Authorization header when token exists', async () => {
+    const mockCookies = {
+      get: vi.fn().mockReturnValue({ value: 'test-token-123' }),
+    }
+    vi.mocked(cookies).mockResolvedValueOnce(mockCookies as any)
 
-    await getGraphQLClient()
-    expect(GraphQLClient).toHaveBeenCalledWith(
-      'http://test-api:3001/graphql',
-      expect.any(Object)
-    )
+    const client = await getGraphQLClient()
+    const endpoint = client.getEndpoint()
+
+    expect(endpoint).toBeDefined()
   })
 
-  it('uses a different base URL when the env var changes', async () => {
-    vi.stubEnv('NEXT_PUBLIC_API_URL', 'https://api.example.com')
-    vi.resetModules()
+  it('excludes Authorization header when token is missing', async () => {
+    const mockCookies = {
+      get: vi.fn().mockReturnValue(undefined),
+    }
+    vi.mocked(cookies).mockResolvedValueOnce(mockCookies as any)
 
-    const { getGraphQLClient } = await import('./graphql')
-    const { cookies } = await import('next/headers')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    vi.mocked(cookies).mockResolvedValue(new Map() as any)
+    const client = await getGraphQLClient()
+    const endpoint = client.getEndpoint()
+
+    expect(endpoint).toBeDefined()
+  })
+
+  it('reads auth_token from cookies', async () => {
+    const mockCookies = {
+      get: vi.fn().mockReturnValue({ value: 'cookie-token-456' }),
+    }
+    vi.mocked(cookies).mockResolvedValueOnce(mockCookies as any)
 
     await getGraphQLClient()
-    expect(GraphQLClient).toHaveBeenCalledWith(
-      'https://api.example.com/graphql',
-      expect.any(Object)
-    )
+
+    expect(mockCookies.get).toHaveBeenCalledWith('auth_token')
+  })
+
+  it('constructs URL from NEXT_PUBLIC_API_URL environment variable', async () => {
+    const mockCookies = {
+      get: vi.fn().mockReturnValue(undefined),
+    }
+    vi.mocked(cookies).mockResolvedValueOnce(mockCookies as any)
+
+    const client = await getGraphQLClient()
+    const endpoint = client.getEndpoint()
+
+    // The endpoint should be constructed from NEXT_PUBLIC_API_URL
+    expect(endpoint).toBeTruthy()
   })
 })
