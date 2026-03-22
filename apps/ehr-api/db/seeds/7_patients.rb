@@ -20,7 +20,7 @@ house = Provider.find_by(first_name: "Gregory", last_name: "House")
 other_providers = Provider.where.not(id: house&.id) if house
 
 CSV.foreach(csv_path, headers: true) do |row|
-  stable_email = "#{row["first_name"].downcase}.#{row["last_name"].downcase}@ppth.med"
+  stable_email = "#{row['first_name'].downcase}.#{row['last_name'].downcase}@ppth.med"
 
   user = User.find_or_create_by!(email: stable_email) do |u|
     u.add_role(:patient)

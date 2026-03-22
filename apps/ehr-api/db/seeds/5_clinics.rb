@@ -12,11 +12,11 @@ if File.exist?(csv_path)
   CSV.foreach(csv_path, headers: true) do |row|
     clinics << row["name"]
   end
-  ::CLINICS = clinics.freeze
-  Rails.logger.debug "  → #{clinics.length} clinic names loaded."
+  CLINICS = clinics.freeze
+  Rails.logger.debug { "  → #{clinics.length} clinic names loaded." }
 else
   Rails.logger.warn "Clinics CSV not found at #{csv_path}. Using default clinics."
-  ::CLINICS = [
+  CLINICS = [
     "Princeton-Plainsboro Teaching Hospital"
   ].freeze
 end

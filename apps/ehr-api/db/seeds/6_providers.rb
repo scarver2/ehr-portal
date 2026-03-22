@@ -34,7 +34,7 @@ CSV.foreach(csv_path, headers: true) do |row|
 
   # Create associated user with appropriate role if not already associated
   unless provider.user
-    email = "#{row["first_name"].downcase}.#{row["last_name"].downcase}@ppth.med"
+    email = "#{row['first_name'].downcase}.#{row['last_name'].downcase}@ppth.med"
     user = User.find_or_create_by!(email: email) do |u|
       u.add_role(role.to_sym)
     end

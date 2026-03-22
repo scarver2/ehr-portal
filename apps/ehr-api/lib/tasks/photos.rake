@@ -18,7 +18,7 @@ namespace :photos do
     puts "\n📥 Downloading provider photos..."
     count = 0
 
-    Provider.where.not(photo_url: nil).each do |provider|
+    Provider.where.not(photo_url: nil).find_each do |provider|
       next unless provider.photo_url&.match?(%r{^https?://})
 
       filename = "#{provider.first_name.downcase}-#{provider.last_name.downcase}.jpg"
@@ -40,7 +40,7 @@ namespace :photos do
     puts "\n📥 Downloading patient photos..."
     count = 0
 
-    Patient.where.not(photo_url: nil).each do |patient|
+    Patient.where.not(photo_url: nil).find_each do |patient|
       next unless patient.photo_url&.match?(%r{^https?://})
 
       filename = "#{patient.first_name.downcase}-#{patient.last_name.downcase}.jpg"
@@ -71,7 +71,7 @@ namespace :photos do
 
       # Return the path relative to public root
       "/images/#{category}/#{filename}"
-    rescue => e
+    rescue StandardError => e
       puts "    Error downloading #{url}: #{e.message}"
       nil
     end
