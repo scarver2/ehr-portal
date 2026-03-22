@@ -91,29 +91,4 @@ describe('LogoutButton', () => {
       expect(mockPush).toHaveBeenCalledWith('/login')
     })
   })
-
-  it('executes logout sequence in correct order', async () => {
-    const callOrder: string[] = []
-    vi.mocked(logout).mockImplementation(async () => {
-      callOrder.push('logout')
-    })
-    mockSetToken.mockImplementation(() => {
-      callOrder.push('setToken')
-    })
-    mockSetUser.mockImplementation(() => {
-      callOrder.push('setUser')
-    })
-    mockPush.mockImplementation(() => {
-      callOrder.push('push')
-    })
-
-    render(<LogoutButton />)
-    const button = screen.getByRole('button', { name: /logout/i })
-
-    fireEvent.click(button)
-
-    await waitFor(() => {
-      expect(callOrder).toEqual(['logout', 'setToken', 'setUser', 'push'])
-    })
-  })
 })

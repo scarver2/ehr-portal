@@ -1,6 +1,6 @@
 // src/context/auth-context.test.tsx
 
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import { AuthProvider, useAuth } from './auth-context'
 
@@ -25,17 +25,21 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock })
 
 // Test component that uses auth context
 function TestComponent() {
-  const { token, user, setToken, setUser } = useAuth()
-  return (
-    <div>
-      <div data-testid="token">{token || 'no-token'}</div>
-      <div data-testid="user">{user?.email || 'no-user'}</div>
-      <button onClick={() => setToken('new-token')}>Set Token</button>
-      <button onClick={() => setUser({ id: 1, email: 'test@example.com', role: 'patient', provider_id: null, roles: ['patient'] })}>Set User</button>
-      <button onClick={() => setToken(null)}>Clear Token</button>
-      <button onClick={() => setUser(null)}>Clear User</button>
-    </div>
-  )
+  try {
+    const { token, user, setToken, setUser } = useAuth()
+    return (
+      <div>
+        <div data-testid="token">{token || 'no-token'}</div>
+        <div data-testid="user">{user?.email || 'no-user'}</div>
+        <button onClick={() => setToken('new-token')}>Set Token</button>
+        <button onClick={() => setUser({ id: 1, email: 'test@example.com', role: 'patient', provider_id: null, roles: ['patient'] })}>Set User</button>
+        <button onClick={() => setToken(null)}>Clear Token</button>
+        <button onClick={() => setUser(null)}>Clear User</button>
+      </div>
+    )
+  } catch (error) {
+    return <div data-testid="error">{String(error)}</div>
+  }
 }
 
 describe('AuthContext', () => {
@@ -160,9 +164,10 @@ describe('AuthContext', () => {
   it('throws error when useAuth is used outside AuthProvider', () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-    expect(() => {
-      render(<TestComponent />)
-    }).toThrow('useAuth must be used inside AuthProvider')
+    render(<TestComponent />)
+
+    // The error boundary catches the error and renders error message
+    expect(screen.getByTestId('error')).toHaveTextContent('useAuth must be used inside AuthProvider')
 
     consoleError.mockRestore()
   })

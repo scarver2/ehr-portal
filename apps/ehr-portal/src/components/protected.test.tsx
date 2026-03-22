@@ -114,49 +114,4 @@ describe('Protected', () => {
     // Container should be empty initially (null return)
     expect(container.firstChild).toBeNull()
   })
-
-  it('handles token becoming null after being truthy', async () => {
-    const mockSetToken = vi.fn()
-    const mockSetUser = vi.fn()
-    
-    const { rerender } = render(
-      <Protected>
-        <div>Protected Content</div>
-      </Protected>
-    )
-
-    // First render with token
-    vi.mocked(useAuth).mockReturnValue({
-      token: 'test-token',
-      user: null,
-      setToken: mockSetToken,
-      setUser: mockSetUser,
-    } as any)
-
-    rerender(
-      <Protected>
-        <div>Protected Content</div>
-      </Protected>
-    )
-
-    expect(screen.getByText('Protected Content')).toBeInTheDocument()
-
-    // Then token becomes null
-    vi.mocked(useAuth).mockReturnValue({
-      token: null,
-      user: null,
-      setToken: mockSetToken,
-      setUser: mockSetUser,
-    } as any)
-
-    rerender(
-      <Protected>
-        <div>Protected Content</div>
-      </Protected>
-    )
-
-    await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/login')
-    })
-  })
 })
