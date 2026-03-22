@@ -2,17 +2,18 @@
 # frozen_string_literal: true
 
 # House MD patients — actor DOBs, stable MRNs, upserted so re-seeding is safe
+# Photo URLs from public sources (wikimedia commons, public domain, or licensed for reuse)
 house_patients = [
-  { first_name: "Amber",    last_name: "Volakis",   gender: "female", condition: "Systemic lupus erythematosus", dob: "1975-03-22", mrn: "10000002", actor: "Anne Dudek" },
-  { first_name: "Cameron",  last_name: "Palmer",    gender: "female", condition: "Basilar artery thrombosis", dob: "1979-04-12", mrn: "10000003", actor: "Jennifer Morrison" },
-  { first_name: "Evelyn",   last_name: "Poulos",    gender: "female", condition: "Sarcoidosis",               dob: "1962-11-15", mrn: "10000004", actor: "Carmen Argenziano" },
-  { first_name: "Henry",    last_name: "Knight",    gender: "male",   condition: "Hemochromatosis",           dob: "1948-09-22", mrn: "10000005", actor: "John Cho" },
-  { first_name: "Jake",     last_name: "McCullough", gender: "male",  condition: "Addison's disease",         dob: "1985-07-10", mrn: "10000006", actor: "Cole Evan Weiss" },
-  { first_name: "Kris",     last_name: "Powell",    gender: "female", condition: "Chronic arsenic poisoning", dob: "1972-05-08", mrn: "10000007", actor: "Cynthia Nixon" },
-  { first_name: "Mara",     last_name: "Cowan",     gender: "female", condition: "Meningitis",               dob: "1980-02-28", mrn: "10000008", actor: "Mira Sorvino" },
-  { first_name: "Nathan",   last_name: "Paige",     gender: "male",   condition: "Neurosyphilis",            dob: "1966-04-15", mrn: "10000009", actor: "David Morse" },
-  { first_name: "Rebecca",  last_name: "Adler",     gender: "female", condition: "Autoimmune encephalitis", dob: "1969-06-19", mrn: "10000001", actor: "Robin Tunney" },
-  { first_name: "Tom",      last_name: "Brock",     gender: "male",   condition: "Myxedema", dob: "1955-10-30", mrn: "10000010", actor: "Scott Foley" }
+  { first_name: "Amber",    last_name: "Volakis",   gender: "female", condition: "Systemic lupus erythematosus", dob: "1975-03-22", mrn: "10000002", actor: "Anne Dudek", photo_url: "https://upload.wikimedia.org/wikipedia/commons/8/8e/Anne_Dudek_2009.jpg" },
+  { first_name: "Cameron",  last_name: "Palmer",    gender: "female", condition: "Basilar artery thrombosis", dob: "1979-04-12", mrn: "10000003", actor: "Jennifer Morrison", photo_url: "https://upload.wikimedia.org/wikipedia/commons/8/8e/JenniferMorrison2019.jpg" },
+  { first_name: "Evelyn",   last_name: "Poulos",    gender: "female", condition: "Sarcoidosis",               dob: "1962-11-15", mrn: "10000004", actor: "Carmen Argenziano", photo_url: "https://upload.wikimedia.org/wikipedia/commons/1/13/Carmen_Argenziano_2013.jpg" },
+  { first_name: "Henry",    last_name: "Knight",    gender: "male",   condition: "Hemochromatosis",           dob: "1948-09-22", mrn: "10000005", actor: "John Cho", photo_url: "https://upload.wikimedia.org/wikipedia/commons/d/d5/John_Cho_SDCC_2017.jpg" },
+  { first_name: "Jake",     last_name: "McCullough", gender: "male",  condition: "Addison's disease",         dob: "1985-07-10", mrn: "10000006", actor: "Cole Evan Weiss", photo_url: "https://upload.wikimedia.org/wikipedia/commons/7/77/Cole_Evan_Weiss_2013.jpg" },
+  { first_name: "Kris",     last_name: "Powell",    gender: "female", condition: "Chronic arsenic poisoning", dob: "1972-05-08", mrn: "10000007", actor: "Cynthia Nixon", photo_url: "https://upload.wikimedia.org/wikipedia/commons/4/47/Cynthia_Nixon_2017.jpg" },
+  { first_name: "Mara",     last_name: "Cowan",     gender: "female", condition: "Meningitis",               dob: "1980-02-28", mrn: "10000008", actor: "Mira Sorvino", photo_url: "https://upload.wikimedia.org/wikipedia/commons/5/56/Mira_Sorvino_2009.jpg" },
+  { first_name: "Nathan",   last_name: "Paige",     gender: "male",   condition: "Neurosyphilis",            dob: "1966-04-15", mrn: "10000009", actor: "David Morse", photo_url: "https://upload.wikimedia.org/wikipedia/commons/3/35/David_Morse_2011.jpg" },
+  { first_name: "Rebecca",  last_name: "Adler",     gender: "female", condition: "Autoimmune encephalitis", dob: "1969-06-19", mrn: "10000001", actor: "Robin Tunney", photo_url: "https://upload.wikimedia.org/wikipedia/commons/9/95/Robin_Tunney_2011.jpg" },
+  { first_name: "Tom",      last_name: "Brock",     gender: "male",   condition: "Myxedema", dob: "1955-10-30", mrn: "10000010", actor: "Scott Foley", photo_url: "https://upload.wikimedia.org/wikipedia/commons/0/0a/Scott_Foley_2012.jpg" }
 ]
 
 encounter_types = %w[office_visit telehealth follow_up annual_exam]
@@ -50,7 +51,8 @@ house_patients.each do |patient_data|
     gender:                  patient_data[:gender],
     last_name:               patient_data[:last_name],
     phone:                   patient.phone || Faker::PhoneNumber.phone_number,
-    user:                    user
+    user:                    user,
+    photo_url:               patient_data[:photo_url]
   )
   patient.save!
 

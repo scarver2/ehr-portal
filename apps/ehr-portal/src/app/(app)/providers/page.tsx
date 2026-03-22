@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic"
 import { getGraphQLClient } from "@/lib/graphql"
 import { gql } from "graphql-request"
 import Link from "next/link"
+import Image from "next/image"
 import { Stethoscope, ChevronRight } from "lucide-react"
 
 const query = gql`
@@ -14,6 +15,7 @@ const query = gql`
       fullName
       npi
       clinicName
+      photoUrl
       specialty {
         id
         name
@@ -27,6 +29,7 @@ type Provider = {
   fullName: string
   npi: string
   clinicName: string | null
+  photoUrl: string | null
   specialty: { id: string; name: string } | null
 }
 
@@ -61,9 +64,20 @@ export default async function ProvidersPage() {
             className="group flex items-center justify-between rounded-xl bg-white border border-slate-200 px-5 py-4 shadow-sm hover:border-blue-300 hover:shadow-md transition-all"
           >
             <div className="flex items-center gap-4">
-              {/* Initials avatar */}
-              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm shrink-0">
-                {provider.fullName.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+              {/* Provider photo or initials avatar */}
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm shrink-0 overflow-hidden">
+                {provider.photoUrl ? (
+                  <Image
+                    src={provider.photoUrl}
+                    alt={provider.fullName}
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-cover"
+                    unoptimized
+                  />
+                ) : (
+                  <span>{provider.fullName.split(" ").map((n) => n[0]).join("").slice(0, 2)}</span>
+                )}
               </div>
 
               <div>
