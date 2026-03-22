@@ -70,8 +70,13 @@ reset_deployment() {
   info "Tearing down $service..."
   # kamal remove may fail due to permission errors when cleaning up postgres data dir
   # (postgres user ownership), but the volume removal below handles cleanup properly.
-  kamal remove -c "$config" 2>&1 | grep -v "Permission denied" || true
-  success "Containers and images removed"
+  # Run with verbose output to show real-time progress. Permission errors are non-fatal.
+  if kamal remove -c "$config"; then
+    success "Containers and images removed"
+  else
+    # kamal remove may fail due to permission errors, but that's OK - we handle volume cleanup separately
+    warn "Remove encountered errors (possibly permission-related, but continuing...)"
+  fi
 
   info "Removing volumes for $service..."
   # Extract service name from config to identify volumes
