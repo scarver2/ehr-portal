@@ -201,6 +201,11 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
+      {/* ECG Waveform Animation - standalone component below demographics */}
+      <div className="rounded-xl border border-slate-200 overflow-hidden shadow-sm mb-6">
+        <EcgAnimation />
+      </div>
+
       {/* Emergency contact */}
       {(patient.emergencyContactName || patient.emergencyContactPhone) && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 mb-6 flex items-start gap-3">
