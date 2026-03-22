@@ -9,3 +9,4 @@ apps/ehr-api/.rbs_collection
 .env.development
 
 /resources
+tmp
