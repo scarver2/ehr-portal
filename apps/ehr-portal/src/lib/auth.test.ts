@@ -30,15 +30,20 @@ describe('login', () => {
     vi.clearAllMocks()
     localStorageMock.clear()
     document.cookie = 'auth_token='
+    // Reset fetch mock
+    ;(global.fetch as unknown as typeof global.fetch).mockClear?.()
   })
 
   it('sends POST request with email and password', async () => {
     const mockFetch = vi.mocked(global.fetch)
-    mockFetch.mockResolvedValueOnce(
-      new Response(JSON.stringify({ user: { id: 1, email: 'test@example.com', role: 'provider', provider_id: 1 } }), {
-        headers: { Authorization: 'Bearer token123' },
-      })
-    )
+    const responseData = {
+      token: 'token123',
+      user: { id: 1, email: 'test@example.com', role: 'provider', provider_id: 1, roles: ['provider'] }
+    }
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(responseData)
+    } as unknown as Response)
 
     await login('test@example.com', 'password')
 
@@ -49,13 +54,16 @@ describe('login', () => {
     })
   })
 
-  it('extracts token from Authorization header', async () => {
+  it('extracts token from response body', async () => {
     const mockFetch = vi.mocked(global.fetch)
-    mockFetch.mockResolvedValueOnce(
-      new Response(JSON.stringify({ user: { id: 1, email: 'test@example.com', role: 'provider', provider_id: 1 } }), {
-        headers: { Authorization: 'Bearer token123' },
-      })
-    )
+    const responseData = {
+      token: 'token123',
+      user: { id: 1, email: 'test@example.com', role: 'provider', provider_id: 1, roles: ['provider'] }
+    }
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(responseData)
+    } as unknown as Response)
 
     const result = await login('test@example.com', 'password')
 
@@ -64,11 +72,14 @@ describe('login', () => {
 
   it('stores token in localStorage', async () => {
     const mockFetch = vi.mocked(global.fetch)
-    mockFetch.mockResolvedValueOnce(
-      new Response(JSON.stringify({ user: { id: 1, email: 'test@example.com', role: 'provider', provider_id: 1 } }), {
-        headers: { Authorization: 'Bearer token123' },
-      })
-    )
+    const responseData = {
+      token: 'token123',
+      user: { id: 1, email: 'test@example.com', role: 'provider', provider_id: 1, roles: ['provider'] }
+    }
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(responseData)
+    } as unknown as Response)
 
     await login('test@example.com', 'password')
 
@@ -77,19 +88,25 @@ describe('login', () => {
 
   it('throws error on failed login', async () => {
     const mockFetch = vi.mocked(global.fetch)
-    mockFetch.mockResolvedValueOnce(new Response('Unauthorized', { status: 401 }))
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 401
+    } as unknown as Response)
 
     await expect(login('test@example.com', 'wrong')).rejects.toThrow('Invalid email or password')
   })
 
   it('returns user data from response', async () => {
     const mockFetch = vi.mocked(global.fetch)
-    const userData = { id: 1, email: 'test@example.com', role: 'provider', provider_id: 1 }
-    mockFetch.mockResolvedValueOnce(
-      new Response(JSON.stringify({ user: userData }), {
-        headers: { Authorization: 'Bearer token123' },
-      })
-    )
+    const userData = { id: 1, email: 'test@example.com', role: 'provider', provider_id: 1, roles: ['provider'] }
+    const responseData = {
+      token: 'token123',
+      user: userData
+    }
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(responseData)
+    } as unknown as Response)
 
     const result = await login('test@example.com', 'password')
 

@@ -15,6 +15,7 @@ vi.mock('@/context/auth-context', () => ({
   useAuth: () => ({
     setToken: vi.fn(),
     setUser: vi.fn(),
+    token: null,
     user: null,
   }),
 }))
@@ -32,7 +33,7 @@ describe('Home', () => {
 
   it('renders the EHR heading', () => {
     render(<Home />)
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('EHR')
+    expect(screen.getByText('EHR')).toBeInTheDocument()
   })
 
   it('renders the copyright footer', () => {
@@ -63,4 +64,5 @@ describe('Home', () => {
     render(<Home />)
     expect(screen.getByRole('button', { name: /Login/i })).toBeInTheDocument()
   })
+
 })

@@ -1,0 +1,18 @@
+class Account < ApplicationRecord
+  attr_reader id: Integer
+  attr_accessor user_id: Integer
+  attr_accessor email: String
+  attr_accessor password_hash: String
+  attr_accessor status: String
+  attr_accessor last_login_at: Time?
+  attr_accessor last_login_ip: String?
+  attr_accessor failed_login_attempts: Integer?
+  attr_reader created_at: Time
+  attr_reader updated_at: Time
+
+  # Association
+  def user: () -> User
+
+  # Password validation
+  def valid_password?: (String password) -> bool
+end

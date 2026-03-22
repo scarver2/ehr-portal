@@ -18,7 +18,8 @@ end
 ].each do |attrs|
   Rails.logger.debug { "Seeding #{attrs[:email]} user..." }
   user = User.find_or_create_by!(email: attrs[:email]) do |u|
-    # Account is created with password via factory, but seeds need manual setup
+    # Assign role BEFORE save (via find_or_create_by block completion)
+    u.add_role(attrs[:role])
   end
 
   # Create Account for password management (Rodauth)
@@ -27,10 +28,6 @@ end
     account.password_hash = BCrypt::Password.create("password")
     account.status = "verified"
   end
-
-  # Assign role via Rolify (replace any existing roles)
-  user.roles.destroy_all
-  user.add_role(attrs[:role])
 end
 
 Rails.logger.debug "Done creating seed users."

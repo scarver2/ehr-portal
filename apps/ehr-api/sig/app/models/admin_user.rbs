@@ -1,0 +1,11 @@
+class AdminUser < ApplicationRecord
+  attr_reader id: Integer
+  attr_accessor email: String
+  attr_accessor encrypted_password: String
+  attr_reader created_at: Time
+  attr_reader updated_at: Time
+
+  # Devise authentication
+  def valid_password?: (String password) -> bool
+  def self.find_for_database_authentication: (Hash[String, untyped] conditions) -> AdminUser?
+end

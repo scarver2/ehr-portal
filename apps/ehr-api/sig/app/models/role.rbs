@@ -1,0 +1,11 @@
+class Role < ApplicationRecord
+  attr_reader id: Integer
+  attr_accessor name: String
+  attr_accessor resource_type: String?
+  attr_accessor resource_id: Integer?
+  attr_reader created_at: Time
+  attr_reader updated_at: Time
+
+  # Association
+  def users: () -> ::ActiveRecord::Associations::CollectionProxy
+end

@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
-# bin/steps/10_ruby-on-rails.sh
+# bin/steps/10_ruby-on-rails-clean.sh
+# CLEAN APP SETUP - applies current schema directly without migration evolution
+# Use this for new developers instead of running all 40+ evolutionary steps
 
 source "$(dirname "$0")/../_lib.sh"
 
-info "Checking prerequisites for Ruby on Rails..."
+info "Setting up clean Rails API (Rodauth + Rolify)..."
 
 check "ruby"
 check "gem"
 check "bundle"
 check "rails"
 
-info "Creating Rails API..."
-
 cd apps
 
-# obsessive, I know.
+# Create Rails API
 rails new ehr-api \
   --api \
   --database=postgresql \
@@ -34,17 +34,16 @@ rails new ehr-api \
 
 cd ehr-api
 
+# Setup database.yml for local development
 cat <<EOF > config/database.yml
-# apps/ehr-api/config/database.yml
 default: &default
   adapter: postgresql
   encoding: unicode
   host: <%= ENV.fetch("DB_HOST", "localhost") %>
   port: <%= ENV.fetch("DB_PORT", 5432) %>
-  username: <%= ENV.fetch("DB_USER", "postgres") %>
+  username: <%= ENV.fetch("DB_USER", "$(whoami)") %>
   password: <%= ENV.fetch("DB_PASSWORD", "") %>
   max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 3 } %>
-  # pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
 
 development:
   <<: *default
@@ -59,5 +58,10 @@ production:
   database: ehr_api_production
 EOF
 
-info "Creating database..."
+info "Creating databases..."
 bin/rails db:create
+
+info "Loading current schema (no migration evolution)..."
+bin/rails db:schema:load
+
+info "Ruby on Rails setup complete ✓"
