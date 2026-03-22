@@ -589,6 +589,7 @@ DEPENDENCIES
   honeybadger (~> 6.0)
   irbtools
   jwt (~> 2.8)
+  nokogiri (~> 1.16)
   pg (~> 1.1)
   pghero
   propshaft (~> 1.3)
