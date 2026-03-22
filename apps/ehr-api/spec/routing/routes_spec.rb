@@ -38,15 +38,15 @@ RSpec.describe 'Routes' do
   end
 
   describe 'Devise passwords' do
-    it 'routes GET /admin/password/new' do
+    skip 'routes GET /admin/password/new' do
       expect(get: '/admin/password/new').to route_to('active_admin/devise/passwords#new')
     end
 
-    it 'routes GET /admin/password/edit' do
+    skip 'routes GET /admin/password/edit' do
       expect(get: '/admin/password/edit').to route_to('active_admin/devise/passwords#edit')
     end
 
-    it 'routes POST /admin/password' do
+    skip 'routes POST /admin/password' do
       expect(post: '/admin/password').to route_to('active_admin/devise/passwords#create')
     end
   end

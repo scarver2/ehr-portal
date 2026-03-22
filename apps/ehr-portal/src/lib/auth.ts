@@ -10,7 +10,6 @@ export async function login(
   const res = await fetch(`${apiUrl}/api/v1/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    // Devise expects credentials nested under the resource key
     body: JSON.stringify({ user: { email, password } }),
   })
 
@@ -18,15 +17,14 @@ export async function login(
     throw new Error("Invalid email or password")
   }
 
-  // devise-jwt emits the token in the Authorization response header, not the body
-  const authHeader = res.headers.get("Authorization") ?? ""
-  const token = authHeader.replace("Bearer ", "")
+  const data = await res.json()
 
+  // Rodauth returns the token in the response body (not the Authorization header like devise-jwt)
+  const token = data.token
   if (!token) {
     throw new Error("No token received from server")
   }
 
-  const data = await res.json()
   const user: AuthUser = data.user
 
   // Persist for context hydration on page reload
@@ -34,6 +32,7 @@ export async function login(
   localStorage.setItem("auth_user", JSON.stringify(user))
 
   // Cookie lets Next.js middleware protect routes server-side
+  // JWT TTL is 1 day (86400 seconds)
   document.cookie = `auth_token=${token}; path=/; max-age=86400; SameSite=Lax`
 
   return { token, user }

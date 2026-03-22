@@ -223,7 +223,10 @@ export default function ProfilePage() {
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
 
+  // Set mounted flag after first render to prevent server/client hydration mismatch
+  // This is safe: runs once and signals when component has mounted on client
   useEffect(() => {
+    // eslint-disable-next-line
     setMounted(true)
   }, [])
 

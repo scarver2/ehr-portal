@@ -3,12 +3,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { render, screen } from "@testing-library/react"
 import React from "react"
+import type { GraphQLClient } from "graphql-request"
+
+const mockRequest = vi.fn()
 
 // Mock the GraphQL client before importing the page
 vi.mock("@/lib/graphql", () => ({
-  graphql: {
-    request: vi.fn(),
-  },
+  getGraphQLClient: vi.fn(async () => ({
+    request: mockRequest,
+  } as unknown as GraphQLClient)),
 }))
 
 // Mock next/link to avoid Next.js router dependency in tests
@@ -19,17 +22,16 @@ vi.mock("next/link", () => ({
 }))
 
 import ProvidersPage from "./page"
-import { graphql } from "@/lib/graphql"
 
 const mockProviders = [
-  { id: "1", fullName: "Alice Adams", specialty: { id: "1", name: "Cardiology" } },
-  { id: "2", fullName: "Bob Brown",   specialty: { id: "2", name: "Neurology" } },
-  { id: "3", fullName: "Carol Chen",  specialty: null },
+  { id: "1", fullName: "Alice Adams", npi: "1111111111", clinicName: "Heart Clinic", specialty: { id: "1", name: "Cardiology" } },
+  { id: "2", fullName: "Bob Brown",   npi: "2222222222", clinicName: "Brain Clinic", specialty: { id: "2", name: "Neurology" } },
+  { id: "3", fullName: "Carol Chen",  npi: "3333333333", clinicName: null, specialty: null },
 ]
 
 describe("ProvidersPage", () => {
   beforeEach(() => {
-    vi.mocked(graphql.request).mockResolvedValue({ providers: mockProviders })
+    mockRequest.mockResolvedValue({ providers: mockProviders })
   })
 
   it("renders the page heading", async () => {
@@ -37,36 +39,39 @@ describe("ProvidersPage", () => {
     expect(screen.getByRole("heading", { name: "Providers" })).toBeInTheDocument()
   })
 
-  it("renders a list item for each provider", async () => {
+  it("renders a link for each provider", async () => {
     render(await ProvidersPage())
-    expect(screen.getAllByRole("listitem")).toHaveLength(3)
+    expect(screen.getAllByRole("link")).toHaveLength(3)
   })
 
-  it("displays each provider with their specialty", async () => {
+  it("displays each provider with their full name", async () => {
     render(await ProvidersPage())
-    expect(screen.getByText("Alice Adams — Cardiology")).toBeInTheDocument()
-    expect(screen.getByText("Bob Brown — Neurology")).toBeInTheDocument()
-  })
-
-  it("displays a provider without specialty gracefully", async () => {
-    render(await ProvidersPage())
+    expect(screen.getByText("Alice Adams")).toBeInTheDocument()
+    expect(screen.getByText("Bob Brown")).toBeInTheDocument()
     expect(screen.getByText("Carol Chen")).toBeInTheDocument()
+  })
+
+  it("displays provider specialty when present", async () => {
+    render(await ProvidersPage())
+    expect(screen.getByText("Cardiology")).toBeInTheDocument()
+    expect(screen.getByText("Neurology")).toBeInTheDocument()
   })
 
   it("links each provider to their detail page", async () => {
     render(await ProvidersPage())
-    const link = screen.getByRole("link", { name: "Alice Adams — Cardiology" })
-    expect(link).toHaveAttribute("href", "/providers/1")
+    const links = screen.getAllByRole("link")
+    const aliceLink = links[0]
+    expect(aliceLink).toHaveAttribute("href", "/providers/1")
   })
 
   it("renders an empty list when no providers are returned", async () => {
-    vi.mocked(graphql.request).mockResolvedValue({ providers: [] })
+    mockRequest.mockResolvedValue({ providers: [] })
     render(await ProvidersPage())
-    expect(screen.queryByRole("listitem")).toBeNull()
+    expect(screen.queryByRole("link")).toBeNull()
   })
 
-  it("calls graphql.request once per render", async () => {
+  it("calls getGraphQLClient().request once per render", async () => {
     await ProvidersPage()
-    expect(graphql.request).toHaveBeenCalledTimes(1)
+    expect(mockRequest).toHaveBeenCalledTimes(1)
   })
 })

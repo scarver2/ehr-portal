@@ -30,7 +30,8 @@ describe('Dashboard', () => {
 
   it('renders welcome message with user email', () => {
     render(<Dashboard />)
-    expect(screen.getByText(/Welcome, user@example.com/)).toBeInTheDocument()
+    expect(screen.getByText(/Welcome back,/)).toBeInTheDocument()
+    expect(screen.getByText(/user@example.com/)).toBeInTheDocument()
   })
 
   it('wraps content with Protected component', () => {

@@ -13,7 +13,7 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
     resource "*",
       headers: :any,
       methods: %i[get post put patch delete options head],
-      expose: ["Authorization"],
       credentials: false
+    # Note: expose header removed — Rodauth returns tokens in response body, not headers
   end
 end

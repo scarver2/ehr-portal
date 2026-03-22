@@ -27,9 +27,15 @@ house_patients.each do |patient_data|
   stable_email = "#{patient_data[:first_name].downcase}.#{patient_data[:last_name].downcase}@ppth.med"
 
   user = User.find_or_create_by!(email: stable_email) do |u|
-    u.role                  = :patient
-    u.password              = "password"
-    u.password_confirmation = "password"
+    # Assign patient role via Rolify (before save)
+    u.add_role(:patient)
+  end
+
+  # Create Account for password management (Rodauth) if not already created
+  Account.find_or_create_by!(user_id: user.id) do |account|
+    account.email = user.email
+    account.password_hash = BCrypt::Password.create("password")
+    account.status = "verified"
   end
 
   patient = Patient.find_or_initialize_by(mrn: patient_data[:mrn])

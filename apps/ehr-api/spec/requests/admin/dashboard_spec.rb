@@ -8,12 +8,12 @@ RSpec.describe 'Admin::Dashboard', type: :request do
     context 'when not authenticated' do
       it 'redirects to login' do
         get '/admin'
-        expect(response).to redirect_to(new_user_session_path)
+        expect(response).to redirect_to(new_admin_user_session_path)
       end
     end
 
     context 'when authenticated as admin' do
-      before { sign_in create(:user, :admin) }
+      before { sign_in create(:admin_user) }
 
       it 'returns ok' do
         get '/admin'
@@ -28,11 +28,10 @@ RSpec.describe 'Admin::Dashboard', type: :request do
 
     %i[provider staff patient].each do |role|
       context "when authenticated as #{role}" do
-        before { sign_in create(:user, role) }
 
         it 'signs out and redirects to login' do
           get '/admin'
-          expect(response).to redirect_to(new_user_session_path)
+          expect(response).to redirect_to(new_admin_user_session_path)
         end
       end
     end

@@ -4,14 +4,17 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  subject(:user) { build(:user) }
+  subject(:user) { create(:user) }
 
   its(:email) { is_expected.to be_present }
-  its(:role)  { is_expected.to eq('patient') }
 
   it { is_expected.to be_valid }
 
   describe "associations" do
+    it "has one account for password management" do
+      expect(user.account).to be_a(Account)
+    end
+
     it "has one patient, destroyed when the user is destroyed" do
       u = create(:user, :patient)
       create(:patient, user: u)
@@ -40,44 +43,34 @@ RSpec.describe User, type: :model do
 
       it { is_expected.not_to be_valid }
     end
-
-    context 'without password' do
-      subject { build(:user, password: nil, password_confirmation: nil) }
-
-      it { is_expected.not_to be_valid }
-    end
-
-    context 'without role' do
-      subject { build(:user, role: nil) }
-
-      it { is_expected.not_to be_valid }
-    end
-
-    context 'with an invalid role' do
-      subject { build(:user) }
-
-      it 'is invalid with an unknown role value' do
-        subject.write_attribute(:role, 'superuser')
-        expect(subject).not_to be_valid
-      end
-    end
   end
 
-  describe 'role predicates' do
-    it { expect(build(:user, :admin)).to    be_admin }
-    it { expect(build(:user, :provider)).to be_provider }
-    it { expect(build(:user, :staff)).to    be_staff }
-    it { expect(build(:user, :patient)).to  be_patient }
+  describe 'role management via Rolify' do
+    it "is assigned patient role by default" do
+      expect(user.has_role?(:patient)).to be(true)
+    end
+
+    it "can have multiple roles" do
+      user.add_role(:provider)
+      expect(user.has_role?(:patient)).to be(true)
+      expect(user.has_role?(:provider)).to be(true)
+    end
+
+    it "can have roles removed" do
+      user.add_role(:provider)
+      user.remove_role(:patient)
+      expect(user.has_role?(:patient)).to be(false)
+      expect(user.has_role?(:provider)).to be(true)
+    end
   end
 
   describe '.provider_accounts' do
     let!(:provider_user) { create(:user, :provider) }
-    let!(:admin_user)    { create(:user, :admin) }
     let!(:patient_user)  { create(:user, :patient) }
 
     it 'includes only provider-role users' do
       expect(User.provider_accounts).to include(provider_user)
-      expect(User.provider_accounts).not_to include(admin_user, patient_user)
+      expect(User.provider_accounts).not_to include(patient_user)
     end
 
     it 'orders results by email' do

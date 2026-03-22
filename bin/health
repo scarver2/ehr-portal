@@ -20,7 +20,7 @@ run_check() {
   local label="$1"
   local app_dir="$2"
   local script="$3"
-  local log="$LOG_DIR/${label// /_}.log"
+  local log="$LOG_DIR/${label//[ \/]/_}.log"
   local padded
   padded=$(printf "%-36s" "$label")
 
@@ -43,7 +43,7 @@ run_check() {
 run_outdated() {
   local label="$1"
   local app_dir="$2"
-  local log="$LOG_DIR/${label// /_}.log"
+  local log="$LOG_DIR/${label//[ \/]/_}.log"
   local padded
   padded=$(printf "%-36s" "$label")
 

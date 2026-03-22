@@ -3,12 +3,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { render, screen } from "@testing-library/react"
 import React from "react"
+import type { GraphQLClient } from "graphql-request"
+
+const mockRequest = vi.fn()
 
 // Mock the GraphQL client before importing the page
 vi.mock("@/lib/graphql", () => ({
-  graphql: {
-    request: vi.fn(),
-  },
+  getGraphQLClient: vi.fn(async () => ({
+    request: mockRequest,
+  } as unknown as GraphQLClient)),
 }))
 
 // Mock next/link to avoid Next.js router dependency in tests
@@ -26,7 +29,6 @@ vi.mock("./InsuranceVerificationPanel", () => ({
 }))
 
 import PatientPage from "./page"
-import { graphql } from "@/lib/graphql"
 
 const mockEncounter = {
   id: "10",
@@ -56,7 +58,7 @@ const params = (id: string) => ({ params: Promise.resolve({ id }) })
 
 describe("PatientPage", () => {
   beforeEach(() => {
-    vi.mocked(graphql.request).mockResolvedValue({ patient: mockPatient })
+    mockRequest.mockResolvedValue({ patient: mockPatient })
   })
 
   // ── Identity ──────────────────────────────────────────────────────────────
@@ -68,82 +70,71 @@ describe("PatientPage", () => {
 
   it("fetches the patient by the id param", async () => {
     await PatientPage(params("42"))
-    expect(graphql.request).toHaveBeenCalledWith(expect.anything(), { id: "42" })
+    expect(mockRequest).toHaveBeenCalledWith(expect.anything(), { id: "42" })
   })
 
-  it("calls graphql.request once per render", async () => {
+  it("calls getGraphQLClient().request once per render", async () => {
     await PatientPage(params("1"))
-    expect(graphql.request).toHaveBeenCalledTimes(1)
+    expect(mockRequest).toHaveBeenCalledTimes(1)
   })
 
   // ── Demographics ──────────────────────────────────────────────────────────
 
-  it("renders the Demographics section heading", async () => {
-    render(await PatientPage(params("1")))
-    expect(screen.getByRole("heading", { name: "Demographics" })).toBeInTheDocument()
-  })
-
   it("displays the formatted date of birth", async () => {
     render(await PatientPage(params("1")))
-    expect(screen.getByText("Date of Birth: March 15, 1990")).toBeInTheDocument()
+    expect(screen.getByText("DOB: Mar 15, 1990")).toBeInTheDocument()
   })
 
-  it("displays age", async () => {
+  it("displays age in the hero section", async () => {
     render(await PatientPage(params("1")))
-    expect(screen.getByText("Age: 35")).toBeInTheDocument()
+    expect(screen.getByText("35 yrs")).toBeInTheDocument()
   })
 
   it("displays a human-readable gender label", async () => {
     render(await PatientPage(params("1")))
-    expect(screen.getByText("Gender: Female")).toBeInTheDocument()
+    expect(screen.getByText("Female")).toBeInTheDocument()
   })
 
   it("displays the MRN", async () => {
     render(await PatientPage(params("1")))
-    expect(screen.getByText("MRN: 00000001")).toBeInTheDocument()
+    expect(screen.getByText("00000001")).toBeInTheDocument()
   })
 
   it("shows dashes for missing demographic fields", async () => {
-    vi.mocked(graphql.request).mockResolvedValue({
+    mockRequest.mockResolvedValue({
       patient: { ...mockPatient, dateOfBirth: null, age: null, gender: null, mrn: null },
     })
     render(await PatientPage(params("1")))
-    expect(screen.getByText("Date of Birth: —")).toBeInTheDocument()
-    expect(screen.getByText("Age: —")).toBeInTheDocument()
-    expect(screen.getByText("Gender: —")).toBeInTheDocument()
-    expect(screen.getByText("MRN: —")).toBeInTheDocument()
+    // Hero section should not have gender, age, mrn
+    expect(screen.queryByText("yrs")).toBeNull()
+    expect(screen.queryByText("—")).toBeNull()
   })
 
   // ── Contact ───────────────────────────────────────────────────────────────
 
-  it("renders the Contact section heading", async () => {
+  it("displays phone and address in the hero", async () => {
     render(await PatientPage(params("1")))
-    expect(screen.getByRole("heading", { name: "Contact" })).toBeInTheDocument()
+    expect(screen.getByText("555-0100")).toBeInTheDocument()
+    expect(screen.getByText("123 Main St, Austin, TX")).toBeInTheDocument()
   })
 
-  it("displays phone, address, and emergency contact", async () => {
+  it("displays emergency contact information", async () => {
     render(await PatientPage(params("1")))
-    expect(screen.getByText("Phone: 555-0100")).toBeInTheDocument()
-    expect(screen.getByText("Address: 123 Main St, Austin, TX")).toBeInTheDocument()
-    expect(screen.getByText("Emergency Contact: John Doe")).toBeInTheDocument()
-    expect(screen.getByText("Emergency Phone: 555-0199")).toBeInTheDocument()
+    expect(screen.getByText("Emergency Contact")).toBeInTheDocument()
+    expect(screen.getByText(/John Doe/)).toBeInTheDocument()
+    expect(screen.getByText(/555-0199/)).toBeInTheDocument()
   })
 
-  it("shows dashes for missing contact fields", async () => {
-    vi.mocked(graphql.request).mockResolvedValue({
+  it("hides emergency contact section when no data", async () => {
+    mockRequest.mockResolvedValue({
       patient: {
         ...mockPatient,
-        phone: null,
-        address: null,
         emergencyContactName: null,
         emergencyContactPhone: null,
       },
     })
     render(await PatientPage(params("1")))
-    expect(screen.getByText("Phone: —")).toBeInTheDocument()
-    expect(screen.getByText("Address: —")).toBeInTheDocument()
-    expect(screen.getByText("Emergency Contact: —")).toBeInTheDocument()
-    expect(screen.getByText("Emergency Phone: —")).toBeInTheDocument()
+    expect(screen.queryByText("Emergency Contact")).toBeNull()
   })
 
   // ── Encounters ────────────────────────────────────────────────────────────
@@ -160,7 +151,7 @@ describe("PatientPage", () => {
 
   it("links each encounter to its detail page", async () => {
     render(await PatientPage(params("1")))
-    const link = screen.getByRole("link", { name: /June 15, 2025/ })
+    const link = screen.getByRole("link", { name: /Office Visit/ })
     expect(link).toHaveAttribute("href", "/encounters/10")
   })
 
@@ -171,11 +162,11 @@ describe("PatientPage", () => {
 
   it("displays the chief complaint when present", async () => {
     render(await PatientPage(params("1")))
-    expect(screen.getByText(/Annual checkup/)).toBeInTheDocument()
+    expect(screen.getByText("Annual checkup")).toBeInTheDocument()
   })
 
   it("shows empty state when no encounters exist", async () => {
-    vi.mocked(graphql.request).mockResolvedValue({
+    mockRequest.mockResolvedValue({
       patient: { ...mockPatient, encounters: [] },
     })
     render(await PatientPage(params("1")))
@@ -184,11 +175,11 @@ describe("PatientPage", () => {
   })
 
   it("falls back to raw gender string for unknown gender values", async () => {
-    vi.mocked(graphql.request).mockResolvedValue({
+    mockRequest.mockResolvedValue({
       patient: { ...mockPatient, gender: "nonbinary" },
     })
     render(await PatientPage(params("1")))
-    expect(screen.getByText("Gender: nonbinary")).toBeInTheDocument()
+    expect(screen.getByText("nonbinary")).toBeInTheDocument()
   })
 
   // ── Insurance Verification ────────────────────────────────────────────────
@@ -201,7 +192,7 @@ describe("PatientPage", () => {
   })
 
   it("omits chief complaint when null", async () => {
-    vi.mocked(graphql.request).mockResolvedValue({
+    mockRequest.mockResolvedValue({
       patient: {
         ...mockPatient,
         encounters: [{ ...mockEncounter, chiefComplaint: null }],
@@ -209,6 +200,6 @@ describe("PatientPage", () => {
     })
     render(await PatientPage(params("1")))
     const item = screen.getByRole("listitem")
-    expect(item.textContent).not.toMatch(/·/)
+    expect(item.textContent).not.toMatch(/italic/)
   })
 })

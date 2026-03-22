@@ -10,9 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_19_071215) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_21_180200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "accounts", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.string "email_auth_token"
+    t.integer "failed_login_attempts", default: 0
+    t.datetime "last_activity_at"
+    t.string "last_activity_ip"
+    t.datetime "last_login_at"
+    t.string "last_login_ip"
+    t.datetime "locked_until"
+    t.string "password_hash", null: false
+    t.datetime "reset_password_deadline"
+    t.datetime "reset_password_email_sent_at"
+    t.string "reset_password_key"
+    t.string "status", default: "unverified", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.datetime "verify_login_change_deadline"
+    t.string "verify_login_change_key"
+    t.index ["email"], name: "index_accounts_on_email", unique: true
+    t.index ["user_id"], name: "index_accounts_on_user_id", unique: true
+  end
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.bigint "author_id"
@@ -26,6 +49,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_071215) do
     t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
     t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
+  end
+
+  create_table "admin_users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.string "encrypted_password"
+    t.datetime "updated_at", null: false
   end
 
   create_table "diagnoses", force: :cascade do |t|
@@ -149,6 +179,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_071215) do
     t.index ["user_id"], name: "index_providers_on_user_id", unique: true
   end
 
+  create_table "roles", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.bigint "resource_id"
+    t.string "resource_type"
+    t.datetime "updated_at", null: false
+    t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
+    t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
+  end
+
   create_table "specialties", force: :cascade do |t|
     t.string "category"
     t.datetime "created_at", null: false
@@ -161,14 +201,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_071215) do
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
-    t.string "encrypted_password", default: "", null: false
-    t.datetime "remember_created_at"
-    t.datetime "reset_password_sent_at"
-    t.string "reset_password_token"
-    t.string "role", default: "patient", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "users_roles", id: false, force: :cascade do |t|
+    t.bigint "role_id"
+    t.bigint "user_id"
+    t.index ["role_id"], name: "index_users_roles_on_role_id"
+    t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"
+    t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
   create_table "vitals", force: :cascade do |t|
@@ -184,6 +226,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_19_071215) do
     t.index ["encounter_id"], name: "index_vitals_on_encounter_id"
   end
 
+  add_foreign_key "accounts", "users"
   add_foreign_key "diagnoses", "encounters"
   add_foreign_key "encounters", "patients"
   add_foreign_key "encounters", "providers"

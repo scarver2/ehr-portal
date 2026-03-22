@@ -1,37 +1,30 @@
 # sig/app/models/user.rbs
-# Column types derived from db/migrate (users table).
-# AR generates attribute accessors dynamically; attr_accessor syntax avoids
-# Ruby::MethodDefinitionMissing under all_error. Devise runtime methods
-# (valid_password?, authenticate, etc.) remain untyped until devise ships
-# official RBS definitions. Enum predicate methods are declared explicitly.
-# devise-jwt: JwtAuthenticatable mixin adds token dispatch/revocation at the
-# Warden level; no instance methods need to be declared here.
+# Rodauth JWT Authentication + Rolify Role Management
+# Portal users authenticate via JWT tokens (stateless)
+# Roles managed via Rolify (dynamic role assignment)
 
 class User < ApplicationRecord
-  include Devise::Models::JwtAuthenticatable
+  attr_reader id: Integer
+  attr_accessor email: String
+  attr_reader created_at: Time
+  attr_reader updated_at: Time
 
-  ROLES: ::Array[::String]
-
-  attr_accessor id: ::Integer
-  attr_accessor email: ::String
-  attr_accessor encrypted_password: ::String
-  attr_accessor reset_password_token: ::String?
-  attr_accessor reset_password_sent_at: ::Time?
-  attr_accessor remember_created_at: ::Time?
-  attr_accessor role: ::String
-  attr_accessor created_at: ::Time
-  attr_accessor updated_at: ::Time
-
-  def admin?: () -> bool
-  def provider?: () -> bool
-  def staff?: () -> bool
-  def patient?: () -> bool
-
-  # Profile associations
-  def patient: () -> ::Patient?
-  def provider: () -> ::Provider?
-  def insurance_profile: () -> ::InsuranceProfile?
+  # Associations
+  def account: () -> Account?
+  def patient: () -> Patient?
+  def provider: () -> Provider?
+  def insurance_profile: () -> InsuranceProfile?
   def insurance_verifications: () -> ::ActiveRecord::Associations::CollectionProxy
+  def roles: () -> ::ActiveRecord::Associations::CollectionProxy
 
+  # Rolify methods
+  def add_role: (String | Symbol role) -> void
+  def has_role?: (String | Symbol role) -> bool
+  def remove_role: (String | Symbol role) -> void
+
+  # Validation
+  def has_at_least_one_role: () -> void
+
+  # Scope for provider accounts
   def self.provider_accounts: () -> ::ActiveRecord::Relation
 end

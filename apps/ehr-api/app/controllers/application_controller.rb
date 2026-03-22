@@ -5,23 +5,27 @@ class ApplicationController < ActionController::Base
 
   private
 
-  # Called by ActiveAdmin's config.before_action for every admin controller action.
-  # authenticate_user! already handles unauthenticated requests; this handles
-  # authenticated users who lack the admin role.
-  def require_admin_role
-    return if current_user&.admin?
-    return unless current_user # unauthenticated — let authenticate_user! handle it
+  # Return the authenticated admin user (for ActiveAdmin)
+  # Admin authentication is handled by Devise for AdminUser model
+  def current_user
+    current_admin_user
+  end
 
-    sign_out current_user
-    redirect_to new_user_session_path, alert: 'Not authorized.'
+  # Called by ActiveAdmin's config.before_action for every admin controller action.
+  # authenticate_admin_user! already handles unauthenticated requests; this handles
+  # authenticated users who lack admin privileges (should not be possible - all AdminUsers are admins).
+  def require_admin_role
+    return if current_admin_user
+    redirect_to new_admin_user_session_path, alert: 'Not authorized.'
   end
 
   def set_honeybadger_context
-    return unless current_user
+    return unless current_admin_user
 
     Honeybadger.context(
-      user_id: current_user.id,
-      user_email: current_user.email
+      user_id: current_admin_user.id,
+      user_email: current_admin_user.email,
+      user_type: 'AdminUser'
     )
   end
 end

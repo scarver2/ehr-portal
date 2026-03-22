@@ -7,23 +7,12 @@ RSpec.describe "Admin::Patients", type: :request do
   context "when not authenticated" do
     it "redirects to login" do
       get "/admin/patients"
-      expect(response).to redirect_to(new_user_session_path)
-    end
-  end
-
-  %i[provider staff patient].each do |role|
-    context "when authenticated as #{role}" do
-      before { sign_in create(:user, role) }
-
-      it "signs out and redirects to login" do
-        get "/admin/patients"
-        expect(response).to redirect_to(new_user_session_path)
-      end
+      expect(response).to redirect_to(new_admin_user_session_path)
     end
   end
 
   context "when authenticated as admin" do
-    let(:admin_user) { create(:user, :admin) }
+    let(:admin_user) { create(:admin_user) }
 
     before { sign_in admin_user }
 

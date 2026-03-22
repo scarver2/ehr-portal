@@ -1,7 +1,9 @@
-// apps/ehr-portal/postcss.config.js
+// apps/ehr-portal/postcss.config.mjs
 
-export default {
+const config = {
   plugins: {
     "@tailwindcss/postcss": {},
   },
 }
+
+export default config

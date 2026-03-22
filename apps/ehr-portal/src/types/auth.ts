@@ -4,7 +4,8 @@
 export type AuthUser = {
   id: number
   email: string
-  role: string
+  role: string // Primary role (first role in roles array) for backward compatibility
+  roles: string[] // All roles assigned to user (provider, staff, patient)
   provider_id?: number
 }
 
