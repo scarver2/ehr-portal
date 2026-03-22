@@ -41,18 +41,23 @@ test.describe('Providers list page (/providers)', () => {
   })
 
   test('lists all providers from the mock API', async ({ page }) => {
-    await expect(page.getByText('Alice Adams — Cardiology')).toBeVisible()
-    await expect(page.getByText('Bob Brown — Neurology')).toBeVisible()
+    await expect(page.getByText('Alice Adams')).toBeVisible()
+    await expect(page.getByText('Bob Brown')).toBeVisible()
+    // Specialties are shown as badge pills next to provider names
+    await expect(page.getByText('Cardiology')).toBeVisible()
+    await expect(page.getByText('Neurology')).toBeVisible()
   })
 
   test('each provider is a link to their detail page', async ({ page }) => {
-    const link = page.getByRole('link', { name: 'Alice Adams — Cardiology' })
+    // Provider names are rendered inside <Link> elements
+    const link = page.getByRole('link').filter({ hasText: 'Alice Adams' }).first()
     await expect(link).toHaveAttribute('href', '/providers/1')
   })
 
   test('renders the correct number of providers', async ({ page }) => {
-    const items = page.getByRole('listitem')
-    await expect(items).toHaveCount(2)
+    // Each provider is a <Link> card; filter to provider links (href matches /providers/:id)
+    const providerLinks = page.getByRole('link').filter({ hasText: /Adams|Brown/ })
+    await expect(providerLinks).toHaveCount(2)
   })
 })
 
@@ -67,15 +72,18 @@ test.describe('Provider detail page (/providers/:id)', () => {
   })
 
   test('displays the NPI', async ({ page }) => {
-    await expect(page.getByText('NPI: 1111111111')).toBeVisible()
+    // NPI label and value are in separate <dt>/<dd> elements
+    await expect(page.getByText('1111111111')).toBeVisible()
   })
 
   test('displays the specialty', async ({ page }) => {
-    await expect(page.getByText('Specialty: Cardiology')).toBeVisible()
+    // Specialty is shown as a badge pill
+    await expect(page.getByText('Cardiology')).toBeVisible()
   })
 
   test('displays the clinic name', async ({ page }) => {
-    await expect(page.getByText('Clinic: Heart Clinic')).toBeVisible()
+    // Clinic name appears in multiple places on the detail page; match first occurrence
+    await expect(page.getByText('Heart Clinic').first()).toBeVisible()
   })
 })
 
@@ -83,7 +91,7 @@ test.describe('Navigation', () => {
   test('clicking a provider link navigates to their detail page', async ({ page }) => {
     await login(page)
     await page.goto('/providers')
-    await page.getByRole('link', { name: 'Alice Adams — Cardiology' }).click()
+    await page.getByRole('link').filter({ hasText: 'Alice Adams' }).first().click()
     await expect(page).toHaveURL(/\/providers\/1$/)
     await expect(page.getByRole('heading', { name: 'Alice Adams' })).toBeVisible()
   })
@@ -91,7 +99,7 @@ test.describe('Navigation', () => {
   test('the second provider also navigates correctly', async ({ page }) => {
     await login(page)
     await page.goto('/providers')
-    await page.getByRole('link', { name: 'Bob Brown — Neurology' }).click()
+    await page.getByRole('link').filter({ hasText: 'Bob Brown' }).first().click()
     await expect(page).toHaveURL(/\/providers\/2$/)
     await expect(page.getByRole('heading', { name: 'Bob Brown' })).toBeVisible()
   })

@@ -13,33 +13,54 @@ RSpec.describe Api::ApplicationController, type: :controller do
 
   let(:user) { create(:user, :patient) }
 
-  # ── current_user session deserialization ──────────────────────────────────
+  def jwt_header_for(user)
+    secret = Rails.application.credentials.secret_key_base
+    payload = {
+      sub:   user.id.to_s,
+      email: user.email,
+      iat:   Time.current.to_i,
+      exp:   (Time.current + 1.day).to_i,
+      iss:   "ehr-portal-api"
+    }
+    token = JWT.encode(payload, secret, "HS256")
+    { "Authorization" => "Bearer #{token}" }
+  end
+
+  # ── current_user JWT resolution ───────────────────────────────────────────
 
   describe "#current_user" do
-    context "with Devise 5 hash format ({ 'id' => id, 'token' => ... })" do
-      before { session["warden.user.user.key"] = { "id" => user.id, "token" => "x" } }
+    context "with a valid JWT Bearer token" do
+      before { request.headers.merge!(jwt_header_for(user)) }
 
-      it "returns the user (line 23 — Hash branch)" do
-        skip "Brittle: DO NOT ENABLE"
+      it "returns the authenticated user" do
         get :index
         expect(response.parsed_body["user_id"]).to eq(user.id)
       end
     end
 
-    context "with Devise < 5 array format ([[id], salt])" do
-      before { session["warden.user.user.key"] = [[user.id], "salt"] }
-
-      it "returns the user (line 22 — Array branch)" do
-        skip "Brittle: DO NOT ENABLE"
+    context "when no Authorization header is present" do
+      it "resolves to nil (returns 401)" do
         get :index
-        expect(response.parsed_body["user_id"]).to eq(user.id)
+        expect(response.parsed_body["user_id"]).to be_nil
       end
     end
 
-    context "when the user id in the session does not match any record" do
-      before { session["warden.user.user.key"] = { "id" => 0, "token" => "x" } }
+    context "with a malformed token" do
+      before { request.headers["Authorization"] = "Bearer not.a.valid.jwt" }
 
-      it "resolves to nil" do
+      it "resolves to nil (returns 401)" do
+        get :index
+        expect(response.parsed_body["user_id"]).to be_nil
+      end
+    end
+
+    context "when the token references a user whose account is not verified" do
+      before do
+        user.account.update!(status: "unverified")
+        request.headers.merge!(jwt_header_for(user))
+      end
+
+      it "resolves to nil (returns 401)" do
         get :index
         expect(response.parsed_body["user_id"]).to be_nil
       end
@@ -49,7 +70,7 @@ RSpec.describe Api::ApplicationController, type: :controller do
   # ── authenticate_api_user! ────────────────────────────────────────────────
 
   describe "#authenticate_api_user!" do
-    context "when no session key is present" do
+    context "when no token is present" do
       it "returns 401 Unauthorized" do
         get :index
         expect(response).to have_http_status(:unauthorized)
@@ -57,8 +78,8 @@ RSpec.describe Api::ApplicationController, type: :controller do
       end
     end
 
-    context "when the session user id does not exist" do
-      before { session["warden.user.user.key"] = { "id" => 0, "token" => "x" } }
+    context "when an invalid token is provided" do
+      before { request.headers["Authorization"] = "Bearer invalid.token.here" }
 
       it "returns 401 Unauthorized" do
         get :index
@@ -66,11 +87,10 @@ RSpec.describe Api::ApplicationController, type: :controller do
       end
     end
 
-    context "when a valid session is present" do
-      before { session["warden.user.user.key"] = { "id" => user.id, "token" => "x" } }
+    context "when a valid JWT token is provided" do
+      before { request.headers.merge!(jwt_header_for(user)) }
 
       it "allows the request through" do
-        skip "Brittle: DO NOT ENABLE"
         get :index
         expect(response).to have_http_status(:ok)
       end

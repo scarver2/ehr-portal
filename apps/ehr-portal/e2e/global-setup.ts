@@ -39,15 +39,15 @@ function handleRequest(req: IncomingMessage, res: ServerResponse) {
       // Mock successful login for test credentials
       if (user.email === 'provider@example.com' && user.password === 'password') {
         const mockJWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxMDAwMDAwMDAwMH0.test'
-        res.writeHead(200, {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${mockJWT}`
-        })
+        res.writeHead(200, { 'Content-Type': 'application/json' })
+        // Rodauth returns the token in the response body (not the Authorization header)
         res.end(JSON.stringify({
+          token: mockJWT,
           user: {
             id: '1',
             email: 'provider@example.com',
             role: 'provider',
+            roles: ['provider'],
             provider_id: '1'
           }
         }))
