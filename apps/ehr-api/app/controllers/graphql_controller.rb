@@ -6,8 +6,9 @@ class GraphqlController < ActionController::API
   # GraphQL supports both:
   # - Portal users: JWT tokens in Authorization header (Rodauth)
   # - Admin users: Session cookies (Devise)
-
-  protect_from_forgery with: :null_session
+  #
+  # protect_from_forgery is omitted: ActionController::API excludes it and
+  # JWT tokens sent via the Authorization header are inherently CSRF-safe.
 
   before_action :authenticate_graphql_user!
 
