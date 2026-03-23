@@ -7,7 +7,11 @@ class Provider < ApplicationRecord
   has_many   :encounters, inverse_of: :provider, dependent: :restrict_with_error
 
   # Validations
-  validates :photo_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true }
+  validates :photo_url, format: {
+    with: %r{^(https?://|/images/)},
+    message: 'must be a valid URL or local image path (/images/...)',
+    allow_blank: true
+  }
 
   def full_name
     "#{first_name} #{last_name}"
