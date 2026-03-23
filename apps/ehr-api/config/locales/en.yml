@@ -29,3 +29,7 @@
 
 en:
   howdy: "Howdy World!"
+  activerecord:
+    errors:
+      messages:
+        photo_url_format: "must be a valid URL or local image path (/images/...)"
