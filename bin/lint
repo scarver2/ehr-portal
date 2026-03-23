@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# bin/lint - Run all linters for the project (Portal, API, and Shell scripts)
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+# shellcheck source=./bin/_lib.sh
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR/_lib.sh"
+
+COMMAND_NAME="lint"
+export COMMAND_NAME
+banner
+
+FAILED=0
+PASSED=0
+
+# Lint portal (Next.js/TypeScript)
+echo ""
+info "Running ESLint on portal app..."
+if (cd "$ROOT_DIR/apps/ehr-portal" && bin/lint "$@"); then
+  ((PASSED++)) || true
+  success "Portal app lint passed"
+else
+  ((FAILED++)) || true
+fi
+
+echo ""
+
+# Lint API (Rails/Ruby)
+info "Linting API app (RuboCop)..."
+if (cd "$ROOT_DIR/apps/ehr-api" && bin/lint "$@" 2>&1 | tail -5); then
+  ((PASSED++)) || true
+  success "API app lint passed"
+else
+  ((FAILED++)) || true
+fi
+
+echo ""
+
+# Lint shell scripts with shellcheck
+info "Linting shell scripts (bin/)..."
+if command -v shellcheck &>/dev/null; then
+  SHELL_ERRORS=0
+  while IFS= read -r script; do
+    if ! shellcheck "$script" 2>&1; then
+      ((SHELL_ERRORS++)) || true
+    fi
+  done < <(find "$ROOT_DIR/bin" -maxdepth 1 -type f -executable ! -name "_lib.sh" ! -name "*.sh")
+
+  if [[ $SHELL_ERRORS -eq 0 ]]; then
+    ((PASSED++))
+    success "Shell scripts lint passed"
+  else
+    ((FAILED++))
+    warn "Found $SHELL_ERRORS shell script linting error(s)"
+  fi
+else
+  warn "shellcheck not found - install with: brew install shellcheck"
+  info "Skipping shell script linting"
+fi
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "📋 Lint Summary"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "✓ Passed: $PASSED"
+echo "✗ Failed: $FAILED"
+echo ""
+
+if [[ $FAILED -eq 0 ]]; then
+  success "All linting checks passed! ✨"
+  exit 0
+else
+  fail "$FAILED linting check(s) failed"
+fi

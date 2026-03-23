@@ -16,6 +16,8 @@ vi.mock('@/context/auth-context', () => ({
 
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/auth-context'
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+import type { AuthContextType } from '@/context/auth-context'
 
 describe('Protected', () => {
   const mockPush = vi.fn()
@@ -24,16 +26,18 @@ describe('Protected', () => {
     vi.clearAllMocks()
     vi.mocked(useRouter).mockReturnValue({
       push: mockPush,
-    } as any)
+    } as AppRouterInstance)
+  })
+
+  const mockAuthValue = (token: string | null = 'test-token'): AuthContextType => ({
+    token,
+    user: null,
+    setToken: vi.fn(),
+    setUser: vi.fn(),
   })
 
   it('renders children when token exists', () => {
-    vi.mocked(useAuth).mockReturnValue({
-      token: 'test-token',
-      user: null,
-      setToken: vi.fn(),
-      setUser: vi.fn(),
-    } as any)
+    vi.mocked(useAuth).mockReturnValue(mockAuthValue('test-token'))
 
     render(
       <Protected>
@@ -45,12 +49,7 @@ describe('Protected', () => {
   })
 
   it('does not render children when token is null', () => {
-    vi.mocked(useAuth).mockReturnValue({
-      token: null,
-      user: null,
-      setToken: vi.fn(),
-      setUser: vi.fn(),
-    } as any)
+    vi.mocked(useAuth).mockReturnValue(mockAuthValue(null))
 
     render(
       <Protected>
@@ -62,12 +61,7 @@ describe('Protected', () => {
   })
 
   it('redirects to login when token is null', async () => {
-    vi.mocked(useAuth).mockReturnValue({
-      token: null,
-      user: null,
-      setToken: vi.fn(),
-      setUser: vi.fn(),
-    } as any)
+    vi.mocked(useAuth).mockReturnValue(mockAuthValue(null))
 
     render(
       <Protected>
@@ -81,12 +75,7 @@ describe('Protected', () => {
   })
 
   it('does not redirect when token exists', () => {
-    vi.mocked(useAuth).mockReturnValue({
-      token: 'test-token',
-      user: null,
-      setToken: vi.fn(),
-      setUser: vi.fn(),
-    } as any)
+    vi.mocked(useAuth).mockReturnValue(mockAuthValue('test-token'))
 
     render(
       <Protected>
@@ -98,12 +87,7 @@ describe('Protected', () => {
   })
 
   it('suppresses flash by returning null during hydration', () => {
-    vi.mocked(useAuth).mockReturnValue({
-      token: null,
-      user: null,
-      setToken: vi.fn(),
-      setUser: vi.fn(),
-    } as any)
+    vi.mocked(useAuth).mockReturnValue(mockAuthValue(null))
 
     const { container } = render(
       <Protected>

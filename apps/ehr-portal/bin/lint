@@ -7,6 +7,11 @@
 
 source "$(dirname "$0")/_lib.sh"
 
-require_command bun
-
-exec bun run --silent lint "$@"
+# Support both npm and bun
+if command -v bun &>/dev/null; then
+  bun run --silent lint "$@"
+elif command -v npm &>/dev/null; then
+  npm run --silent lint "$@"
+else
+  require_command npm
+fi

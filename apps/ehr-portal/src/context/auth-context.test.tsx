@@ -24,22 +24,45 @@ const localStorageMock = (() => {
 Object.defineProperty(window, 'localStorage', { value: localStorageMock })
 
 // Test component that uses auth context
+interface User {
+  id: number
+  email: string
+  role: string
+  provider_id: number | null
+  roles: string[]
+}
+
 function TestComponent() {
+  let token: string | null = null
+  let user: User | null = null
+  let setToken: ((t: string | null) => void) | null = null
+  let setUser: ((u: User | null) => void) | null = null
+  let error: Error | null = null
+
   try {
-    const { token, user, setToken, setUser } = useAuth()
-    return (
-      <div>
-        <div data-testid="token">{token || 'no-token'}</div>
-        <div data-testid="user">{user?.email || 'no-user'}</div>
-        <button onClick={() => setToken('new-token')}>Set Token</button>
-        <button onClick={() => setUser({ id: 1, email: 'test@example.com', role: 'patient', provider_id: null, roles: ['patient'] })}>Set User</button>
-        <button onClick={() => setToken(null)}>Clear Token</button>
-        <button onClick={() => setUser(null)}>Clear User</button>
-      </div>
-    )
-  } catch (error) {
+    const auth = useAuth()
+    token = auth.token
+    user = auth.user
+    setToken = auth.setToken
+    setUser = auth.setUser
+  } catch (e) {
+    error = e as Error
+  }
+
+  if (error) {
     return <div data-testid="error">{String(error)}</div>
   }
+
+  return (
+    <div>
+      <div data-testid="token">{token || 'no-token'}</div>
+      <div data-testid="user">{user?.email || 'no-user'}</div>
+      <button onClick={() => setToken?.('new-token')}>Set Token</button>
+      <button onClick={() => setUser?.({ id: 1, email: 'test@example.com', role: 'patient', provider_id: null, roles: ['patient'] })}>Set User</button>
+      <button onClick={() => setToken?.(null)}>Clear Token</button>
+      <button onClick={() => setUser?.(null)}>Clear User</button>
+    </div>
+  )
 }
 
 describe('AuthContext', () => {
