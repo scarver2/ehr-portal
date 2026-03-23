@@ -12,14 +12,12 @@ module Api
     def authenticate_api_user!
       return if current_user
 
-      render json: { error: "Unauthorized" }, status: :unauthorized
+      render json: { error: 'Unauthorized' }, status: :unauthorized
     end
 
     def current_user
       @current_user ||= load_user_from_jwt_token
     end
-
-    private
 
     def load_user_from_jwt_token
       token = extract_token_from_request
@@ -30,8 +28,8 @@ module Api
     end
 
     def extract_token_from_request
-      auth_header = request.headers["Authorization"]
-      auth_header&.sub(/\ABearer\s+/, "")
+      auth_header = request.headers['Authorization']
+      auth_header&.sub(/\ABearer\s+/, '')
     end
   end
 end

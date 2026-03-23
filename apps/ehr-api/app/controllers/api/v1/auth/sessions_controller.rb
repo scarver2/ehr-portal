@@ -18,8 +18,8 @@ module Api
           # Validate presence
           if email.blank? || password.blank?
             return render json: {
-              errors: { base: ["Email and password required"] }
-            }, status: :unprocessable_entity
+              errors: { base: ['Email and password required'] }
+            }, status: :unprocessable_content
           end
 
           # Find user by email
@@ -41,25 +41,25 @@ module Api
           else
             # Invalid credentials
             render json: {
-              errors: { base: ["Invalid email or password"] }
+              errors: { base: ['Invalid email or password'] }
             }, status: :unauthorized
           end
         end
 
         def destroy
           # Require Authorization header with Bearer token
-          auth_header = request.headers["Authorization"]
+          auth_header = request.headers['Authorization']
 
           unless auth_header&.match?(/\ABearer\s+.+\z/)
             return render json: {
-              errors: { base: ["Unauthorized"] }
+              errors: { base: ['Unauthorized'] }
             }, status: :unauthorized
           end
 
           user = current_user
           unless user
             return render json: {
-              errors: { base: ["Unauthorized"] }
+              errors: { base: ['Unauthorized'] }
             }, status: :unauthorized
           end
 
@@ -68,7 +68,7 @@ module Api
           user.account.update(last_activity_at: Time.current, last_activity_ip: request.remote_ip)
 
           render json: {
-            message: "Logged out successfully"
+            message: 'Logged out successfully'
           }, status: :ok
         end
 

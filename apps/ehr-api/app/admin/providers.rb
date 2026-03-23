@@ -16,11 +16,11 @@ ActiveAdmin.register Provider do
   index do
     selectable_column
     id_column
-    column(:name)      { |p| p.full_name }
+    column(:name, &:full_name)
     column :specialty
     column :clinic_name
     column :npi
-    column(:location)  { |p| p.location }
+    column(:location, &:location)
     actions
   end
 
@@ -42,26 +42,26 @@ ActiveAdmin.register Provider do
   end
 
   form do |f|
-    f.inputs "Identity" do
+    f.inputs 'Identity' do
       f.input :first_name
       f.input :last_name
       f.input :npi
       f.input :specialty, as: :select,
-              collection: Specialty.alphabetical.map { |s| [s.name, s.id] },
-              include_blank: true
+                          collection: Specialty.alphabetical.map { |s| [s.name, s.id] },
+                          include_blank: true
       f.input :clinic_name
     end
 
-    f.inputs "Location" do
+    f.inputs 'Location' do
       f.input :city
       f.input :state
       f.input :zip
     end
 
-    f.inputs "Account" do
+    f.inputs 'Account' do
       f.input :user, as: :select,
-              collection: User.provider_accounts.map { |u| [u.email, u.id] },
-              include_blank: true
+                     collection: User.provider_accounts.map { |u| [u.email, u.id] },
+                     include_blank: true
     end
 
     f.actions

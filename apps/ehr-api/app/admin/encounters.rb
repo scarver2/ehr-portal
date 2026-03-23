@@ -37,7 +37,7 @@ ActiveAdmin.register Encounter do
       row :updated_at
     end
 
-    panel "Vitals" do
+    panel 'Vitals' do
       table_for encounter.vitals.recent do
         column :vital_type
         column :value
@@ -46,7 +46,7 @@ ActiveAdmin.register Encounter do
       end
     end
 
-    panel "Diagnoses" do
+    panel 'Diagnoses' do
       table_for encounter.diagnoses.recent do
         column :icd10_code
         column :description

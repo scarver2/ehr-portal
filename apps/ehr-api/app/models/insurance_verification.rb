@@ -54,17 +54,17 @@ class InsuranceVerification < ApplicationRecord
     InsuranceVerificationChannel.broadcast_to(
       user,
       {
-        id:                  id,
-        request_uuid:        request_uuid,
-        status:              status,
-        payer_name:          payer_name,
-        plan_name:           plan_name,
-        copay_cents:         copay_cents,
-        deductible_cents:    deductible_cents,
-        oop_max_cents:       oop_max_cents,
-        verified_at:         verified_at,
-        error_message:       error_message,
-        updated_at:          updated_at
+        id: id,
+        request_uuid: request_uuid,
+        status: status,
+        payer_name: payer_name,
+        plan_name: plan_name,
+        copay_cents: copay_cents,
+        deductible_cents: deductible_cents,
+        oop_max_cents: oop_max_cents,
+        verified_at: verified_at,
+        error_message: error_message,
+        updated_at: updated_at
       }
     )
   # Gracefully handle Redis unavailability during seeding and initialization.

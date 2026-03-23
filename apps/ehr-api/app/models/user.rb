@@ -18,7 +18,7 @@ class User < ApplicationRecord
   validate :has_at_least_one_role
 
   has_one :patient,           dependent: :destroy, inverse_of: :user
-  has_one :provider,          dependent: :nullify,  inverse_of: :user
+  has_one :provider,          dependent: :nullify, inverse_of: :user
   has_one :insurance_profile, dependent: :destroy
 
   has_many :insurance_verifications, dependent: :destroy
@@ -28,6 +28,6 @@ class User < ApplicationRecord
   private
 
   def has_at_least_one_role
-    errors.add(:roles, "User must have at least one role") if roles.empty?
+    errors.add(:roles, 'User must have at least one role') if roles.empty?
   end
 end

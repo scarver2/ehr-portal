@@ -9,11 +9,11 @@ class Specialty < ApplicationRecord
   scope :alphabetical, -> { order(:name) }
   scope :by_category,  ->(cat) { where(category: cat) }
 
-  def self.ransackable_attributes(auth_object = nil)
+  def self.ransackable_attributes(_auth_object = nil)
     %w[category id name created_at updated_at]
   end
 
-  def self.ransackable_associations(auth_object = nil)
+  def self.ransackable_associations(_auth_object = nil)
     %w[providers]
   end
 end

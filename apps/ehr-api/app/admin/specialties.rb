@@ -26,12 +26,12 @@ ActiveAdmin.register Specialty do
       row :updated_at
     end
 
-    panel "Providers" do
+    panel 'Providers' do
       table_for specialty.providers.order(:last_name) do
         column :full_name
         column :clinic_name
-        column(:location) { |p| p.location }
-        column("") { |p| link_to "View", admin_provider_path(p) }
+        column(:location, &:location)
+        column('') { |p| link_to 'View', admin_provider_path(p) }
       end
     end
   end
@@ -40,8 +40,8 @@ ActiveAdmin.register Specialty do
     f.inputs do
       f.input :name
       f.input :category, as: :select,
-              collection: %w[Clinical Diagnostic Medical Primary\ Care Surgical],
-              include_blank: true
+                         collection: ['Clinical', 'Diagnostic', 'Medical', 'Primary Care', 'Surgical'],
+                         include_blank: true
     end
     f.actions
   end

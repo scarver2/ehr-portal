@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Guardfile
 # Run with: bin/guard
 
@@ -17,8 +19,8 @@ guard :rubocop, all_on_start: false, cli: %w[--format progress --display-cop-nam
 end
 
 # ── RSpec ──────────────────────────────────────────────────────────────────
-guard :rspec, cmd: "bundle exec rspec --format documentation", all_on_start: false do
-  require "guard/rspec/dsl"
+guard :rspec, cmd: 'bundle exec rspec --format documentation', all_on_start: false do
+  require 'guard/rspec/dsl'
   dsl = Guard::RSpec::Dsl.new(self)
 
   rspec = dsl.rspec
@@ -26,7 +28,7 @@ guard :rspec, cmd: "bundle exec rspec --format documentation", all_on_start: fal
   # Re-run all specs when helpers change
   watch(rspec.spec_helper)  { rspec.spec_dir }
   watch(rspec.spec_support) { rspec.spec_dir }
-  watch("spec/rails_helper.rb") { rspec.spec_dir }
+  watch('spec/rails_helper.rb') { rspec.spec_dir }
 
   # Spec files run themselves
   watch(rspec.spec_files)
@@ -44,7 +46,7 @@ guard :rspec, cmd: "bundle exec rspec --format documentation", all_on_start: fal
   watch(%r{^app/controllers/api/(.+)\.rb$}) { |m| "spec/controllers/api/#{m[1]}_spec.rb" }
 
   # GraphQL controller → spec/requests/graphql_spec.rb
-  watch("app/controllers/graphql_controller.rb") { "spec/requests/graphql_spec.rb" }
+  watch('app/controllers/graphql_controller.rb') { 'spec/requests/graphql_spec.rb' }
 
   # Factories → run the corresponding model spec
   watch(%r{^spec/factories/(.+)\.rb$}) { |m| "spec/models/#{m[1].singularize}_spec.rb" }

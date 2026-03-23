@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # apps/ehr-api/Steepfile
 # https://github.com/soutaro/steep
 
@@ -10,9 +12,9 @@ D = Steep::Diagnostic
 # :graphql    → lenient: blocked by graphql-ruby having no official RBS.
 
 target :models do
-  signature "sig"
+  signature 'sig'
 
-  check "app/models"
+  check 'app/models'
 
   # all_error with MethodDefinitionMissing downgraded to :information.
   # AR generates column accessors at runtime — they can't be found in source.
@@ -23,17 +25,17 @@ target :models do
 end
 
 target :controllers do
-  signature "sig"
+  signature 'sig'
 
-  check "app/controllers"
+  check 'app/controllers'
 
   configure_code_diagnostics(D::Ruby.lenient)
 end
 
 target :graphql do
-  signature "sig"
+  signature 'sig'
 
-  check "app/graphql"
+  check 'app/graphql'
 
   configure_code_diagnostics(D::Ruby.lenient)
 end

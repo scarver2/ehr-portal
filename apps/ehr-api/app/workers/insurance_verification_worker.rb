@@ -12,8 +12,8 @@ class InsuranceVerificationWorker
     payer        = profile.payer
 
     cached = RteCache.read(
-      payer_code: payer&.payer_code || "UNKNOWN",
-      member_id:  profile.member_id
+      payer_code: payer&.payer_code || 'UNKNOWN',
+      member_id: profile.member_id
     )
 
     if cached
@@ -32,9 +32,9 @@ class InsuranceVerificationWorker
     response = FakePayerGateway.new(verification).check_eligibility
 
     RteCache.write(
-      payer_code: payer&.payer_code || "UNKNOWN",
-      member_id:  profile.member_id,
-      data:       response
+      payer_code: payer&.payer_code || 'UNKNOWN',
+      member_id: profile.member_id,
+      data: response
     )
 
     apply_response(verification, response)
@@ -56,15 +56,15 @@ class InsuranceVerificationWorker
       return unless verification.may_mark_verified?
 
       verification.update!(
-        payer_name:         response[:payer_name],
-        plan_name:          response[:plan_name],
-        copay_cents:        response[:copay_cents],
-        deductible_cents:   response[:deductible_cents],
-        oop_max_cents:      response[:oop_max_cents],
-        raw_response:       response,
+        payer_name: response[:payer_name],
+        plan_name: response[:plan_name],
+        copay_cents: response[:copay_cents],
+        deductible_cents: response[:deductible_cents],
+        oop_max_cents: response[:oop_max_cents],
+        raw_response: response,
         external_reference: response[:reference_id],
-        verified_at:        Time.current,
-        expires_at:         24.hours.from_now
+        verified_at: Time.current,
+        expires_at: 24.hours.from_now
       )
       verification.mark_verified!
       verification.broadcast!
@@ -77,7 +77,7 @@ class InsuranceVerificationWorker
 
       verification.update!(
         raw_response: response,
-        verified_at:  Time.current
+        verified_at: Time.current
       )
       verification.mark_verified!
       verification.broadcast!
