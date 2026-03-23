@@ -13,6 +13,9 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/_lib.sh"
 
+# Error trap to catch unexpected failures
+trap 'echo ""; fail "Smoke test failed unexpectedly at line $LINENO"' ERR
+
 require_command curl
 
 ########################################
@@ -315,6 +318,7 @@ case "$ENV" in
     echo "  bin/smoke              Interactive environment selection"
     echo "  bin/smoke local        Test localhost (API :3000, Portal :3001)"
     echo "  bin/smoke production   Test production"
+    echo "  bin/smoke local -v     Verbose mode (shows more details on failure)"
     echo ""
     exit 0
     ;;
@@ -323,6 +327,10 @@ case "$ENV" in
     run_env "$ENV"
     ;;
   *)
+    # Handle verbose flag if provided as second argument
+    if [[ "${2:-}" == "-v" || "${2:-}" == "--verbose" ]]; then
+      export DEBUG=1
+    fi
     run_env "$ENV"
     ;;
 esac
