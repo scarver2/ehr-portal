@@ -2,6 +2,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { getGraphQLClient } from './graphql'
+import type { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies'
 
 // Mock next/headers
 vi.mock('next/headers', () => ({
@@ -27,7 +28,7 @@ describe('getGraphQLClient', () => {
 
   it('creates a GraphQL client successfully', async () => {
     const mockCookies = createMockCookies()
-    vi.mocked(cookies).mockResolvedValueOnce(mockCookies as any)
+    vi.mocked(cookies).mockResolvedValueOnce(mockCookies as unknown as RequestCookies)
 
     const client = await getGraphQLClient()
 
@@ -37,7 +38,7 @@ describe('getGraphQLClient', () => {
 
   it('reads auth_token from cookies', async () => {
     const mockCookies = createMockCookies('test-token-123')
-    vi.mocked(cookies).mockResolvedValueOnce(mockCookies as any)
+    vi.mocked(cookies).mockResolvedValueOnce(mockCookies as unknown as RequestCookies)
 
     await getGraphQLClient()
 
@@ -46,7 +47,7 @@ describe('getGraphQLClient', () => {
 
   it('returns client when token exists', async () => {
     const mockCookies = createMockCookies('valid-token')
-    vi.mocked(cookies).mockResolvedValueOnce(mockCookies as any)
+    vi.mocked(cookies).mockResolvedValueOnce(mockCookies as unknown as RequestCookies)
 
     const client = await getGraphQLClient()
 
@@ -55,7 +56,7 @@ describe('getGraphQLClient', () => {
 
   it('returns client when token is missing', async () => {
     const mockCookies = createMockCookies()
-    vi.mocked(cookies).mockResolvedValueOnce(mockCookies as any)
+    vi.mocked(cookies).mockResolvedValueOnce(mockCookies as unknown as RequestCookies)
 
     const client = await getGraphQLClient()
 
@@ -64,7 +65,7 @@ describe('getGraphQLClient', () => {
 
   it('client is a GraphQLClient instance', async () => {
     const mockCookies = createMockCookies()
-    vi.mocked(cookies).mockResolvedValueOnce(mockCookies as any)
+    vi.mocked(cookies).mockResolvedValueOnce(mockCookies as unknown as RequestCookies)
 
     const client = await getGraphQLClient()
 

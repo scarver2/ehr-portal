@@ -24,11 +24,19 @@ const localStorageMock = (() => {
 Object.defineProperty(window, 'localStorage', { value: localStorageMock })
 
 // Test component that uses auth context
+interface User {
+  id: number
+  email: string
+  role: string
+  provider_id: number | null
+  roles: string[]
+}
+
 function TestComponent() {
   let token: string | null = null
-  let user: any = null
+  let user: User | null = null
   let setToken: ((t: string | null) => void) | null = null
-  let setUser: ((u: any) => void) | null = null
+  let setUser: ((u: User | null) => void) | null = null
   let error: Error | null = null
 
   try {
