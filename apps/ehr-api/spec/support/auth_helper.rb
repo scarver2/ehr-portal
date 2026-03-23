@@ -38,6 +38,12 @@ module AuthHelper
   def delete_with_auth(path, user:, **opts)
     api_request_with_auth(:delete, path, user: user, **opts)
   end
+
+  # Parse JSON response body
+  def response_json
+    JSON.parse(response.body)
+  end
+  alias_method :response_body, :response_json
 end
 
 RSpec.configure do |config|

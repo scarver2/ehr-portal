@@ -4,16 +4,15 @@
 require "rails_helper"
 
 RSpec.describe "Api::InsuranceVerifications", type: :request do
+  include_context 'with sidekiq'
+
   let(:user)    { create(:user, :patient) }
   let(:payer)   { create(:payer) }
-  let!(:profile) { create(:insurance_profile, user: user, payer: payer) }
+  let(:profile) { create(:insurance_profile, user: user, payer: payer) }
 
   before do
     allow(InsuranceVerificationChannel).to receive(:broadcast_to)
-    Sidekiq::Testing.fake!
   end
-
-  after { Sidekiq::Worker.clear_all }
 
   describe "POST /api/insurance_verifications" do
     context "when unauthenticated" do
@@ -44,7 +43,6 @@ RSpec.describe "Api::InsuranceVerifications", type: :request do
       end
 
       it "enqueues a worker job" do
-        Sidekiq::Worker.clear_all
         post "/api/insurance_verifications",
              params: { patient_id: user.id },
              headers: headers,
@@ -57,8 +55,7 @@ RSpec.describe "Api::InsuranceVerifications", type: :request do
              params: { patient_id: user.id },
              headers: headers,
              as: :json
-        body = JSON.parse(response.body)
-        expect(body["status"]).to eq("queued")
+        expect(response_json["status"]).to eq("queued")
       end
 
       it "returns 422 when the patient has no insurance profile" do
@@ -68,7 +65,7 @@ RSpec.describe "Api::InsuranceVerifications", type: :request do
              headers: headers,
              as: :json
         expect(response).to have_http_status(:unprocessable_content)
-        expect(JSON.parse(response.body)["error"]).to include("no insurance profile")
+        expect(response_json["error"]).to include("no insurance profile")
       end
     end
   end
@@ -91,8 +88,7 @@ RSpec.describe "Api::InsuranceVerifications", type: :request do
             headers: headers,
             as: :json
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
-        expect(body["status"]).to eq("verified")
+        expect(response_json["status"]).to eq("verified")
       end
     end
   end
@@ -108,9 +104,8 @@ RSpec.describe "Api::InsuranceVerifications", type: :request do
             headers: headers,
             as: :json
         expect(response).to have_http_status(:ok)
-        body = JSON.parse(response.body)
-        expect(body).to be_an(Array)
-        expect(body.first["id"]).to eq(verification.id)
+        expect(response_json).to be_an(Array)
+        expect(response_json.first["id"]).to eq(verification.id)
       end
     end
   end
