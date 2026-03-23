@@ -13,9 +13,9 @@
 
 return unless Rails.env.development?
 
-require "rack-mini-profiler"
-require "stackprof"
+require 'rack-mini-profiler'
+require 'stackprof'
 
-Rack::MiniProfiler.config.position                           = "bottom-right"
+Rack::MiniProfiler.config.position                           = 'bottom-right'
 Rack::MiniProfiler.config.enabled                            = true
 Rack::MiniProfiler.config.enable_hotwire_turbo_drive_support = false

@@ -2,18 +2,18 @@
 # frozen_string_literal: true
 
 ALLOWED_ORIGINS = [
-  "https://ehr.stancarver.com",
-  ("http://localhost:3001" if Rails.env.development?)
+  'https://ehr.stancarver.com',
+  ('http://localhost:3001' if Rails.env.development?)
 ].compact.freeze
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
     origins(*ALLOWED_ORIGINS)
 
-    resource "*",
-      headers: :any,
-      methods: %i[get post put patch delete options head],
-      credentials: false
-    # Note: expose header removed — Rodauth returns tokens in response body, not headers
+    resource '*',
+             headers: :any,
+             methods: %i[get post put patch delete options head],
+             credentials: false
+    # NOTE: expose header removed — Rodauth returns tokens in response body, not headers
   end
 end
