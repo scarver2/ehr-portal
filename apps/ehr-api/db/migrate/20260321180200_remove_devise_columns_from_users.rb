@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RemoveDeviseColumnsFromUsers < ActiveRecord::Migration[8.1]
   def change
     remove_column :users, :encrypted_password, :string if column_exists?(:users, :encrypted_password)

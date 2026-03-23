@@ -9,7 +9,7 @@ class CreatePatients < ActiveRecord::Migration[8.1]
       t.string :last_name,               null: false
       t.date   :date_of_birth
       t.string :gender
-      t.string :mrn,                     index: { unique: true }
+      t.string :mrn, index: { unique: true }
       t.string :phone
       t.string :address
       t.string :emergency_contact_name
@@ -19,7 +19,7 @@ class CreatePatients < ActiveRecord::Migration[8.1]
     end
 
     # Generated tsvector column for full-text name search (no extra gem needed)
-    execute <<~SQL
+    execute <<~SQL.squish
       ALTER TABLE patients
         ADD COLUMN searchable_name tsvector
         GENERATED ALWAYS AS (
@@ -29,7 +29,7 @@ class CreatePatients < ActiveRecord::Migration[8.1]
     SQL
 
     add_index :patients, :searchable_name, using: :gin
-    add_index :patients, [:last_name, :first_name]
+    add_index :patients, %i[last_name first_name]
   end
 
   def down

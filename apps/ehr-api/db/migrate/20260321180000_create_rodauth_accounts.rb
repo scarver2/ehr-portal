@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateRodauthAccounts < ActiveRecord::Migration[8.1]
   def change
     create_table :accounts do |t|
@@ -12,7 +14,7 @@ class CreateRodauthAccounts < ActiveRecord::Migration[8.1]
       t.string :password_hash, null: false
 
       # Account status (unverified, verified, closed)
-      t.string :status, null: false, default: "unverified"
+      t.string :status, null: false, default: 'unverified'
 
       # Email verification
       t.string :email_auth_token
