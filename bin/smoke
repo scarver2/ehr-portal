@@ -17,6 +17,7 @@ source "$SCRIPT_DIR/_lib.sh"
 trap 'echo ""; fail "Smoke test failed unexpectedly at line $LINENO"' ERR
 
 require_command curl
+require_command jq
 
 ########################################
 # Environment URLs
@@ -85,11 +86,21 @@ smoke_login() {
   local email="$3"
   local password="$4"
 
+  if [[ "${DEBUG:-}" == "1" ]]; then
+    echo "  (DEBUG: smoke_login attempting POST to $url)"
+  fi
+
   local data
-  data=$(jq -n --arg email "$email" --arg password "$password" '{user: {email: $email, password: $password}}')
+  data=$(jq -n --arg email "$email" --arg password "$password" '{user: {email: $email, password: $password}}') || {
+    echo "  ✖ Failed to construct JSON payload with jq"
+    FAIL=$((FAIL + 1))
+    return
+  }
 
   local response_file
   response_file=$(mktemp)
+  local headers_file
+  headers_file=$(mktemp)
 
   local http_code
   http_code=$(curl \
@@ -100,39 +111,39 @@ smoke_login() {
     --connect-timeout 5 \
     --request POST \
     --header "Content-Type: application/json" \
-    --dump-header - \
+    --dump-header "$headers_file" \
     --data "$data" \
-    "$url" 2>/dev/null | tail -1)
+    "$url" 2>/dev/null || echo "000")
 
   local padded
   padded=$(printf "%-50s" "$label")
 
   if [[ "$http_code" == "200" ]]; then
-    # Check for Authorization header with Bearer token
-    local auth_header
-    auth_header=$(curl \
-      --silent \
-      --max-time 10 \
-      --connect-timeout 5 \
-      --request POST \
-      --header "Content-Type: application/json" \
-      --data "$data" \
-      --dump-header - \
-      "$url" 2>/dev/null | grep -i "^Authorization:" | head -1)
+    # Check for token in response body (Rodauth JWT response format)
+    local token
+    token=$(jq -r '.token // empty' "$response_file" 2>/dev/null || echo "")
 
-    if [[ "$auth_header" =~ Bearer\ [A-Za-z0-9._-]+ ]]; then
+    if [[ -n "$token" && "$token" =~ ^eyJ ]]; then
       echo "  ✔ ${padded} HTTP 200 (JWT token received)"
       PASS=$((PASS + 1))
     else
-      echo "  ✖ ${padded} HTTP 200 but no valid JWT token in Authorization header"
+      echo "  ✖ ${padded} HTTP 200 but no valid JWT token in response"
+      if [[ "${DEBUG:-}" == "1" ]]; then
+        echo "     Response body:"
+        cat "$response_file" | sed 's/^/     /'
+      fi
       FAIL=$((FAIL + 1))
     fi
   else
     echo "  ✖ ${padded} expected HTTP 200, got HTTP ${http_code}"
+    if [[ "${DEBUG:-}" == "1" ]]; then
+      echo "     Response body:"
+      cat "$response_file" | sed 's/^/     /'
+    fi
     FAIL=$((FAIL + 1))
   fi
 
-  rm -f "$response_file"
+  rm -f "$response_file" "$headers_file"
 }
 
 # smoke_activeadmin_login LABEL API_URL EMAIL PASSWORD
@@ -158,10 +169,18 @@ smoke_activeadmin_login() {
     --cookie-jar "$cookie_file" \
     "$login_url" 2>/dev/null)
 
-  # Try multiple patterns for CSRF token extraction
-  csrf_token=$(echo "$login_page" | grep 'authenticity_token' | sed 's/.*value="\([^"]*\).*/\1/' | head -1)
+  # Extract CSRF token from meta tag (Rails 7.0+ format) or form field
+  # Try meta tag format first: <meta name="csrf-token" content="TOKEN" />
+  csrf_token=$(echo "$login_page" | sed -n 's/.*name="csrf-token"[^>]*content="\([^"]*\)".*/\1/p' | head -1)
+
   if [[ -z "$csrf_token" ]]; then
-    csrf_token=$(echo "$login_page" | grep 'authenticity_token' | sed "s/.*value='\([^']*\).*/\1/" | head -1)
+    # Try legacy form input format: <input name="authenticity_token" value="TOKEN" />
+    csrf_token=$(echo "$login_page" | sed -n 's/.*name="authenticity_token"[^>]*value="\([^"]*\)".*/\1/p' | head -1)
+  fi
+
+  if [[ -z "$csrf_token" ]]; then
+    # Try alternative form format with reversed attributes
+    csrf_token=$(echo "$login_page" | sed -n 's/.*value="\([^"]*\)"[^>]*name="authenticity_token".*/\1/p' | head -1)
   fi
 
   local padded
