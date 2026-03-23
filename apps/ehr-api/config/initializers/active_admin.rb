@@ -7,12 +7,12 @@ ActiveAdmin.setup do |config|
   # Set the title that is displayed on the main layout
   # for each of the active admin pages.
   #
-  config.site_title = "EHR Portal Admin"
+  config.site_title = 'EHR Portal Admin'
 
   # Set the link url for the title. For example, to take
   # users to your main site. Defaults to no link.
   #
-  config.site_title_link = "/admin"
+  config.site_title_link = '/admin'
 
   # Set an optional image to be displayed for the header
   # instead of a string (overrides :site_title)
@@ -177,7 +177,7 @@ ActiveAdmin.setup do |config|
   # You can exclude possibly sensitive model attributes from being displayed,
   # added to forms, or exported by default by ActiveAdmin
   #
-  config.filter_attributes = [:encrypted_password, :password, :password_confirmation]
+  config.filter_attributes = %i[encrypted_password password password_confirmation]
 
   # == Localize Date/Time Format
   #
@@ -252,25 +252,25 @@ ActiveAdmin.setup do |config|
   #
   config.namespace :admin do |admin|
     admin.build_menu do |menu|
-      menu.add label: "Tools", priority: 98 do |tools|
+      menu.add label: 'Tools', priority: 98 do |tools|
         if Rails.env.development?
-          tools.add label:         "GraphiQL",
-                    url:           "/graphiql",
-                    priority:      1,
-                    html_options:  { target: "_blank" }
+          tools.add label: 'GraphiQL',
+                    url: '/graphiql',
+                    priority: 1,
+                    html_options: { target: '_blank' }
         end
-        tools.add label:        "Honeybadger",
-                  url:          "https://app.honeybadger.io/projects/138326/insights/dashboards",
-                  priority:     2,
-                  html_options: { target: "_blank", rel: "noopener noreferrer" }
-        tools.add label:        "PGHero",
-                  url:          "/pghero",
-                  priority:     3,
-                  html_options: { target: "_blank" }
-        tools.add label:        "Sidekiq",
-                  url:          "/sidekiq",
-                  priority:     4,
-                  html_options: { target: "_blank" }
+        tools.add label: 'Honeybadger',
+                  url: 'https://app.honeybadger.io/projects/138326/insights/dashboards',
+                  priority: 2,
+                  html_options: { target: '_blank', rel: 'noopener noreferrer' }
+        tools.add label: 'PGHero',
+                  url: '/pghero',
+                  priority: 3,
+                  html_options: { target: '_blank' }
+        tools.add label: 'Sidekiq',
+                  url: '/sidekiq',
+                  priority: 4,
+                  html_options: { target: '_blank' }
       end
     end
   end
@@ -344,11 +344,11 @@ ActiveAdmin.setup do |config|
 
   # == Footer
   config.footer = proc do
-    build_ref = [ENV.fetch("GIT_BRANCH", nil), ENV.fetch("GIT_SHA", nil)].compact.presence&.join(" ") || "dev"
+    build_ref = [ENV.fetch('GIT_BRANCH', nil), ENV.fetch('GIT_SHA', nil)].compact.presence&.join(' ') || 'dev'
     para do
-      strong { "EHR Portal" }
+      strong { 'EHR Portal' }
       text_node " \u00A92026 "
-      a "Stan Carver II", href: "https://stancarver.com", target: "_blank"
+      a 'Stan Carver II', href: 'https://stancarver.com', target: '_blank'
       text_node " \u2022 #{build_ref}"
       text_node " \u2022 #{Time.current.strftime('%Y-%m-%d %H:%M')}"
     end

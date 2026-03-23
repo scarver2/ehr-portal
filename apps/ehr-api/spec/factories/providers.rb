@@ -6,7 +6,7 @@ FactoryBot.define do
     first_name  { Faker::Name.first_name }
     last_name   { Faker::Name.last_name }
     npi         { Faker::Number.number(digits: 10).to_s }
-    association :specialty
-    clinic_name { "General Hospital" }
+    specialty
+    clinic_name { 'General Hospital' }
   end
 end

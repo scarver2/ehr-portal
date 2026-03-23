@@ -27,7 +27,7 @@ RSpec.describe ApplicationController do
     context 'when a user is signed in' do
       let(:user) { create(:user) }
 
-      before { get "/api/insurance_verifications", headers: auth_headers_for(user), as: :json }
+      before { get '/api/insurance_verifications', headers: auth_headers_for(user), as: :json }
 
       skip 'sets Honeybadger context with the user id and email' do
         post '/graphql', params: payload, headers: headers

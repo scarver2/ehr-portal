@@ -16,7 +16,7 @@ ActiveAdmin.register Patient do
     selectable_column
     id_column
     column :mrn
-    column(:name) { |p| p.full_name }
+    column(:name, &:full_name)
     column :date_of_birth
     column :gender
     column :phone
@@ -30,7 +30,7 @@ ActiveAdmin.register Patient do
       row :mrn
       row :first_name
       row :last_name
-      row(:age) { |p| p.age }
+      row(:age, &:age)
       row :date_of_birth
       row :gender
       row :phone
@@ -42,40 +42,40 @@ ActiveAdmin.register Patient do
       row :updated_at
     end
 
-    panel "Encounters" do
+    panel 'Encounters' do
       table_for patient.encounters.recent do
         column :encountered_at
         column :encounter_type
         column :status
         column :provider
         column :chief_complaint
-        column("") { |e| link_to "View", admin_encounter_path(e) }
+        column('') { |e| link_to 'View', admin_encounter_path(e) }
       end
     end
   end
 
   form do |f|
-    f.inputs "Identity" do
+    f.inputs 'Identity' do
       f.input :mrn
       f.input :first_name
       f.input :last_name
       f.input :date_of_birth, as: :date_picker
       f.input :gender, as: :select,
-              collection: %w[male female other prefer_not_to_say],
-              include_blank: true
+                       collection: %w[male female other prefer_not_to_say],
+                       include_blank: true
     end
 
-    f.inputs "Contact" do
+    f.inputs 'Contact' do
       f.input :phone
       f.input :address
       f.input :emergency_contact_name
       f.input :emergency_contact_phone
     end
 
-    f.inputs "Account" do
+    f.inputs 'Account' do
       f.input :user, as: :select,
-              collection: User.order(:email).map { |u| [u.email, u.id] },
-              include_blank: true
+                     collection: User.order(:email).map { |u| [u.email, u.id] },
+                     include_blank: true
     end
 
     f.actions

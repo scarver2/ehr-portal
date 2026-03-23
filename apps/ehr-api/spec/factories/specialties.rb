@@ -4,6 +4,6 @@
 FactoryBot.define do
   factory :specialty do
     sequence(:name) { |n| "Specialty #{n}" }
-    category { %w[Medical Surgical Primary\ Care].sample }
+    category { ['Medical', 'Surgical', 'Primary Care'].sample }
   end
 end

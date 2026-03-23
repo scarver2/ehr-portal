@@ -23,6 +23,7 @@ class GraphqlController < ActionController::API
     render json: result
   rescue StandardError => e
     raise e unless Rails.env.development?
+
     handle_error_in_development(e)
   end
 
@@ -51,8 +52,8 @@ class GraphqlController < ActionController::API
   end
 
   def extract_token_from_request
-    auth_header = request.headers["Authorization"]
-    auth_header&.sub(/\ABearer\s+/, "")
+    auth_header = request.headers['Authorization']
+    auth_header&.sub(/\ABearer\s+/, '')
   end
 
   # Handle variables in form data, JSON body, or a blank value
@@ -79,6 +80,6 @@ class GraphqlController < ActionController::API
     logger.error e.message
     logger.error e.backtrace.join("\n")
 
-    render json: { errors: [{ message: e.message, backtrace: e.backtrace }], data: {} }, status: 500
+    render json: { errors: [{ message: e.message, backtrace: e.backtrace }], data: {} }, status: :internal_server_error
   end
 end

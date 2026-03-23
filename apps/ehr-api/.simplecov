@@ -10,9 +10,9 @@ SimpleCov.configure do
   # These Base* stubs, the schema wiring, and the generated controller contain no
   # app-specific logic and will never hit 100% without meaningless tests.
   add_filter %r{/graphql/(types|mutations|resolvers)/base_}
-  add_filter "/graphql/ehr_api_schema.rb"
-  add_filter "/controllers/graphql_controller.rb"
+  add_filter '/graphql/ehr_api_schema.rb'
+  add_filter '/controllers/graphql_controller.rb'
 
-  add_group "GraphQL", "app/graphql"
-  add_group "Admin",   "app/admin"
+  add_group 'GraphQL', 'app/graphql'
+  add_group 'Admin',   'app/admin'
 end

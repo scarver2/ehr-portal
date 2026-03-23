@@ -36,24 +36,24 @@ module ApplicationCable
       # fail after server restarts even with a valid encrypted session cookie.
       # Reading the session key directly is secure — the session is encrypted with
       # SECRET_KEY_BASE and cannot be forged.
-      raw_key = request.session["warden.user.user.key"]
+      raw_key = request.session['warden.user.user.key']
       user_id = case raw_key
                 when Array then raw_key.dig(0, 0) # Devise < 5: [[id], salt]
-                when Hash  then raw_key["id"] # Devise 5: { "id" => id, "token" => ... }
+                when Hash  then raw_key['id'] # Devise 5: { "id" => id, "token" => ... }
                 end
       user_id && User.find_by(id: user_id)
     end
 
     def extract_jwt_token
       # Try Authorization header first (standard)
-      auth_header = request.headers["Authorization"]
+      auth_header = request.headers['Authorization']
       if auth_header&.match?(/\ABearer\s+/)
-        return auth_header.sub(/\ABearer\s+/, "")
+        return auth_header.sub(/\ABearer\s+/, '')
       end
 
       # Fall back to query parameter for WebSocket
       # ActionCable can pass token via ?token=eyJ...
-      request.params["token"]
+      request.params['token']
     end
   end
 end

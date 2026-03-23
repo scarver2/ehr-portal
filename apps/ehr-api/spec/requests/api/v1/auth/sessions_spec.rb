@@ -3,16 +3,16 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Api::V1::Auth::Sessions', type: :request do
+RSpec.describe 'Api::V1::Auth::Sessions' do
   let(:user) { create(:user, :provider) }
-  let(:json) { JSON.parse(response.body) }
+  let(:json) { response.parsed_body }
 
   describe 'POST /api/v1/auth/login' do
     context 'with valid credentials' do
       before do
         post '/api/v1/auth/login',
-          params: { user: { email: user.email, password: 'Password1!' } },
-          as: :json
+             params: { user: { email: user.email, password: 'Password1!' } },
+             as: :json
       end
 
       it 'returns 200' do
@@ -48,8 +48,8 @@ RSpec.describe 'Api::V1::Auth::Sessions', type: :request do
     context 'with invalid password' do
       before do
         post '/api/v1/auth/login',
-          params: { user: { email: user.email, password: 'wrong' } },
-          as: :json
+             params: { user: { email: user.email, password: 'wrong' } },
+             as: :json
       end
 
       it 'returns 401' do
@@ -68,8 +68,8 @@ RSpec.describe 'Api::V1::Auth::Sessions', type: :request do
     context 'with an unknown email' do
       before do
         post '/api/v1/auth/login',
-          params: { user: { email: 'nobody@example.com', password: 'Password1!' } },
-          as: :json
+             params: { user: { email: 'nobody@example.com', password: 'Password1!' } },
+             as: :json
       end
 
       it 'returns 401' do
@@ -84,12 +84,12 @@ RSpec.describe 'Api::V1::Auth::Sessions', type: :request do
     context 'with missing email' do
       before do
         post '/api/v1/auth/login',
-          params: { user: { email: '', password: 'Password1!' } },
-          as: :json
+             params: { user: { email: '', password: 'Password1!' } },
+             as: :json
       end
 
       it 'returns 422' do
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
@@ -98,15 +98,15 @@ RSpec.describe 'Api::V1::Auth::Sessions', type: :request do
     context 'with a valid Bearer token' do
       let(:token) do
         post '/api/v1/auth/login',
-          params: { user: { email: user.email, password: 'Password1!' } },
-          as: :json
-        JSON.parse(response.body)['token']
+             params: { user: { email: user.email, password: 'Password1!' } },
+             as: :json
+        response.parsed_body['token']
       end
 
       before do
         delete '/api/v1/auth/logout',
-          headers: { 'Authorization' => "Bearer #{token}" },
-          as: :json
+               headers: { 'Authorization' => "Bearer #{token}" },
+               as: :json
       end
 
       it 'returns 200' do
@@ -125,7 +125,7 @@ RSpec.describe 'Api::V1::Auth::Sessions', type: :request do
     context 'without a token' do
       before do
         delete '/api/v1/auth/logout',
-          as: :json
+               as: :json
       end
 
       it 'returns 401' do
@@ -140,8 +140,8 @@ RSpec.describe 'Api::V1::Auth::Sessions', type: :request do
     context 'with an invalid token' do
       before do
         delete '/api/v1/auth/logout',
-          headers: { 'Authorization' => 'Bearer invalid.token.here' },
-          as: :json
+               headers: { 'Authorization' => 'Bearer invalid.token.here' },
+               as: :json
       end
 
       it 'returns 401' do

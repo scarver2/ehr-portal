@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
 
@@ -16,6 +18,7 @@ class ApplicationController < ActionController::Base
   # authenticated users who lack admin privileges (should not be possible - all AdminUsers are admins).
   def require_admin_role
     return if current_admin_user
+
     redirect_to new_admin_user_session_path, alert: 'Not authorized.'
   end
 

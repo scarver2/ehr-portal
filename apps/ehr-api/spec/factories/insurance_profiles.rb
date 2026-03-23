@@ -3,12 +3,12 @@
 
 FactoryBot.define do
   factory :insurance_profile do
-    association :user
-    association :payer
+    user
+    payer
 
     sequence(:member_id) { |n| "MBR#{n.to_s.rjust(7, '0')}" }
-    payer_name { "Aetna" }
-    status     { "pending" }
+    payer_name { 'Aetna' }
+    status     { 'pending' }
     raw_response { {} }
   end
 end

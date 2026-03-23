@@ -2,14 +2,14 @@
 
 FactoryBot.define do
   factory :encounter do
-    association :patient
-    association :provider, factory: :provider
+    patient
+    provider factory: %i[provider]
 
     encounter_type { :office_visit }
     status         { :scheduled }
     encountered_at { 1.day.ago }
     chief_complaint { Faker::Lorem.sentence(word_count: 4) }
-    notes          { nil }
+    notes { nil }
 
     trait :telehealth do
       encounter_type { :telehealth }

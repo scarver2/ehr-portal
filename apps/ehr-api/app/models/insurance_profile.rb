@@ -16,7 +16,7 @@ class InsuranceProfile < ApplicationRecord
   def trigger_verification
     verification = user.insurance_verifications.create!(
       insurance_profile: self,
-      payer_name:        payer_name
+      payer_name: payer_name
     )
     verification.enqueue!
     verification.broadcast!

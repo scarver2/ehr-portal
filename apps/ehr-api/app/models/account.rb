@@ -8,9 +8,9 @@ class Account < ApplicationRecord
   validates :status, presence: true, inclusion: { in: %w[unverified verified closed] }
 
   # JWT Configuration
-  JWT_ALGORITHM = "HS256"
+  JWT_ALGORITHM = 'HS256'
   JWT_TTL = 1.day
-  JWT_ISSUER = "ehr-portal-api"
+  JWT_ISSUER = 'ehr-portal-api'
 
   # Password validation using bcrypt
   def valid_password?(password)
@@ -50,11 +50,11 @@ class Account < ApplicationRecord
     payload = verify_jwt_token(token)
     return nil unless payload
 
-    user_id = payload["sub"]&.to_i
+    user_id = payload['sub']&.to_i
     return nil unless user_id
 
     user = User.find_by(id: user_id)
     # Only return user if account is verified
-    user if user && user.account&.status == "verified"
+    user if user && user.account&.status == 'verified'
   end
 end

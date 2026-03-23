@@ -5,6 +5,6 @@
 # from the Next.js portal (localhost:3001) and browser dev tools alike.
 
 if defined?(BetterErrors)
-  BetterErrors::Middleware.allow_ip! "127.0.0.0/8"
-  BetterErrors::Middleware.allow_ip! "::1"
+  BetterErrors::Middleware.allow_ip! '127.0.0.0/8'
+  BetterErrors::Middleware.allow_ip! '::1'
 end

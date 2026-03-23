@@ -4,13 +4,13 @@
 # Assigns an insurance profile to the first 10 seeded patients.
 # Runs last (z_ prefix) so payers and patients already exist.
 
-Rails.logger.debug "Seeding insurance profiles..."
+Rails.logger.debug 'Seeding insurance profiles...'
 
 patients = Patient.includes(:user).order(:id).to_a
 payers   = Payer.active.to_a
 
 if payers.empty?
-  Rails.logger.debug "  ⚠ No active payers found — skipping insurance profiles"
+  Rails.logger.debug '  ⚠ No active payers found — skipping insurance profiles'
   return
 end
 
@@ -22,11 +22,11 @@ patients.each_with_index do |patient, i|
   payer = payers[i % payers.size]
 
   InsuranceProfile.create!(
-    member_id:  "MBR#{Faker::Number.unique.number(digits: 9)}",
+    member_id: "MBR#{Faker::Number.unique.number(digits: 9)}",
     payer_name: payer.name,
-    payer:      payer,
-    status:     "pending",
-    user:       patient.user
+    payer: payer,
+    status: 'pending',
+    user: patient.user
   )
 
   seeded += 1

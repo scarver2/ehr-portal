@@ -3,25 +3,25 @@
 
 FactoryBot.define do
   factory :insurance_verification do
-    association :user
-    association :insurance_profile
+    user
+    insurance_profile
 
-    payer_name { "Aetna" }
-    status     { "pending" }
+    payer_name { 'Aetna' }
+    status     { 'pending' }
     raw_response { {} }
 
     trait :queued do
-      status { "queued" }
+      status { 'queued' }
     end
 
     trait :requesting do
-      status { "requesting" }
+      status { 'requesting' }
     end
 
     trait :verified do
-      status       { "verified" }
-      payer_name   { "Aetna" }
-      plan_name    { "Silver PPO" }
+      status       { 'verified' }
+      payer_name   { 'Aetna' }
+      plan_name    { 'Silver PPO' }
       copay_cents  { 2500 }
       deductible_cents { 100_000 }
       oop_max_cents    { 500_000 }
@@ -30,8 +30,8 @@ FactoryBot.define do
     end
 
     trait :failed do
-      status        { "failed" }
-      error_message { "Simulated gateway error" }
+      status        { 'failed' }
+      error_message { 'Simulated gateway error' }
     end
   end
 end

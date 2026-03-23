@@ -9,9 +9,9 @@ class Patient < ApplicationRecord
   validates :mrn, uniqueness: true, allow_blank: true
   validates :photo_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true }
 
-  scope :search_by_name, ->(query) {
+  scope :search_by_name, lambda { |query|
     # Build a prefix-matching tsquery: "jan" → "jan:*", "jane smith" → "jane:* & smith:*"
-    terms = query.to_s.split.map { |w| "#{w.gsub(/[^a-zA-Z0-9]/, '')}:*" }.join(" & ")
+    terms = query.to_s.split.map { |w| "#{w.gsub(/[^a-zA-Z0-9]/, '')}:*" }.join(' & ')
     where("searchable_name @@ to_tsquery('simple', ?)", terms)
   }
   scope :alphabetical, -> { order(:last_name, :first_name) }
@@ -23,7 +23,7 @@ class Patient < ApplicationRecord
   def age
     return nil unless date_of_birth
 
-    now = Date.today
+    now = Time.zone.today
     years_elapsed = now.year - date_of_birth.year
     years_elapsed -= 1 unless birthday_passed_this_year?(now)
     years_elapsed
@@ -33,7 +33,7 @@ class Patient < ApplicationRecord
 
   # Check if the patient's birthday has already occurred this calendar year.
   # Returns true if we've passed or are on the birthday month/day.
-  def birthday_passed_this_year?(reference_date = Date.today)
+  def birthday_passed_this_year?(reference_date = Time.zone.today)
     dob = date_of_birth
     return false unless dob
 
@@ -41,12 +41,12 @@ class Patient < ApplicationRecord
       (reference_date.month == dob.month && reference_date.day >= dob.day)
   end
 
-  def self.ransackable_attributes(auth_object = nil)
+  def self.ransackable_attributes(_auth_object = nil)
     %w[address date_of_birth emergency_contact_name emergency_contact_phone
        first_name gender id last_name mrn phone created_at updated_at]
   end
 
-  def self.ransackable_associations(auth_object = nil)
+  def self.ransackable_associations(_auth_object = nil)
     %w[encounters user]
   end
 end

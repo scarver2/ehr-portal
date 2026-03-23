@@ -1,7 +1,7 @@
 # apps/ehr-api/config/environments/development.rb
 # frozen_string_literal: true
 
-require "active_support/core_ext/integer/time"
+require 'active_support/core_ext/integer/time'
 
 Rails.application.configure do
   # Don't filter any parameters (e.g., passwords) so they show up in logs
@@ -19,8 +19,8 @@ Rails.application.configure do
   # config/   — application.rb, environments/*, initializers/*, routes.rb, puma.rb, etc.
   #             Rails already watches routes.rb and locales; Listen deduplicates, no double restart.
   # lib/      — non-autoloaded support code; watch proactively so additions are picked up.
-  config.watchable_dirs[Rails.root.join("config").to_s] = [:rb]
-  config.watchable_dirs[Rails.root.join("lib").to_s]    = [:rb]
+  config.watchable_dirs[Rails.root.join('config').to_s] = [:rb]
+  config.watchable_dirs[Rails.root.join('lib').to_s]    = [:rb]
 
   # Do not eager load code on boot.
   config.eager_load = false
@@ -33,8 +33,8 @@ Rails.application.configure do
 
   # Enable/disable Action Controller caching. By default Action Controller caching is disabled.
   # Run rails dev:cache to toggle Action Controller caching.
-  if Rails.root.join("tmp/caching-dev.txt").exist?
-    config.public_file_server.headers = { "cache-control" => "public, max-age=#{2.days.to_i}" }
+  if Rails.root.join('tmp/caching-dev.txt').exist?
+    config.public_file_server.headers = { 'cache-control' => "public, max-age=#{2.days.to_i}" }
   else
     config.action_controller.perform_caching = false
   end
@@ -68,6 +68,6 @@ Rails.application.configure do
 
   # Inject LiveReload script into HTML responses (ActiveAdmin pages) so the browser
   # refreshes automatically when guard-livereload detects file changes.
-  require "rack-livereload"
+  require 'rack-livereload'
   config.middleware.use Rack::LiveReload
 end

@@ -3,7 +3,7 @@
 
 class InsuranceVerificationChannel < ApplicationCable::Channel
   def subscribed
-    reject unless current_user.present?
+    reject if current_user.blank?
 
     stream_for current_user
   end

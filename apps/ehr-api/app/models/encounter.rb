@@ -9,18 +9,18 @@ class Encounter < ApplicationRecord
   has_many :diagnoses, dependent: :destroy, inverse_of: :encounter
 
   enum :encounter_type, {
-    office_visit:  "office_visit",
-    telehealth:    "telehealth",
-    emergency:     "emergency",
-    follow_up:     "follow_up",
-    annual_exam:   "annual_exam"
+    office_visit: 'office_visit',
+    telehealth: 'telehealth',
+    emergency: 'emergency',
+    follow_up: 'follow_up',
+    annual_exam: 'annual_exam'
   }, validate: true
 
   enum :status, {
-    scheduled:   "scheduled",
-    in_progress: "in_progress",
-    completed:   "completed",
-    cancelled:   "cancelled"
+    scheduled: 'scheduled',
+    in_progress: 'in_progress',
+    completed: 'completed',
+    cancelled: 'cancelled'
   }, validate: true
 
   validates :encountered_at, presence: true
@@ -30,13 +30,13 @@ class Encounter < ApplicationRecord
   scope :for_patient,  ->(patient)  { where(patient: patient) }
   scope :for_provider, ->(provider) { where(provider: provider) }
   scope :recent,                    -> { order(encountered_at: :desc) }
-  scope :completed,                 -> { where(status: "completed") }
+  scope :completed,                 -> { where(status: 'completed') }
 
-  def self.ransackable_attributes(auth_object = nil)
+  def self.ransackable_attributes(_auth_object = nil)
     %w[chief_complaint encountered_at encounter_type id patient_id provider_id status created_at updated_at]
   end
 
-  def self.ransackable_associations(auth_object = nil)
+  def self.ransackable_associations(_auth_object = nil)
     %w[patient provider vitals diagnoses]
   end
 end

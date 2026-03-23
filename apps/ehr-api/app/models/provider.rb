@@ -14,14 +14,14 @@ class Provider < ApplicationRecord
   end
 
   def location
-    [city, state].compact.join(", ")
+    [city, state].compact.join(', ')
   end
 
-  def self.ransackable_attributes(auth_object = nil)
+  def self.ransackable_attributes(_auth_object = nil)
     %w[city clinic_name created_at first_name id last_name npi specialty_id state updated_at zip]
   end
 
-  def self.ransackable_associations(auth_object = nil)
+  def self.ransackable_associations(_auth_object = nil)
     %w[encounters specialty user]
   end
 end
