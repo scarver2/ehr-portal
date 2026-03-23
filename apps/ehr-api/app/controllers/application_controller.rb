@@ -5,20 +5,12 @@ class ApplicationController < ActionController::Base
 
   before_action :set_honeybadger_context
 
-  # Disable CSRF protection for localhost/development smoke tests
+  # Disable CSRF protection for development smoke tests
   # This allows the smoke test script to POST login requests without extracting
   # session-specific CSRF tokens. CSRF protection remains enabled in staging/production.
-  skip_before_action :verify_authenticity_token, if: :localhost_request?
+  skip_before_action :verify_authenticity_token, if: :development?
 
   private
-
-  # Check if request is from localhost (for development/testing)
-  def localhost_request?
-    return false unless Rails.env.development?
-
-    # Match localhost, 127.0.0.1, and local IP addresses
-    request.host.match?(/\Alocalhost\z|\A127\.0\.0\.1\z|\A::1\z/)
-  end
 
   # Return the authenticated admin user (for ActiveAdmin)
   # Admin authentication is handled by Devise for AdminUser model
