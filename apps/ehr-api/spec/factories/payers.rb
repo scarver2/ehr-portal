@@ -5,8 +5,8 @@ FactoryBot.define do
   factory :payer do
     sequence(:name)       { |n| "Payer #{n}" }
     sequence(:payer_code) { |n| "PAYER#{n.to_s.rjust(3, '0')}" }
-    clearinghouse         { "Availity" }
-    api_endpoint          { "https://api.availity.com/eligibility" }
+    clearinghouse         { 'Availity' }
+    api_endpoint          { 'https://api.availity.com/eligibility' }
     requires_auth         { true }
     active                { true }
     response_time_ms      { 1200 }

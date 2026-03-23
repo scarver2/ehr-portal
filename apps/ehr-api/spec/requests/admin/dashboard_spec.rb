@@ -3,7 +3,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Admin::Dashboard', type: :request do
+RSpec.describe 'Admin::Dashboard' do
   describe 'GET /admin' do
     context 'when not authenticated' do
       it 'redirects to login' do
@@ -28,7 +28,6 @@ RSpec.describe 'Admin::Dashboard', type: :request do
 
     %i[provider staff patient].each do |role|
       context "when authenticated as #{role}" do
-
         it 'signs out and redirects to login' do
           get '/admin'
           expect(response).to redirect_to(new_admin_user_session_path)

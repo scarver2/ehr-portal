@@ -6,7 +6,10 @@ require 'rails_helper'
 RSpec.describe Types::ProviderType do
   subject(:fields) { described_class.fields }
 
-  it { is_expected.to include('id', 'firstName', 'lastName', 'fullName', 'npi', 'specialty', 'clinicName', 'createdAt', 'updatedAt') }
+  it {
+    expect(subject).to include('id', 'firstName', 'lastName', 'fullName', 'npi', 'specialty', 'clinicName', 'createdAt',
+                               'updatedAt')
+  }
 
   describe 'field nullability' do
     it 'marks id as non-null' do
@@ -23,14 +26,14 @@ RSpec.describe Types::ProviderType do
   end
 
   describe '#full_name resolver' do
-    let(:provider) { create(:provider, first_name: 'Jane', last_name: 'Doe') }
-
     subject(:result) do
       EhrApiSchema.execute(
         "{ provider(id: \"#{provider.id}\") { fullName } }",
         context: {}
       )
     end
+
+    let(:provider) { create(:provider, first_name: 'Jane', last_name: 'Doe') }
 
     it 'returns no errors' do
       expect(result['errors']).to be_nil
@@ -43,14 +46,14 @@ RSpec.describe Types::ProviderType do
 
   describe '#location resolver' do
     context 'when the provider has city and state' do
-      let(:provider) { create(:provider, city: 'Boston', state: 'MA') }
-
       subject(:result) do
         EhrApiSchema.execute(
           "{ provider(id: \"#{provider.id}\") { location } }",
           context: {}
         )
       end
+
+      let(:provider) { create(:provider, city: 'Boston', state: 'MA') }
 
       it 'returns no errors' do
         expect(result['errors']).to be_nil
@@ -62,14 +65,14 @@ RSpec.describe Types::ProviderType do
     end
 
     context 'when the provider has no city or state' do
-      let(:provider) { create(:provider, city: nil, state: nil) }
-
       subject(:result) do
         EhrApiSchema.execute(
           "{ provider(id: \"#{provider.id}\") { location } }",
           context: {}
         )
       end
+
+      let(:provider) { create(:provider, city: nil, state: nil) }
 
       it 'returns no errors' do
         expect(result['errors']).to be_nil

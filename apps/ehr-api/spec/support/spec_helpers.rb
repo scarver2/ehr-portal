@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/support/spec_helpers.rb
 # Shared helpers for test optimization and cleaner specs
 
@@ -36,7 +38,7 @@ RSpec.configure do |config|
   end
 
   RSpec.shared_examples 'a GraphQL list field' do |field_name|
-    include_examples 'a GraphQL field', field_name
+    it_behaves_like 'a GraphQL field', field_name
     specify { expect(subject.type.list?).to be true }
   end
 

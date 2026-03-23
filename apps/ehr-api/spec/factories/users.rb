@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/factories/users.rb
 
 FactoryBot.define do
@@ -43,6 +45,6 @@ FactoryBot.define do
       end
     end
 
-    # Note: :admin trait removed — admin users are now AdminUser model only
+    # NOTE: :admin trait removed — admin users are now AdminUser model only
   end
 end

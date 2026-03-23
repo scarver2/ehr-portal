@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/support/auth_helper.rb
 # Authentication helpers for testing
 
@@ -15,35 +17,35 @@ module AuthHelper
   end
 
   # Make POST API request with JWT authentication
-  def post_with_auth(path, user:, **opts)
-    api_request_with_auth(:post, path, user: user, **opts)
+  def post_with_auth(path, user:, **)
+    api_request_with_auth(:post, path, user: user, **)
   end
 
   # Make GET API request with JWT authentication
-  def get_with_auth(path, user:, **opts)
-    api_request_with_auth(:get, path, user: user, **opts)
+  def get_with_auth(path, user:, **)
+    api_request_with_auth(:get, path, user: user, **)
   end
 
   # Make PUT API request with JWT authentication
-  def put_with_auth(path, user:, **opts)
-    api_request_with_auth(:put, path, user: user, **opts)
+  def put_with_auth(path, user:, **)
+    api_request_with_auth(:put, path, user: user, **)
   end
 
   # Make PATCH API request with JWT authentication
-  def patch_with_auth(path, user:, **opts)
-    api_request_with_auth(:patch, path, user: user, **opts)
+  def patch_with_auth(path, user:, **)
+    api_request_with_auth(:patch, path, user: user, **)
   end
 
   # Make DELETE API request with JWT authentication
-  def delete_with_auth(path, user:, **opts)
-    api_request_with_auth(:delete, path, user: user, **opts)
+  def delete_with_auth(path, user:, **)
+    api_request_with_auth(:delete, path, user: user, **)
   end
 
   # Parse JSON response body
   def response_json
     JSON.parse(response.body)
   end
-  alias_method :response_body, :response_json
+  alias response_body response_json
 end
 
 RSpec.configure do |config|

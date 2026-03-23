@@ -2,10 +2,10 @@
 
 FactoryBot.define do
   factory :diagnosis do
-    association :encounter
+    encounter
 
-    icd10_code   { "Z00.00" }
-    description  { "Encounter for general adult medical examination without abnormal findings" }
+    icd10_code   { 'Z00.00' }
+    description  { 'Encounter for general adult medical examination without abnormal findings' }
     status       { :active }
     diagnosed_at { Time.current }
     notes        { nil }
@@ -27,20 +27,20 @@ FactoryBot.define do
     end
 
     trait :hypertension do
-      icd10_code  { "I10" }
-      description { "Essential (primary) hypertension" }
+      icd10_code  { 'I10' }
+      description { 'Essential (primary) hypertension' }
       status      { :chronic }
     end
 
     trait :type2_diabetes do
-      icd10_code  { "E11.9" }
-      description { "Type 2 diabetes mellitus without complications" }
+      icd10_code  { 'E11.9' }
+      description { 'Type 2 diabetes mellitus without complications' }
       status      { :chronic }
     end
 
     trait :upper_respiratory do
-      icd10_code  { "J06.9" }
-      description { "Acute upper respiratory infection, unspecified" }
+      icd10_code  { 'J06.9' }
+      description { 'Acute upper respiratory infection, unspecified' }
       status      { :active }
     end
   end
