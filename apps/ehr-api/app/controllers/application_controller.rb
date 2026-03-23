@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   # Disable CSRF protection for development smoke tests
   # This allows the smoke test script to POST login requests without extracting
   # session-specific CSRF tokens. CSRF protection remains enabled in staging/production.
-  skip_before_action :verify_authenticity_token, if: :development?
+  skip_before_action :verify_authenticity_token, if: proc { Rails.env.development? }
 
   private
 
