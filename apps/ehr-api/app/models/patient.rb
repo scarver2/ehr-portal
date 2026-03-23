@@ -8,7 +8,7 @@ class Patient < ApplicationRecord
   validates :first_name, :last_name, presence: true
   validates :mrn, uniqueness: true, allow_blank: true
   validates :photo_url, format: {
-    with: %r{^(https?://|/images/)},
+    with: %r{\A(https?://|/images/)},
     message: :photo_url_format,
     allow_blank: true
   }
