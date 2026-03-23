@@ -18,6 +18,7 @@ AllCops:
   Exclude:
     - '.bundle/**/*'
     - 'coverage/**/*'
+    - 'db/schema.rb'
     - 'tmp/**/*'
     - 'vendor/**/*'
 

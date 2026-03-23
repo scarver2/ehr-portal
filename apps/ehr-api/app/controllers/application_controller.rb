@@ -5,6 +5,11 @@ class ApplicationController < ActionController::Base
 
   before_action :set_honeybadger_context
 
+  # Disable CSRF protection for development smoke tests
+  # This allows the smoke test script to POST login requests without extracting
+  # session-specific CSRF tokens. CSRF protection remains enabled in staging/production.
+  skip_before_action :verify_authenticity_token, if: proc { Rails.env.development? }
+
   private
 
   # Return the authenticated admin user (for ActiveAdmin)

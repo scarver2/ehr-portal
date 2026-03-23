@@ -170,7 +170,10 @@ ActiveAdmin.setup do |config|
   # You can add before, after and around filters to all of your
   # Active Admin resources and pages from here.
   #
-  config.before_action :require_admin_role
+  # Note: authenticate_admin_user! is already called by Devise, so we don't need
+  # require_admin_role as a global filter. The login page should not require it.
+  # If you need authorization checks, add them per-resource instead.
+  # config.before_action :require_admin_role
 
   # == Attribute Filters
   #

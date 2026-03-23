@@ -8,8 +8,8 @@ class Provider < ApplicationRecord
 
   # Validations
   validates :photo_url, format: {
-    with: %r{^(https?://|/images/)},
-    message: 'must be a valid URL or local image path (/images/...)',
+    with: %r{\A(?:https?://|/images/).+\z},
+    message: :photo_url_format,
     allow_blank: true
   }
 

@@ -52,6 +52,8 @@ describe("useInsuranceVerificationStream", () => {
     mockUnsubscribe.mockClear()
     mockDisconnect.mockClear()
     mockCreate.mockClear()
+    // Set a token in localStorage for these tests
+    localStorage.setItem("auth_token", "fake-jwt-token")
   })
 
   it("returns null before any data arrives", () => {
@@ -123,7 +125,7 @@ describe("startVerification", () => {
   beforeEach(() => {
     vi.restoreAllMocks()
     // Provide a JWT token so startVerification passes the auth check
-    vi.spyOn(Storage.prototype, "getItem").mockReturnValue("fake-jwt-token")
+    localStorage.setItem("auth_token", "fake-jwt-token")
   })
 
   it("POSTs to the insurance verifications endpoint", async () => {
@@ -162,7 +164,7 @@ describe("startVerification", () => {
   })
 
   it("throws when not authenticated", async () => {
-    vi.spyOn(Storage.prototype, "getItem").mockReturnValue(null)
+    localStorage.removeItem("auth_token")
     await expect(startVerification(42)).rejects.toThrow("Not authenticated")
   })
 })
