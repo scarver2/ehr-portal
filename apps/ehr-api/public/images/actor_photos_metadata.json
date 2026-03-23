@@ -1,0 +1,132 @@
+{
+  "processed_count": 25,
+  "skipped_count": 0,
+  "timestamp": "2026-03-22T20:16:28-05:00",
+  "files": [
+    {
+      "filename": "jennifer-morrison.jpg",
+      "source": "1280px-Jennifer_Morrison_crop.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/jennifer-morrison.jpg"
+    },
+    {
+      "filename": "bryan-singer.jpg",
+      "source": "Bryan_Singer.2776_cropped.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/bryan-singer.jpg"
+    },
+    {
+      "filename": "chi-mcbride.jpg",
+      "source": "Chi_McBride_2.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/chi-mcbride.jpg"
+    },
+    {
+      "filename": "david-morse.jpg",
+      "source": "David_Morse.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/david-morse.jpg"
+    },
+    {
+      "filename": "david-shore.jpg",
+      "source": "David_Shore_Cropped.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/david-shore.jpg"
+    },
+    {
+      "filename": "hugh-laurie.jpg",
+      "source": "Hugh_Laurie.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/hugh-laurie.jpg"
+    },
+    {
+      "filename": "jesse-spencer.jpg",
+      "source": "Jesse_Spencer_cropped.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/jesse-spencer.jpg"
+    },
+    {
+      "filename": "kal-penn.jpg",
+      "source": "Kal_Penn.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/kal-penn.jpg"
+    },
+    {
+      "filename": "katie-jacobs.jpg",
+      "source": "Katie_Jacobs.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/katie-jacobs.jpg"
+    },
+    {
+      "filename": "lisa-edelstein.jpg",
+      "source": "Lisa_Edelstein_@_Farm_Sancutary_Gala_2006.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/lisa-edelstein.jpg"
+    },
+    {
+      "filename": "amber-tamblyn.jpg",
+      "source": "MMVA2007_Amber_Tamblyn_3A2V0164.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/amber-tamblyn.jpg"
+    },
+    {
+      "filename": "odette-yustman.jpg",
+      "source": "OdetteYustmanJun09.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/odette-yustman.jpg"
+    },
+    {
+      "filename": "olivia-wilde.jpg",
+      "source": "Olivia_Wilde_by_David_Shankbone.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/olivia-wilde.jpg"
+    },
+    {
+      "filename": "omar-epps.jpg",
+      "source": "Omar_Epps.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/omar-epps.jpg"
+    },
+    {
+      "filename": "peter-jacobson.jpg",
+      "source": "Peter_Jacobson_cropped.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/peter-jacobson.jpg"
+    },
+    {
+      "filename": "robert-leonard.jpg",
+      "source": "Robert_Sean_Leonard_cropped2.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/robert-leonard.jpg"
+    },
+    {
+      "filename": "sela-ward.jpg",
+      "source": "Sela_Ward_cropped.jpeg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/sela-ward.jpg"
+    },
+    {
+      "filename": "anne-dudek.jpg",
+      "source": "MV5BNDQ2NjMwNDcwM15BMl5BanBnXkFtZTgwNTk1MjIzMjE@._V1_.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/anne-dudek.jpg"
+    },
+    {
+      "filename": "jennifer-morrison.jpg",
+      "source": "MV5BMTkwMzgzMTM5NF5BMl5BanBnXkFtZTgwOTIxMjY5MDI@._V1_FMjpg_UY2048_.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/jennifer-morrison.jpg"
+    },
+    {
+      "filename": "robert-sean leonard.jpg",
+      "source": "MV5BMTU3NDY3NDM5Ml5BMl5BanBnXkFtZTgwODIxMjY5MDI@._V1_FMjpg_UY2048_.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/robert-sean leonard.jpg"
+    },
+    {
+      "filename": "kal-penn.jpg",
+      "source": "MV5BOTcwNDA5NDc4Ml5BMl5BanBnXkFtZTgwMzE4OTYzNDM@._V1_FMjpg_UY2048_.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/kal-penn.jpg"
+    },
+    {
+      "filename": "lisa-edelstein.jpg",
+      "source": "MV5BODM3NTc3ODE5MV5BMl5BanBnXkFtZTgwOTc4MTIzMjE@._V1_FMjpg_UX500_.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/lisa-edelstein.jpg"
+    },
+    {
+      "filename": "omar-epps.jpg",
+      "source": "MV5BMTQxMTU0MjMxMl5BMl5BanBnXkFtZTgwNDA3MzIzMjE@._V1_FMjpg_UX500_.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/omar-epps.jpg"
+    },
+    {
+      "filename": "jesse-spencer.jpg",
+      "source": "MV5BNTA1NzM5MzE0MF5BMl5BanBnXkFtZTgwODE3MjIzMjE@._V1_FMjpg_UX500_.jpg",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/jesse-spencer.jpg"
+    },
+    {
+      "filename": "hugh-laurie.jpg",
+      "source": "MV5BNjA4NTdhZmItNDJiNC00OWY5LTliMDEtM2RlM2EwNDFhNGY5XkEyXkFqcGdeQXVyNDQ0MTYzMDA%40._V1_.webp",
+      "path": "/Users/scarver2/Projects/OSS/ehr-portal/apps/ehr-api/public/images/providers/hugh-laurie.jpg"
+    }
+  ]
+}

@@ -1,20 +1,20 @@
 first_name,last_name,specialty,npi,clinic_name,photo_url,role
-Gregory,House,Internal Medicine,1234567890,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Gregory_House,provider
-James,Wilson,Oncology,1234567891,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/James_Wilson,provider
-Robert,Chase,Internal Medicine,1234567892,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Robert_Chase,provider
-Allison,Cameron,Immunology,1234567893,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Allison_Cameron,provider
-Eric,Foreman,Infectious Disease,1234567894,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Eric_Foreman,provider
-Christopher,Taub,Surgery,1234567895,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Christopher_Taub,provider
-Remy,Hadley,Internal Medicine,1234567896,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Remy_Hadley,provider
-Lisa,Cuddy,Administration,1234567897,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Lisa_Cuddy,administrator
-Dominika,Patrova,Surgery,1234567898,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Dominika,provider
-Martha,Masters,Neurology,1234567899,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Martha_Masters,provider
+Gregory,House,Internal Medicine,1234567890,Princeton-Plainsboro Teaching Hospital,/images/providers/hugh-laurie.jpg,provider
+James,Wilson,Oncology,1234567891,Princeton-Plainsboro Teaching Hospital,/images/providers/robert-sean leonard.jpg,provider
+Robert,Chase,Internal Medicine,1234567892,Princeton-Plainsboro Teaching Hospital,/images/providers/jesse-spencer.jpg,provider
+Allison,Cameron,Immunology,1234567893,Princeton-Plainsboro Teaching Hospital,/images/providers/jennifer-morrison.jpg,provider
+Eric,Foreman,Infectious Disease,1234567894,Princeton-Plainsboro Teaching Hospital,/images/providers/omar-epps.jpg,provider
+Christopher,Taub,Surgery,1234567895,Princeton-Plainsboro Teaching Hospital,/images/providers/peter-jacobson.jpg,provider
+Remy,Hadley,Internal Medicine,1234567896,Princeton-Plainsboro Teaching Hospital,/images/providers/olivia-wilde.jpg,provider
+Lisa,Cuddy,Administration,1234567897,Princeton-Plainsboro Teaching Hospital,/images/providers/lisa-edelstein.jpg,administrator
+Dominika,Patrova,Surgery,1234567898,Princeton-Plainsboro Teaching Hospital,/images/providers/odette-yustman.jpg,provider
+Martha,Masters,Neurology,1234567899,Princeton-Plainsboro Teaching Hospital,/images/providers/amber-tamblyn.jpg,provider
 Callie,Torres,Orthopedic Surgery,1234567901,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Calliope_Torres,provider
 Mark,Cordova,Cardiology,1234567902,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Mark_Cordova,provider
 Robert,Langdon,Psychiatry,1234567903,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Robert_Langdon,provider
 Ann,Reynolds,Pediatrics,1234567904,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Ann_Reynolds,provider
 Steve,Myerson,Oncology,1234567905,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Steve_Myerson,provider
-David,Vogler,Administration,1234567906,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/David_Vogler,administrator
+David,Vogler,Administration,1234567906,Princeton-Plainsboro Teaching Hospital,/images/providers/david-shore.jpg,administrator
 Edward,Vogler,Administration,1234567907,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Edward_Vogler,administrator
 Michael,Tritter,Internal Medicine,1234567908,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Michael_Tritter,provider
 Paul,Idelson,Nephrology,1234567909,Princeton-Plainsboro Teaching Hospital,https://house.fandom.com/wiki/Paul_Idelson,provider

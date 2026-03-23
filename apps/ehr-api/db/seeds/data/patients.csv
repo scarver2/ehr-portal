@@ -1,12 +1,12 @@
 first_name,last_name,gender,condition,dob,mrn,actor,photo_url
-Amber,Volakis,female,Systemic lupus erythematosus,1975-03-22,10000002,Anne Dudek,https://house.fandom.com/wiki/Amber_Volakis
-Cameron,Palmer,female,Basilar artery thrombosis,1979-04-12,10000003,Jennifer Morrison,https://house.fandom.com/wiki/Cameron_Palmer
+Amber,Volakis,female,Systemic lupus erythematosus,1975-03-22,10000002,Anne Dudek,/images/patients/anne-dudek.jpg
+Cameron,Palmer,female,Basilar artery thrombosis,1979-04-12,10000003,Jennifer Morrison,/images/patients/jennifer-morrison.jpg
 Evelyn,Poulos,female,Sarcoidosis,1962-11-15,10000004,Carmen Argenziano,https://house.fandom.com/wiki/Evelyn_Poulos
 Henry,Knight,male,Hemochromatosis,1948-09-22,10000005,John Cho,https://house.fandom.com/wiki/Henry_Knight
 Jake,McCullough,male,Addison's disease,1985-07-10,10000006,Cole Evan Weiss,https://house.fandom.com/wiki/Jake_McCullough
 Kris,Powell,female,Chronic arsenic poisoning,1972-05-08,10000007,Cynthia Nixon,https://house.fandom.com/wiki/Kris_Powell
 Mara,Cowan,female,Meningitis,1980-02-28,10000008,Mira Sorvino,https://house.fandom.com/wiki/Mara_Cowan
-Nathan,Paige,male,Neurosyphilis,1966-04-15,10000009,David Morse,https://house.fandom.com/wiki/Nathan_Paige
+Nathan,Paige,male,Neurosyphilis,1966-04-15,10000009,David Morse,/images/patients/david-morse.jpg
 Rebecca,Adler,female,Autoimmune encephalitis,1969-06-19,10000001,Robin Tunney,https://house.fandom.com/wiki/Rebecca_Adler
 Tom,Brock,male,Myxedema,1955-10-30,10000010,Scott Foley,https://house.fandom.com/wiki/Tom_Brock
 Mariah,Cowan,female,Pancreatic cancer,1965-08-14,10000011,Michelle Trachtenberg,https://house.fandom.com/wiki/Mariah_Cowan
@@ -22,7 +22,7 @@ Stewart,Duncan,male,Chronic pain,1958-06-11,10000020,Stewart Duncan,https://hous
 Martha,Ryan,female,Sarcoidosis,1974-02-28,10000021,Martha Ryan,https://house.fandom.com/wiki/Martha_Ryan
 David,Foster,male,Vascular disease,1952-10-05,10000022,David Foster,https://house.fandom.com/wiki/David_Foster
 Sarah,Macintosh,female,Antiphospholipid syndrome,1975-12-18,10000023,Sarah Macintosh,https://house.fandom.com/wiki/Sarah_Macintosh
-Robert,Chase,male,Bipolar disorder,1982-03-22,10000024,Robert Chase,https://house.fandom.com/wiki/Robert_Chase_(patient)
+Robert,Chase,male,Bipolar disorder,1982-03-22,10000024,Robert Chase,/images/patients/jesse-spencer.jpg
 Jennifer,Knight,female,Systemic sclerosis,1980-07-14,10000025,Jennifer Knight,https://house.fandom.com/wiki/Jennifer_Knight
 James,Parsons,male,Thyroiditis,1970-04-09,10000026,James Parsons,https://house.fandom.com/wiki/James_Parsons_(patient)
 Lisa,Moore,female,Brucellosis,1978-11-30,10000027,Lisa Moore,https://house.fandom.com/wiki/Lisa_Moore
