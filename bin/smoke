@@ -269,11 +269,10 @@ smoke_api() {
   smoke_check "POST /graphql  (introspect)"  "$base/graphql" "200" "POST" '{"query":"{__typename}"}'
   smoke_login "POST /api/v1/auth/login (JWT)" "$base" "provider@example.com" "password"
 
-  # TODO: Fix ActiveAdmin login test - CSRF token validation issue
   # Only test ActiveAdmin login in non-production (test credentials don't exist in production)
-  # if [[ "$base" != *"stancarver.com"* ]]; then
-  #   smoke_activeadmin_login "POST /admin/login (ActiveAdmin)" "$base" "admin@example.com" "password"
-  # fi
+  if [[ "$base" != *"stancarver.com"* ]]; then
+    smoke_activeadmin_login "POST /admin/login (ActiveAdmin)" "$base" "admin@example.com" "password"
+  fi
 }
 
 smoke_portal() {
