@@ -1,4 +1,8 @@
 class Account < ApplicationRecord
+  JWT_ALGORITHM: String
+  JWT_TTL: ActiveSupport::Duration
+  JWT_ISSUER: String
+
   attr_reader id: Integer
   attr_accessor user_id: Integer
   attr_accessor email: String
@@ -15,4 +19,13 @@ class Account < ApplicationRecord
 
   # Password validation
   def valid_password?: (String password) -> bool
+
+  # JWT token generation
+  def generate_jwt_token: () -> String
+
+  # JWT token verification
+  def self.verify_jwt_token: (String? token) -> Hash[String, untyped]?
+
+  # Find user from JWT token
+  def self.find_user_from_jwt: (String? token) -> User?
 end
