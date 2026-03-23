@@ -19,7 +19,7 @@ PASSED=0
 # Lint portal (Next.js/TypeScript)
 echo ""
 info "Running ESLint on portal app..."
-if (cd "$ROOT_DIR/apps/ehr-portal" && bash "$SCRIPT_DIR/lint" "$@" 2>&1 | grep -v "^$"); then
+if (cd "$ROOT_DIR/apps/ehr-portal" && bin/lint "$@"); then
   ((PASSED++)) || true
   success "Portal app lint passed"
 else
