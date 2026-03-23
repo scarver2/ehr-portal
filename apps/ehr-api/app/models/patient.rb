@@ -7,7 +7,11 @@ class Patient < ApplicationRecord
 
   validates :first_name, :last_name, presence: true
   validates :mrn, uniqueness: true, allow_blank: true
-  validates :photo_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true }
+  validates :photo_url, format: {
+    with: %r{^(https?://|/images/)},
+    message: 'must be a valid URL or local image path (/images/...)',
+    allow_blank: true
+  }
 
   scope :search_by_name, lambda { |query|
     # Build a prefix-matching tsquery: "jan" → "jan:*", "jane smith" → "jane:* & smith:*"
