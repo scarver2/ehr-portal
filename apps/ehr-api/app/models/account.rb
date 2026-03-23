@@ -35,12 +35,11 @@ class Account < ApplicationRecord
 
   # Verify JWT token and return decoded payload, or nil if invalid
   def self.verify_jwt_token(token)
-    return nil unless token.present?
+    return nil if token.blank?
 
     begin
       secret = Rails.application.secret_key_base
-      payload = JWT.decode(token, secret, true, { algorithm: JWT_ALGORITHM }).first
-      payload
+      JWT.decode(token, secret, true, { algorithm: JWT_ALGORITHM }).first
     rescue JWT::DecodeError, JWT::ExpiredSignature
       nil
     end

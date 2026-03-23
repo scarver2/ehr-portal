@@ -139,7 +139,7 @@ namespace :photos do
       # Fallback: find the first meaningful image in the page
       page_image = doc.css("img").find do |img|
         src = img["src"]
-        src && src.include?("fandom.com/") && !src.include?("wiki/") &&
+        src&.include?("fandom.com/") && src.exclude?("wiki/") &&
           src.match?(/\.(jpg|jpeg|png|gif)/i)
       end
 
@@ -151,7 +151,7 @@ namespace :photos do
   end
 
   def download_photo(url, category, filename)
-    return nil unless url.present?
+    return nil if url.blank?
 
     # Make relative URLs absolute
     url = "https:#{url}" if url.start_with?("//")
